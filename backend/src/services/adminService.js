@@ -1,20 +1,21 @@
 import crypto from 'crypto';
 import cloudinary from '../config/cloudinary.js';
 
-// Simple admin authentication (in production, use proper auth with JWT)
-const ADMIN_CREDENTIALS = {
-    username: process.env.ADMIN_USERNAME || 'admin',
-    // Hash of 'admin123' - change this in production!
-    passwordHash: process.env.ADMIN_PASSWORD_HASH || '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9'
-};
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 
 export const hashPassword = (password) => {
     return crypto.createHash('sha256').update(password).digest('hex');
 };
 
 export const verifyAdmin = (username, password) => {
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH) {
+        console.error('Admin credentials are not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD_HASH environment variables.');
+        return false;
+    }
+
     const passwordHash = hashPassword(password);
-    return username === ADMIN_CREDENTIALS.username && passwordHash === ADMIN_CREDENTIALS.passwordHash;
+    return username === ADMIN_USERNAME && passwordHash === ADMIN_PASSWORD_HASH;
 };
 
 export const getAdminStats = async (db) => {
@@ -108,4 +109,5 @@ export const uploadMedia = async (fileBuffer, filename) => {
 
 // Keep backward compatibility
 export const uploadImage = uploadMedia;
+
 

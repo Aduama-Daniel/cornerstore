@@ -3,18 +3,6 @@ import { searchProductsAI, getProductBySlug, getFeaturedProducts } from './produ
 import { addToCart } from './cartService.js';
 import { searchOrders } from './orderService.js';
 
-// Initialize the Gemini API client
-const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyDqlGTm4G_t5zrMzkeBz9GAvntzUsDat70';
-console.log('[GEMINI] Initializing with API key:', apiKey ? `${apiKey.substring(0, 10)}...${apiKey.substring(apiKey.length - 5)}` : 'NOT SET');
-console.log('[GEMINI] Environment check:', {
-    GEMINI_API_KEY_SET: !!process.env.GEMINI_API_KEY,
-    using_fallback: !process.env.GEMINI_API_KEY,
-    NODE_ENV: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-});
-
-const genAI = new GoogleGenerativeAI(apiKey);
-
 const tools = [
     {
         functionDeclarations: [
@@ -80,10 +68,26 @@ const tools = [
     }
 ];
 
-const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    tools: tools
+
+console.log('[GEMINI] Gemini client configured:', !!process.env.GEMINI_API_KEY);
+console.log('[GEMINI] Environment check:', {
+    GEMINI_API_KEY_SET: !!process.env.GEMINI_API_KEY,
+    NODE_ENV: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
 });
+
+const getGeminiModel = () => {
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+        throw new Error('GEMINI_API_KEY is not configured');
+    }
+
+    return new GoogleGenerativeAI(apiKey).getGenerativeModel({
+        model: 'gemini-2.0-flash',
+        tools
+    });
+};
 
 const systemInstruction = `
 You are a helpful and knowledgeable sales assistant for "Cornerstore", a premium fashion and design store.
@@ -158,6 +162,7 @@ export const generateResponse = async (db, message, history = [], userId = null)
         };
 
         console.log('[GEMINI] Creating chat session with', chatOptions.history.length, 'history items');
+        const model = getGeminiModel();
         const chat = model.startChat(chatOptions);
 
         console.log('[GEMINI] Sending message to Gemini API...');
@@ -319,3 +324,4 @@ export const generateResponse = async (db, message, history = [], userId = null)
         };
     }
 };
+

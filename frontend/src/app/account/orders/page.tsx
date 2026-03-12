@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,8 +9,14 @@ import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/currency';
 
 export default function OrdersPage() {
-  const { user, getIdToken } = useAuth();
+  const { user, getIdToken, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login?redirect=/account/orders');
+    }
+  }, [authLoading, user, router]);
 
   const { data, error, isLoading } = useSWR(
     user ? ['/api/orders', user.uid] : null,
@@ -19,8 +26,7 @@ export default function OrdersPage() {
     }
   );
 
-  if (!user) {
-    router.push('/login?redirect=/account/orders');
+  if (authLoading || !user) {
     return null;
   }
 
@@ -28,17 +34,15 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Page Header */}
       <div className="bg-warm-beige py-12">
         <div className="container-custom">
           <Link href="/account" className="text-sm text-neutral hover:text-contrast mb-2 inline-block">
-            ← Back to Account
+            Back to Account
           </Link>
           <h1 className="text-4xl font-serif">Order History</h1>
         </div>
       </div>
 
-      {/* Orders List */}
       <div className="container-custom py-12">
         {isLoading ? (
           <div className="space-y-4">
@@ -73,7 +77,6 @@ export default function OrdersPage() {
                 className="block bg-warm-beige p-6 hover:bg-sand/30 transition-colors"
               >
                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                  {/* Order Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="font-medium text-lg">Order {order.orderNumber}</h3>
@@ -95,7 +98,6 @@ export default function OrdersPage() {
                       })}
                     </p>
 
-                    {/* Items Summary */}
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-neutral">
                         {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
@@ -105,7 +107,6 @@ export default function OrdersPage() {
                     </div>
                   </div>
 
-                  {/* View Order Arrow */}
                   <div className="flex items-center text-neutral">
                     <span className="text-sm mr-2">View Details</span>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

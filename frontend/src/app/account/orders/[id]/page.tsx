@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,8 +11,14 @@ import { formatPrice } from '@/lib/currency';
 import OrderTrackingVisualizer from '@/components/OrderTrackingVisualizer';
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
-  const { user, getIdToken } = useAuth();
+  const { user, getIdToken, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login?redirect=/account/orders');
+    }
+  }, [authLoading, user, router]);
 
   const { data, error, isLoading } = useSWR(
     user ? [`/api/orders/${params.id}`, user.uid] : null,
@@ -21,8 +28,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     }
   );
 
-  if (!user) {
-    router.push('/login?redirect=/account/orders');
+  if (authLoading || !user) {
     return null;
   }
 
@@ -52,11 +58,10 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
   return (
     <div className="min-h-screen">
-      {/* Page Header */}
       <div className="bg-warm-beige py-12">
         <div className="container-custom">
           <Link href="/account/orders" className="text-sm text-neutral hover:text-contrast mb-2 inline-block">
-            ← Back to Orders
+            Back to Orders
           </Link>
           <h1 className="text-4xl font-serif mb-2">Order {order.orderNumber}</h1>
           <p className="text-neutral">
@@ -71,9 +76,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         </div>
       </div>
 
-      {/* Order Details */}
       <div className="container-custom py-12">
-        {/* Tracking Visualization */}
         <OrderTrackingVisualizer
           status={order.status}
           trackingNumber={order.trackingNumber}
@@ -82,7 +85,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Order Items */}
           <div className="lg:col-span-2 space-y-6">
             <div>
               <h2 className="text-xl font-serif mb-4">Order Items</h2>
@@ -107,10 +109,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     </div>
 
                     <div className="flex-1">
-                      <Link
-                        href={`/product/${item.productSlug}`}
-                        className="font-medium hover:text-neutral transition-colors"
-                      >
+                      <Link href={`/product/${item.productSlug}`} className="font-medium hover:text-neutral transition-colors">
                         {item.productName}
                       </Link>
                       <p className="text-sm text-neutral mt-1">
@@ -127,7 +126,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               </div>
             </div>
 
-            {/* Shipping Address */}
             <div>
               <h2 className="text-xl font-serif mb-4">Shipping Address</h2>
               <div className="bg-warm-beige p-6">
@@ -141,12 +139,10 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-warm-beige p-6 sticky top-24">
               <h2 className="text-xl font-serif mb-6">Order Summary</h2>
 
-              {/* Status */}
               <div className="mb-6 pb-6 border-b border-neutral/20">
                 <p className="text-sm text-neutral mb-2">Status</p>
                 <p className={`text-lg font-medium capitalize ${order.status === 'delivered' ? 'text-green-600' :
@@ -158,7 +154,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 </p>
               </div>
 
-              {/* Pricing */}
               <div className="space-y-3 mb-6 pb-6 border-b border-neutral/20">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
@@ -175,7 +170,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <span>{formatPrice(order.total)}</span>
               </div>
 
-              {/* Actions */}
               <div className="space-y-3">
                 <button
                   onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}

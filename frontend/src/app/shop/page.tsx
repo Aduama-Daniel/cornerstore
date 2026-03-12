@@ -1,7 +1,7 @@
+import { Suspense } from 'react';
 import { api } from '@/lib/api';
 import ShopClient from './ShopClient';
 
-// Enable caching for 1 hour
 export const revalidate = 3600;
 
 async function getProducts() {
@@ -41,5 +41,9 @@ export default async function ShopPage() {
     getCategories()
   ]);
 
-  return <ShopClient initialProducts={products} colors={colors} categories={categories} />;
+  return (
+    <Suspense fallback={null}>
+      <ShopClient initialProducts={products} colors={colors} categories={categories} />
+    </Suspense>
+  );
 }

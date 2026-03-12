@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,10 +9,15 @@ import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/currency';
 
 export default function AccountPage() {
-  const { user, logout, getIdToken } = useAuth();
+  const { user, logout, getIdToken, loading } = useAuth();
   const router = useRouter();
 
-  // Fetch recent orders
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [loading, user, router]);
+
   const { data: ordersData } = useSWR(
     user ? ['/api/orders', user.uid] : null,
     async () => {
@@ -20,8 +26,7 @@ export default function AccountPage() {
     }
   );
 
-  if (!user) {
-    router.push('/login');
+  if (loading || !user) {
     return null;
   }
 
@@ -34,7 +39,6 @@ export default function AccountPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Page Header */}
       <div className="bg-warm-beige py-12">
         <div className="container-custom">
           <h1 className="text-4xl font-serif mb-2">My Account</h1>
@@ -42,29 +46,18 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Quick Links */}
           <div className="md:col-span-1">
             <div className="bg-warm-beige p-6 space-y-4">
               <h2 className="text-lg font-medium mb-4">Account Menu</h2>
-              <Link
-                href="/account/orders"
-                className="block py-2 hover:text-neutral transition-colors"
-              >
+              <Link href="/account/orders" className="block py-2 hover:text-neutral transition-colors">
                 Order History
               </Link>
-              <Link
-                href="/account/addresses"
-                className="block py-2 hover:text-neutral transition-colors"
-              >
+              <Link href="/account/addresses" className="block py-2 hover:text-neutral transition-colors">
                 Saved Addresses
               </Link>
-              <Link
-                href="/account/settings"
-                className="block py-2 hover:text-neutral transition-colors"
-              >
+              <Link href="/account/settings" className="block py-2 hover:text-neutral transition-colors">
                 Account Settings
               </Link>
               <button
@@ -76,9 +69,7 @@ export default function AccountPage() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="md:col-span-2 space-y-8">
-            {/* Welcome */}
             <div>
               <h2 className="text-2xl font-serif mb-4">Welcome back!</h2>
               <p className="text-neutral">
@@ -86,14 +77,10 @@ export default function AccountPage() {
               </p>
             </div>
 
-            {/* Recent Orders */}
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-serif">Recent Orders</h3>
-                <Link
-                  href="/account/orders"
-                  className="text-sm uppercase tracking-wide link-underline"
-                >
+                <Link href="/account/orders" className="text-sm uppercase tracking-wide link-underline">
                   View All
                 </Link>
               </div>
@@ -138,18 +125,11 @@ export default function AccountPage() {
               )}
             </div>
 
-            {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-4">
-              <Link
-                href="/shop"
-                className="btn-secondary text-center py-6"
-              >
+              <Link href="/shop" className="btn-secondary text-center py-6">
                 Continue Shopping
               </Link>
-              <Link
-                href="/account/orders"
-                className="btn-ghost text-center py-6 border border-neutral/30"
-              >
+              <Link href="/account/orders" className="btn-ghost text-center py-6 border border-neutral/30">
                 Track Orders
               </Link>
             </div>

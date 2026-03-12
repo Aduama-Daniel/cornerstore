@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { signIn, signInWithGoogle } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -48,20 +48,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-6">
       <div className="w-full max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-serif mb-2">Welcome Back</h1>
           <p className="text-neutral">Sign in to your account</p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-sm rounded">
             {error}
           </div>
         )}
 
-        {/* Sign In Form */}
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
             <label htmlFor="email" className="block text-sm mb-2">
@@ -89,7 +86,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="input-field"
-              placeholder="••••••••"
+              placeholder="********"
             />
           </div>
 
@@ -103,16 +100,11 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full"
-          >
+          <button type="submit" disabled={loading} className="btn-primary w-full">
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        {/* Divider */}
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-neutral/20"></div>
@@ -122,7 +114,6 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Google Sign In */}
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
@@ -137,7 +128,6 @@ export default function LoginPage() {
           <span>Sign in with Google</span>
         </button>
 
-        {/* Sign Up Link */}
         <p className="mt-8 text-center text-sm">
           Don't have an account?{' '}
           <Link href="/signup" className="font-medium hover:text-neutral transition-colors">
@@ -146,5 +136,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
