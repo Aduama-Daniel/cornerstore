@@ -26,20 +26,28 @@ import chatRoutes from './src/routes/chat.js';
 
 dotenv.config();
 
-const fastify = Fastify({
-  logger: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname'
-      }
-    }
-  }
-});
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Security & CORS
+const fastify = Fastify(
+  isProduction
+    ? { logger: true }
+    : {
+        logger: {
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname'
+            }
+          }
+        }
+      }
+);
+
+fastify.decorate('db', null);
+fastify.decorate('startupError', null);
+
 await fastify.register(helmet, {
   contentSecurityPolicy: false
 });
@@ -54,67 +62,58 @@ await fastify.register(rateLimit, {
   timeWindow: '1 minute'
 });
 
-// Multipart for file uploads
 await fastify.register(multipart, {
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max file size
+    fileSize: 10 * 1024 * 1024
   }
 });
 
-// Database & Firebase
-const db = await connectDB();
-initializeFirebase();
+fastify.addHook('onRequest', async (request, reply) => {
+  if (!fastify.startupError) {
+    return;
+  }
 
-// Make db available to routes
-fastify.decorate('db', db);
+  if (request.url === '/health') {
+    return;
+  }
 
-// Routes
+  return reply.status(503).send({
+    error: true,
+    message: 'Backend startup failed',
+    detail: fastify.startupError
+  });
+});
+
+fastify.get('/health', async () => {
+  return {
+    status: fastify.startupError ? 'degraded' : 'ok',
+    startupError: fastify.startupError,
+    timestamp: new Date().toISOString()
+  };
+});
+
 fastify.register(productRoutes, { prefix: '/api/products' });
 fastify.register(categoryRoutes, { prefix: '/api/categories' });
 fastify.register(cartRoutes, { prefix: '/api/cart' });
 fastify.register(orderRoutes, { prefix: '/api/orders' });
 fastify.register(searchRoutes, { prefix: '/api/search' });
 fastify.register(adminRoutes, { prefix: '/api/admin' });
-
-// New routes
 fastify.register(colorRoutes, { prefix: '/api/colors' });
 fastify.register(inventoryRoutes, { prefix: '/api/inventory' });
 fastify.register(collectionRoutes, { prefix: '/api/collections' });
 fastify.register(reviewRoutes, { prefix: '/api/reviews' });
-
-// Admin routes for new features
 fastify.register(adminColorRoutes, { prefix: '/api/admin/colors' });
 fastify.register(adminInventoryRoutes, { prefix: '/api/admin/inventory' });
 fastify.register(adminCollectionRoutes, { prefix: '/api/admin/collections' });
 fastify.register(adminReviewRoutes, { prefix: '/api/admin/reviews' });
-
-// Wishlist routes
 fastify.register(wishlistRoutes, { prefix: '/api/wishlist' });
-
-// Analytics routes
 fastify.register(analyticsRoutes, { prefix: '/api/analytics' });
-
-// Admin order management routes
 fastify.register(adminOrderRoutes, { prefix: '/api/admin/orders' });
-
-// Returns management routes
 fastify.register(returnsRoutes, { prefix: '/api/admin/returns' });
-
-// Analytics admin routes
 fastify.register(analyticsAdminRoutes, { prefix: '/api/admin/analytics' });
-
-// User routes
 fastify.register(userRoutes, { prefix: '/api/user' });
-
-// Chat routes
 fastify.register(chatRoutes, { prefix: '/api/chat' });
 
-// Health check
-fastify.get('/health', async () => {
-  return { status: 'ok', timestamp: new Date().toISOString() };
-});
-
-// Error handler
 fastify.setErrorHandler((error, request, reply) => {
   fastify.log.error(error);
 
@@ -128,12 +127,21 @@ fastify.setErrorHandler((error, request, reply) => {
   });
 });
 
-// Start server
+try {
+  const db = await connectDB();
+  initializeFirebase();
+  fastify.db = db;
+} catch (error) {
+  const message = error instanceof Error ? error.message : 'Unknown startup error';
+  fastify.startupError = message;
+  fastify.log.error({ error }, 'Startup initialization failed');
+}
+
 const start = async () => {
   try {
     const port = process.env.PORT || 3001;
     await fastify.listen({ port, host: '0.0.0.0' });
-    console.log(`🚀 Cornerstore API running on port ${port}`);
+    console.log(`Cornerstore API running on port ${port}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
