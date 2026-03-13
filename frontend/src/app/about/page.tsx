@@ -1,44 +1,50 @@
-export default function AboutPage() {
+﻿export default function AboutPage() {
   return (
     <div className="min-h-screen">
-      <div className="flex min-h-[45vh] items-center justify-center bg-warm-beige px-4 py-16 text-center sm:min-h-[60vh] sm:px-6">
-        <div className="z-10 max-w-3xl">
-          <h1 className="mb-4 text-4xl font-serif sm:text-6xl">Our Story</h1>
-          <p className="mx-auto max-w-2xl text-base text-neutral sm:text-xl">
-            Built for the modern intellectual who values quality over quantity.
-          </p>
+      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
+        <div className="container-custom relative flex min-h-[46vh] items-end py-12 sm:py-14 lg:min-h-[52vh] lg:py-16">
+          <div className="max-w-4xl">
+            <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">About Cornerstore</p>
+            <h1 className="mt-4 text-4xl font-serif leading-[0.95] sm:text-6xl lg:text-7xl">A multi-brand storefront shaped by fashion, but open to the full lifestyle around it.</h1>
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-cream/72 sm:text-base">
+              Cornerstore brings together clothing, skincare, lighting, and home essentials in a calmer retail experience built for discovery.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="container-custom section-padding">
+      <div className="container-custom py-10 sm:py-12 lg:py-16">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="relative aspect-[4/5] bg-sand/20">
-            <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm uppercase tracking-[0.25em] text-neutral/40">
-              Philosophy Image
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-black/10 bg-[linear-gradient(155deg,#ece6dd,#f8f4ee_42%,#d8c8b8)]">
+            <div className="absolute inset-x-6 top-6 rounded-full border border-black/10 bg-white/45 px-4 py-2 text-[0.68rem] uppercase tracking-[0.3em] text-neutral backdrop-blur-sm">
+              Fashion First
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.08),transparent_55%)]" />
+            <div className="absolute inset-0 flex items-end p-8">
+              <p className="max-w-xs text-sm leading-relaxed text-contrast/75">
+                A storefront that can hold premium apparel, skincare rituals, and home-led essentials without losing its editorial point of view.
+              </p>
             </div>
           </div>
 
           <div className="editorial-spacing">
             <p className="mb-4 text-xs uppercase tracking-[0.3em] text-neutral">Philosophy</p>
-            <h2 className="mb-6 text-3xl font-serif sm:text-5xl">Curated for the modern intellectual</h2>
+            <h2 className="mb-6 text-3xl font-serif sm:text-5xl">Curated for people who want cohesion, not clutter</h2>
             <p className="text-base leading-relaxed sm:text-lg">
-              We believe in the quiet confidence of well-made things. Our collections are sourced from artisans who
-              prioritize texture, longevity, and ethical craftsmanship over fleeting trends.
+              We believe the best stores feel edited. Clothing may lead the way, but skincare, lighting, and practical home pieces should feel just as considered when they share the same space.
             </p>
             <p className="leading-relaxed text-neutral">
-              Every piece tells a story. Every garment is an investment. We create not for seasons, but for years,
-              pieces meant to age gracefully and travel with you through chapters of life.
+              That is why Cornerstore is built as a multi-brand platform. We can onboard new voices, expand categories, and still preserve a consistent tone through clear curation and strong product presentation.
             </p>
             <p className="leading-relaxed text-neutral">
-              Born from a desire to slow down consumption and celebrate intention, Cornerstore exists at the
-              intersection of form and function. We champion minimalism without sacrificing warmth, and sophistication
-              without pretense.
+              The result is a catalog that can scale over time without feeling noisy, generic, or disconnected.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="section-padding bg-contrast text-cream">
+      <div className="bg-contrast py-16 text-cream">
         <div className="container-custom">
           <h2 className="mb-10 text-center text-3xl font-serif sm:mb-12 sm:text-5xl">Our Values</h2>
 
@@ -74,30 +80,34 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="container-custom section-padding">
+      <div className="container-custom py-16">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="order-2 editorial-spacing lg:order-1">
-            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-neutral">Craftsmanship</p>
-            <h2 className="mb-6 text-3xl font-serif sm:text-5xl">Material honesty</h2>
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-neutral">Marketplace Design</p>
+            <h2 className="mb-6 text-3xl font-serif sm:text-5xl">Built to scale across brands and categories</h2>
             <p className="leading-relaxed text-neutral">
-              We believe in the integrity of materials. Every fabric is sourced with intention, prioritizing natural
-              fibers that breathe, age gracefully, and feel as good as they look.
+              Good commerce design is not only visual. The platform is structured so brands can be onboarded cleanly, products can be assigned clearly, and new departments can grow without forcing a redesign every few months.
             </p>
             <p className="leading-relaxed text-neutral">
-              Our production is by nature slow. We work closely with select ateliers who share our values, ensuring
-              transparency at every step from raw material to finished product.
+              That gives the storefront room to expand while keeping the experience coherent for shoppers and manageable for administrators.
             </p>
           </div>
 
-          <div className="relative order-1 aspect-[4/5] bg-sand/20 lg:order-2">
-            <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm uppercase tracking-[0.25em] text-neutral/40">
-              Craftsmanship Image
+          <div className="relative order-1 aspect-[4/5] overflow-hidden rounded-[2rem] border border-black/10 bg-[linear-gradient(155deg,#111111,#202020_48%,#3a342e)] lg:order-2">
+            <div className="absolute left-6 top-6 rounded-full border border-white/10 bg-white/8 px-4 py-2 text-[0.68rem] uppercase tracking-[0.3em] text-cream/75 backdrop-blur-sm">
+              Multi-Brand Ready
+            </div>
+            <div className="absolute inset-0 grid grid-cols-2 gap-4 p-6">
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6" />
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6" />
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6" />
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/6" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="section-padding bg-warm-beige">
+      <div className="bg-warm-beige py-16">
         <div className="container-custom mx-auto max-w-3xl text-center">
           <h2 className="mb-6 text-3xl font-serif">Join our community</h2>
           <p className="mb-8 leading-relaxed text-neutral">

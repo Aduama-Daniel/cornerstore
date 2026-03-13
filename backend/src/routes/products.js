@@ -11,12 +11,17 @@ export default async function productRoutes(fastify, options) {
   // GET all products with optional filtering
   fastify.get('/', { preHandler: optionalAuth }, async (request, reply) => {
     try {
-      const { category, minPrice, maxPrice, size, status, limit = 50, skip = 0 } = request.query;
+      const { category, department, heroAdvert, minPrice, maxPrice, size, status, brandSlug, limit = 50, skip = 0 } = request.query;
 
       const filters = {};
 
       if (category) filters.category = category;
+      if (department) filters.department = department;
       if (status) filters.status = status;
+      if (brandSlug) filters['brand.slug'] = brandSlug;
+      if (typeof heroAdvert !== 'undefined') {
+        filters.heroAdvert = heroAdvert === true || heroAdvert === 'true';
+      }
       if (size) filters.sizes = { $in: [size] };
       if (minPrice || maxPrice) {
         filters.price = {};
@@ -25,15 +30,6 @@ export default async function productRoutes(fastify, options) {
       }
       if (request.query.ids) {
         const ids = request.query.ids.split(',');
-        // Import ObjectId if not already available in the scope, or assume fastify.mongo.ObjectId?
-        // Usually we need to import { ObjectId } from 'mongodb'; at the top.
-        // But checking the file imports... it imports from services.
-        // The service getAllProducts takes `filters`.
-        // So we just need to pass the filter.
-        // But we need to convert strings to ObjectIds.
-        // Let's assume the service handles string IDs or I need to import ObjectId.
-        // Looking at file content from Step 312, it doesn't import ObjectId.
-        // I will add the import.
         const { ObjectId } = await import('mongodb');
         filters._id = { $in: ids.map(id => new ObjectId(id)) };
       }

@@ -70,7 +70,7 @@ export default function CartItem({ item }: CartItemProps) {
         <div className="relative h-40 w-full overflow-hidden rounded bg-sand/20 sm:h-32 sm:w-24">
           {itemMedia ? (
             itemMedia.type === 'video' ? (
-              <video src={itemMedia.url} className="h-full w-full object-cover" muted playsInline autoPlay loop />
+              <video src={itemMedia.url} className="h-full w-full object-cover" muted playsInline preload="metadata" />
             ) : (
               <Image src={itemMedia.url} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="160px" />
             )
@@ -134,3 +134,4 @@ export default function CartItem({ item }: CartItemProps) {
     </div>
   );
 }
+

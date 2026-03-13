@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -43,6 +43,8 @@ interface Product {
   price: number;
   discountPrice?: number;
   category: string;
+  brand?: { name?: string } | null;
+  department?: string;
   variations?: Variation[];
   status: string;
   tags?: string[];
@@ -59,8 +61,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // Data from API
   const [colors, setColors] = useState<Color[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [currentVariant, setCurrentVariant] = useState<InventoryItem | null>(null);
@@ -70,40 +70,23 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const { addToast } = useToast();
   const router = useRouter();
 
-  // Fetch colors and inventory on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
-        console.log('=== PRODUCT INFO - Fetching Data ===');
-        console.log('Product ID:', product._id);
-        console.log('Product object:', product);
-
-        // Fetch all colors
-        console.log('Fetching colors...');
         const colorsResponse = await api.colors.getAll();
-        console.log('Colors API response:', colorsResponse);
-
         if (colorsResponse.success && colorsResponse.data) {
           setColors(colorsResponse.data);
-          console.log('Colors set:', colorsResponse.data);
         }
 
-        // Fetch inventory for this product
-        console.log('Fetching inventory for product:', product._id);
         const inventoryResponse = await api.inventory.getByProduct(product._id);
-        console.log('Inventory API response:', inventoryResponse);
-
         if (inventoryResponse.success && inventoryResponse.data) {
           setInventory(inventoryResponse.data);
-          console.log('Inventory set:', inventoryResponse.data);
 
-          // Auto-select first available color
           if (inventoryResponse.data.length > 0) {
             const firstColor = inventoryResponse.data[0].colorSlug;
-            setSelectedColor(firstColor);
-            console.log('Auto-selected color:', firstColor);
+            setSelectedColor(firstColor || null);
           }
         }
       } catch (error) {
@@ -116,11 +99,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     fetchData();
   }, [product._id]);
 
-  // Update current variant when color or size changes
   useEffect(() => {
     if (selectedColor && selectedSize) {
       const variant = inventory.find(
-        inv => inv.colorSlug === selectedColor && inv.size === selectedSize
+        (item) => item.colorSlug === selectedColor && item.size === selectedSize
       );
       setCurrentVariant(variant || null);
     } else {
@@ -128,23 +110,19 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     }
   }, [selectedColor, selectedSize, inventory]);
 
-  // Get unique sizes and colors from inventory
-  const availableSizes = Array.from(new Set(inventory.map(inv => inv.size)));
-  const availableColorSlugs = Array.from(new Set(inventory.map(inv => inv.colorSlug)));
-  const productColors = colors.filter(c => availableColorSlugs.includes(c.slug));
+  const availableSizes = Array.from(new Set(inventory.map((item) => item.size)));
+  const availableColorSlugs = Array.from(new Set(inventory.map((item) => item.colorSlug)));
+  const productColors = colors.filter((color) => availableColorSlugs.includes(color.slug));
 
-  // Get size availability for selected color
   const getSizeAvailability = () => {
-    // If no colors are available but sizes are, we don't need a color.
-    // If colors are available, and one is selected, use it.
     const colorToUse = selectedColor || (availableColorSlugs.length === 0 ? '' : null);
     if (colorToUse === null) return {};
 
     const availability: { [size: string]: { available: boolean; stock: number } } = {};
 
-    availableSizes.forEach(size => {
+    availableSizes.forEach((size) => {
       const variant = inventory.find(
-        inv => inv.size === size && (inv.colorSlug === colorToUse || colorToUse === '')
+        (item) => item.size === size && (item.colorSlug === colorToUse || colorToUse === '')
       );
 
       availability[size] = {
@@ -156,31 +134,27 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     return availability;
   };
 
-  // Get available colors (colors with stock in at least one size)
   const getAvailableColors = () => {
-    return availableColorSlugs.filter(colorSlug => {
+    return availableColorSlugs.filter((colorSlug) => {
       return inventory.some(
-        inv => inv.colorSlug === colorSlug && inv.enabled && inv.stockQuantity > 0
+        (item) => item.colorSlug === colorSlug && item.enabled && item.stockQuantity > 0
       );
     });
   };
 
   const handleAddToCart = async () => {
-    if (availableColorSlugs.filter(c => c !== '').length > 0 && !selectedColor) {
+    if (availableColorSlugs.filter((item) => item !== '').length > 0 && !selectedColor) {
       addToast('Please select a color', 'error');
       return;
     }
 
-    if (availableSizes.filter(s => s !== '').length > 0 && !selectedSize) {
+    if (availableSizes.filter((item) => item !== '').length > 0 && !selectedSize) {
       addToast('Please select a size', 'error');
       return;
     }
 
-    // Default to empty strings if no valid choices exist to allow checkout
     const colorToPass = selectedColor || '';
     const sizeToPass = selectedSize || '';
-
-    // In a default sizeless inventory scenario, we might have an inventory item with empty strings
     const effectiveVariant = currentVariant || (inventory.length === 1 && inventory[0].size === '' && inventory[0].colorSlug === '' ? inventory[0] : null);
 
     if (inventory.length > 0 && (!effectiveVariant || effectiveVariant.stockQuantity < quantity)) {
@@ -204,218 +178,183 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const price = currentVariant?.priceOverride || product.price;
   const discountedPrice = product.discountPrice;
   const isOnSale = discountedPrice && discountedPrice < price;
-
   const effectiveVariant = currentVariant || (inventory.length === 1 && inventory[0].size === '' && inventory[0].colorSlug === '' ? inventory[0] : null);
 
   const isAddToCartDisabled = Boolean(
     isOutOfStock ||
     adding ||
-    (availableColorSlugs.filter(c => c !== '').length > 0 && !selectedColor) ||
-    (availableSizes.filter(s => s !== '').length > 0 && !selectedSize) ||
+    (availableColorSlugs.filter((item) => item !== '').length > 0 && !selectedColor) ||
+    (availableSizes.filter((item) => item !== '').length > 0 && !selectedSize) ||
     (inventory.length > 0 ? (effectiveVariant ? effectiveVariant.stockQuantity === 0 : true) : false)
   );
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-        <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-        <div className="h-20 bg-gray-200 rounded"></div>
+      <div className="space-y-6 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm animate-pulse sm:p-8">
+        <div className="h-5 w-32 rounded bg-gray-200"></div>
+        <div className="h-10 w-3/4 rounded bg-gray-200"></div>
+        <div className="h-20 rounded bg-gray-200"></div>
+        <div className="h-12 rounded bg-gray-200"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Product Title & Price */}
+    <div className="space-y-6 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm sm:p-8 lg:p-10">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+          {product.brand?.name || 'Cornerstore'}
+        </span>
+        <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+          {product.category.replace('-', ' ')}
+        </span>
+        {product.origin ? (
+          <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+            {product.origin}
+          </span>
+        ) : null}
+      </div>
+
       <div>
-        <div className="flex items-center gap-3 mb-2">
-          <p className="text-xs uppercase tracking-widest text-neutral">
-            {product.category.replace('-', ' ')}
-          </p>
-          {product.origin && (
-            <span className="text-[10px] uppercase tracking-wider text-neutral/60 border border-neutral/20 px-1.5 py-0.5 rounded-sm">
-              Origin: {product.origin}
-            </span>
-          )}
+        <div className="flex flex-wrap items-center gap-2">
+          {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
+          {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
         </div>
-        <h1 className="text-3xl md:text-4xl font-serif mb-4">{product.name}</h1>
-        <div className="flex items-center gap-3">
+        <div className="mt-5 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-serif sm:text-4xl">{product.name}</h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral">{product.description}</p>
+          </div>
+          <WishlistButton productId={product._id} productName={product.name} size="lg" showLabel={false} />
+        </div>
+      </div>
+
+      <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+        <p className="text-[0.68rem] uppercase tracking-[0.3em] text-neutral">Price</p>
+        <div className="mt-3 flex items-center gap-3">
           {isOnSale ? (
-            <div className="flex items-center gap-2">
-              <p className="text-2xl font-medium text-red-600">{formatPrice(discountedPrice)}</p>
+            <>
+              <p className="text-3xl font-medium text-red-600">{formatPrice(discountedPrice)}</p>
               <p className="text-lg text-gray-400 line-through">{formatPrice(price)}</p>
-            </div>
+            </>
           ) : (
-            <p className="text-2xl font-medium">{formatPrice(price)}</p>
-          )}
-          {product.tags && product.tags.includes('sale') && (
-            <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
-              SALE
-            </span>
-          )}
-          {product.tags && product.tags.includes('new') && (
-            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
-              NEW
-            </span>
+            <p className="text-3xl font-medium text-contrast">{formatPrice(price)}</p>
           )}
         </div>
       </div>
 
-      {/* Description */}
-      <div className="prose prose-sm max-w-none">
-        <p className="text-neutral leading-relaxed">{product.description}</p>
-      </div>
-
-      {/* Color Selection */}
-      {productColors.filter(c => c.slug !== '').length > 0 && (
-        <ColorSelector
-          colors={productColors.filter(c => c.slug !== '')}
-          selectedColor={selectedColor}
-          onColorSelect={setSelectedColor}
-          availableColors={getAvailableColors()}
-        />
+      {productColors.filter((color) => color.slug !== '').length > 0 && (
+        <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+          <ColorSelector
+            colors={productColors.filter((color) => color.slug !== '')}
+            selectedColor={selectedColor}
+            onColorSelect={setSelectedColor}
+            availableColors={getAvailableColors()}
+          />
+        </div>
       )}
 
-      {/* Size Selection */}
-      {(selectedColor || availableColorSlugs.filter(c => c !== '').length === 0) && availableSizes.filter(s => s !== '').length > 0 && (
-        <SizeSelector
-          sizes={availableSizes.filter(s => s !== '')}
-          selectedSize={selectedSize}
-          onSizeSelect={setSelectedSize}
-          availability={getSizeAvailability()}
-        />
+      {(selectedColor || availableColorSlugs.filter((item) => item !== '').length === 0) && availableSizes.filter((item) => item !== '').length > 0 && (
+        <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+          <SizeSelector
+            sizes={availableSizes.filter((item) => item !== '')}
+            selectedSize={selectedSize}
+            onSizeSelect={setSelectedSize}
+            availability={getSizeAvailability()}
+          />
+        </div>
       )}
 
-      {/* Stock Indicator */}
-      {currentVariant && (
-        <StockIndicator
-          available={currentVariant.enabled && currentVariant.stockQuantity > 0}
-          stockQuantity={currentVariant.stockQuantity}
-          lowStockThreshold={5}
-        />
-      )}
+      {currentVariant && <StockIndicator available={currentVariant.enabled && currentVariant.stockQuantity > 0} stockQuantity={currentVariant.stockQuantity} lowStockThreshold={5} />}
 
-      {/* Quantity */}
-      <div>
-        <label className="text-sm font-medium uppercase tracking-wide mb-3 block">Quantity</label>
-        <div className="flex items-center border border-neutral/30 w-fit">
+      <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+        <label className="mb-3 block text-sm font-medium uppercase tracking-wide">Quantity</label>
+        <div className="flex w-fit items-center overflow-hidden rounded-full border border-neutral/20 bg-white">
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            className="px-4 py-3 hover:bg-sand/30 transition-colors"
-            disabled={isOutOfStock || !currentVariant}
+            className="px-4 py-3 transition-colors hover:bg-sand/30"
+            disabled={isOutOfStock || !effectiveVariant}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
-          <span className="px-6 py-3 border-x border-neutral/30 min-w-[4rem] text-center">
-            {quantity}
-          </span>
+          <span className="min-w-[4rem] border-x border-neutral/20 px-6 py-3 text-center">{quantity}</span>
           <button
-            onClick={() => setQuantity(Math.min(currentVariant?.stockQuantity || 1, quantity + 1))}
-            className="px-4 py-3 hover:bg-sand/30 transition-colors"
-            disabled={isOutOfStock || !currentVariant}
+            onClick={() => setQuantity(Math.min(effectiveVariant?.stockQuantity || 1, quantity + 1))}
+            className="px-4 py-3 transition-colors hover:bg-sand/30"
+            disabled={isOutOfStock || !effectiveVariant}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Add to Cart Button */}
       <div className="space-y-3">
-        <div className="flex gap-3">
-          <button
-            onClick={handleAddToCart}
-            disabled={isAddToCartDisabled}
-            className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
-              ? 'Out of Stock'
-              : adding
-                ? 'Adding...'
-                : 'Add to Bag'}
-          </button>
-
-          <WishlistButton
-            productId={product._id}
-            productName={product.name}
-            size="lg"
-            showLabel={false}
-          />
-        </div>
+        <button
+          onClick={handleAddToCart}
+          disabled={isAddToCartDisabled}
+          className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
+            ? 'Out of Stock'
+            : adding
+              ? 'Adding...'
+              : 'Add to Bag'}
+        </button>
 
         {!user && (
-          <p className="text-xs text-center text-neutral">
-            <button
-              onClick={() => router.push('/login')}
-              className="underline hover:text-contrast"
-            >
+          <p className="text-center text-xs text-neutral">
+            <button onClick={() => router.push('/login')} className="underline hover:text-contrast">
               Sign in
-            </button>
-            {' '}to save items to your account
+            </button>{' '}
+            to save items to your account
           </p>
         )}
       </div>
 
-      {/* Product Details */}
-      <div className="border-t border-neutral/20 pt-6 space-y-4">
-        <details className="group">
-          <summary className="flex justify-between items-center cursor-pointer list-none">
+      <div className="space-y-4 border-t border-black/10 pt-6">
+        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Product Details</span>
-            <svg
-              className="w-5 h-5 transition-transform group-open:rotate-180"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </summary>
-          <div className="mt-4 text-sm text-neutral space-y-2">
-            <p>• Premium materials sourced from ethical suppliers</p>
-            <p>• Designed for longevity and timeless style</p>
-            <p>• Made with attention to detail and craftsmanship</p>
+          <div className="mt-4 space-y-2 text-sm text-neutral">
+            <p>Premium materials sourced from ethical suppliers.</p>
+            <p>Designed for longevity and timeless style.</p>
+            <p>Made with attention to detail and craftsmanship.</p>
           </div>
         </details>
 
-        <details className="group">
-          <summary className="flex justify-between items-center cursor-pointer list-none border-t border-neutral/20 pt-4">
+        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Shipping & Returns</span>
-            <svg
-              className="w-5 h-5 transition-transform group-open:rotate-180"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </summary>
-          <div className="mt-4 text-sm text-neutral space-y-2">
-            <p>• Free shipping on all orders within Ghana</p>
-            <p>• 14-day return policy on unworn items</p>
-            <p>• International shipping available</p>
+          <div className="mt-4 space-y-2 text-sm text-neutral">
+            <p>Free shipping on all orders within Ghana.</p>
+            <p>14-day return policy on unworn items.</p>
+            <p>International shipping available.</p>
           </div>
         </details>
 
-        <details className="group">
-          <summary className="flex justify-between items-center cursor-pointer list-none border-t border-neutral/20 pt-4">
+        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Care Instructions</span>
-            <svg
-              className="w-5 h-5 transition-transform group-open:rotate-180"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </summary>
-          <div className="mt-4 text-sm text-neutral space-y-2">
-            <p>• Dry clean recommended</p>
-            <p>• Store in a cool, dry place</p>
-            <p>• Avoid direct sunlight</p>
+          <div className="mt-4 space-y-2 text-sm text-neutral">
+            <p>Dry clean recommended.</p>
+            <p>Store in a cool, dry place.</p>
+            <p>Avoid direct sunlight.</p>
           </div>
         </details>
       </div>

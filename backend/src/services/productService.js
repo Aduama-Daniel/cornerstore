@@ -64,10 +64,10 @@ export const createProduct = async (db, productData) => {
     status: productData.status || 'active',
     featured: productData.featured || false,
     trending: productData.trending || false,
-    tags: productData.tags || [], // ['new', 'sale', 'limited']
-    origin: productData.origin || 'Ghana', // 'Ghana' or 'China'
+    tags: productData.tags || [],
+    origin: productData.origin || 'Ghana',
     discountPrice: productData.discountPrice ? parseFloat(productData.discountPrice) : null,
-    variations: productData.variations || [], // [{ size, colorSlug, enabled }]
+    variations: productData.variations || [],
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -75,7 +75,6 @@ export const createProduct = async (db, productData) => {
   const result = await collection.insertOne(product);
   const insertedProduct = { ...product, _id: result.insertedId };
 
-  // Create inventory records for each variation
   if (product.variations && product.variations.length > 0) {
     const { createInventoryForVariant } = await import('./inventoryService.js');
 
@@ -90,15 +89,13 @@ export const createProduct = async (db, productData) => {
       );
     }
   } else if (!product.sizes || product.sizes.length === 0) {
-    // If there are no variations nor explicit sizes, create a default inventory record
-    // so the product can be purchased.
     const { createInventoryForVariant } = await import('./inventoryService.js');
     await createInventoryForVariant(
       db,
       result.insertedId,
       '',
       '',
-      100, // Default stock for sizeless items
+      100,
       null
     );
   }
@@ -121,14 +118,12 @@ export const updateProduct = async (db, productId, productData) => {
     { returnDocument: 'after' }
   );
 
-  // If variations were updated, sync inventory
   if (productData.variations && productData.variations.length > 0) {
-    const { getInventoryByProduct, createInventoryForVariant, updateInventoryByVariant } = await import('./inventoryService.js');
+    const { getInventoryByProduct, createInventoryForVariant } = await import('./inventoryService.js');
 
     const existingInventory = await getInventoryByProduct(db, productId);
     const existingKeys = new Set(existingInventory.map(inv => `${inv.size}-${inv.colorSlug}`));
 
-    // Add new variations
     for (const variation of productData.variations) {
       const key = `${variation.size}-${variation.colorSlug}`;
       if (!existingKeys.has(key)) {
@@ -147,7 +142,6 @@ export const updateProduct = async (db, productId, productData) => {
     const existingInventory = await getInventoryByProduct(db, productId);
     const existingKeys = new Set(existingInventory.map(inv => `${inv.size}-${inv.colorSlug}`));
 
-    // Ensure default inventory exists if there are no variations/sizes
     if (!existingKeys.has('-')) {
       await createInventoryForVariant(
         db,
@@ -164,7 +158,6 @@ export const updateProduct = async (db, productId, productData) => {
 };
 
 export const getProductVariants = async (db, productId) => {
-  const { ObjectId } = await import('mongodb');
   const { getInventoryByProduct } = await import('./inventoryService.js');
 
   const inventory = await getInventoryByProduct(db, productId);
@@ -234,6 +227,14 @@ export const getAllProductsAdmin = async (db, filters = {}) => {
     query.status = filters.status;
   }
 
+  if (filters.department) {
+    query.department = filters.department;
+  }
+
+  if (filters.brandSlug) {
+    query['brand.slug'] = filters.brandSlug;
+  }
+
   if (filters.search) {
     query.$or = [
       { name: { $regex: filters.search, $options: 'i' } },
@@ -287,7 +288,6 @@ export const searchProductsAI = async (db, params) => {
   }
 
   if (params.color) {
-    // Attempt to match color in variations or tags
     query.$or = query.$or || [];
     query.$or.push({ 'variations.colorSlug': { $regex: params.color, $options: 'i' } });
     query.$or.push({ tags: { $in: [new RegExp(params.color, 'i')] } });

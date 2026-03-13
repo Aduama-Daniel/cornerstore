@@ -95,7 +95,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden bg-sand/20">
                       {item.productImage ? (
                         isVideoUrl(item.productImage) ? (
-                          <video src={item.productImage} className="h-full w-full object-cover" muted playsInline autoPlay loop />
+                          <video src={item.productImage} className="h-full w-full object-cover" muted playsInline preload="metadata" />
                         ) : (
                           <Image src={item.productImage} alt={item.productName} fill className="object-cover" sizes="80px" />
                         )
@@ -112,7 +112,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                       <Link href={`/product/${item.productSlug}`} className="font-medium transition-colors hover:text-neutral">
                         {item.productName}
                       </Link>
-                      <p className="mt-1 text-sm text-neutral">Size: {item.size} • Quantity: {item.quantity}</p>
+                      <p className="mt-1 text-sm text-neutral">Size: {item.size} â€¢ Quantity: {item.quantity}</p>
                       <p className="mt-2 text-sm">{formatPrice(item.price)} each</p>
                     </div>
 
@@ -177,3 +177,4 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     </div>
   );
 }
+

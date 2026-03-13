@@ -49,7 +49,7 @@ export default function AdminDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="flex min-h-screen items-center justify-center">
                 <div className="text-lg">Loading...</div>
             </div>
         );
@@ -57,9 +57,8 @@ export default function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
                     <h1 className="text-2xl font-bold text-gray-900">Cornerstore Admin</h1>
                     <button
                         onClick={handleLogout}
@@ -70,97 +69,109 @@ export default function AdminDashboard() {
                 </div>
             </header>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-lg shadow">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
+                    <div className="rounded-lg bg-white p-6 shadow">
                         <div className="text-sm font-medium text-gray-500">Total Products</div>
                         <div className="mt-2 text-3xl font-bold text-gray-900">{stats?.totalProducts || 0}</div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="rounded-lg bg-white p-6 shadow">
                         <div className="text-sm font-medium text-gray-500">Active Products</div>
                         <div className="mt-2 text-3xl font-bold text-green-600">{stats?.activeProducts || 0}</div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="rounded-lg bg-white p-6 shadow">
                         <div className="text-sm font-medium text-gray-500">Categories</div>
                         <div className="mt-2 text-3xl font-bold text-gray-900">{stats?.totalCategories || 0}</div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow">
+                    <div className="rounded-lg bg-white p-6 shadow">
                         <div className="text-sm font-medium text-gray-500">Total Orders</div>
                         <div className="mt-2 text-3xl font-bold text-gray-900">{stats?.totalOrders || 0}</div>
                     </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="bg-white rounded-lg shadow p-6 mb-8">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mb-8 rounded-lg bg-white p-6 shadow">
+                    <h2 className="mb-4 text-lg font-semibold text-gray-900">Quick Actions</h2>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                         <Link
                             href="/admin/products/new"
-                            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                         >
                             + New Product
                         </Link>
 
                         <Link
                             href="/admin/categories/new"
-                            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                         >
                             + New Category
                         </Link>
 
                         <Link
+                            href="/admin/brands/new"
+                            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                        >
+                            + New Brand
+                        </Link>
+
+                        <Link
                             href="/admin/products"
-                            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            className="flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                         >
                             View All Products
                         </Link>
                     </div>
                 </div>
 
-                {/* Navigation */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <Link
                         href="/admin/products"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
                     >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">📦 Products</h3>
-                        <p className="text-gray-600">Manage your product catalog, inventory, and pricing</p>
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Products</h3>
+                        <p className="text-gray-600">Manage pricing, hero adverts, departments, and product-brand assignments.</p>
+                    </Link>
+
+                    <Link
+                        href="/admin/brands"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+                    >
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Brands</h3>
+                        <p className="text-gray-600">Add and edit brand profiles so the store can grow as a true multi-brand marketplace.</p>
                     </Link>
 
                     <Link
                         href="/admin/categories"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
                     >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">📁 Categories</h3>
-                        <p className="text-gray-600">Organize products into categories</p>
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Categories</h3>
+                        <p className="text-gray-600">Organize products across clothing, skincare, lighting, electricals, and future categories.</p>
                     </Link>
 
                     <Link
                         href="/admin/colors"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
                     >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">🎨 Colors</h3>
-                        <p className="text-gray-600">Manage color swatches for product variations</p>
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Colors</h3>
+                        <p className="text-gray-600">Manage color swatches for product variations.</p>
                     </Link>
 
                     <Link
                         href="/admin/collections"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
                     >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">📚 Collections</h3>
-                        <p className="text-gray-600">Create and manage curated product collections</p>
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Collections</h3>
+                        <p className="text-gray-600">Create and manage curated product collections.</p>
                     </Link>
 
                     <Link
                         href="/admin/reviews"
-                        className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+                        className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
                     >
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">⭐ Reviews</h3>
-                        <p className="text-gray-600">Moderate customer reviews and respond</p>
+                        <h3 className="mb-2 text-lg font-semibold text-gray-900">Reviews</h3>
+                        <p className="text-gray-600">Moderate customer reviews and respond from one place.</p>
                     </Link>
                 </div>
             </div>

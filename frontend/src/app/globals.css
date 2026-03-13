@@ -15,6 +15,9 @@
 
   body {
     @apply bg-cream text-contrast font-sans antialiased overflow-x-hidden;
+    background-image:
+      radial-gradient(circle at top, rgba(232, 221, 207, 0.4), transparent 32%),
+      linear-gradient(180deg, rgba(250, 247, 242, 0.98), rgba(250, 247, 242, 1));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -134,3 +137,5 @@
   background: #E8DDCF;
   color: #2E2E2C;
 }
+
+

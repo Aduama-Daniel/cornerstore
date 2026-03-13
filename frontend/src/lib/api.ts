@@ -21,7 +21,6 @@ const fetchWithAuth = async (
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Support for Next.js caching options
   const fetchOptions = {
     ...options,
     headers,
@@ -38,7 +37,6 @@ const fetchWithAuth = async (
 };
 
 export const api = {
-  // Products
   products: {
     getAll: (params?: Record<string, any>): Promise<ApiResponse> => {
       const query = params ? `?${new URLSearchParams(params)}` : '';
@@ -62,7 +60,6 @@ export const api = {
       fetchWithAuth(`/api/products/${id}`),
   },
 
-  // Categories
   categories: {
     getAll: (): Promise<ApiResponse> =>
       fetchWithAuth('/api/categories'),
@@ -71,7 +68,6 @@ export const api = {
       fetchWithAuth(`/api/categories/${slug}`),
   },
 
-  // User
   user: {
     updateProfile: (token: string | null, data: any): Promise<ApiResponse> =>
       fetchWithAuth('/api/user/profile', token, {
@@ -80,7 +76,6 @@ export const api = {
       }),
   },
 
-  // Cart
   cart: {
     getCart: (token: string | null): Promise<ApiResponse> =>
       fetchWithAuth('/api/cart', token),
@@ -114,7 +109,6 @@ export const api = {
       }),
   },
 
-  // Orders
   orders: {
     create: (token: string | null, orderData: any): Promise<ApiResponse> =>
       fetchWithAuth('/api/orders', token, {
@@ -143,7 +137,6 @@ export const api = {
       }),
   },
 
-  // Wishlist
   wishlist: {
     getAll: (token: string | null): Promise<ApiResponse> =>
       fetchWithAuth('/api/wishlist', token),
@@ -160,13 +153,11 @@ export const api = {
       }),
   },
 
-  // Search
   search: (query: string, params?: Record<string, any>): Promise<ApiResponse> => {
     const searchParams = new URLSearchParams({ q: query, ...params });
     return fetchWithAuth(`/api/search?${searchParams}`);
   },
 
-  // Colors
   colors: {
     getAll: (): Promise<ApiResponse> =>
       fetchWithAuth('/api/colors'),
@@ -175,7 +166,6 @@ export const api = {
       fetchWithAuth(`/api/colors/${slug}`),
   },
 
-  // Inventory
   inventory: {
     getByProduct: (productId: string): Promise<ApiResponse> =>
       fetchWithAuth(`/api/inventory/${productId}`),
@@ -187,7 +177,6 @@ export const api = {
     },
   },
 
-  // Collections
   collections: {
     getAll: (): Promise<ApiResponse> => fetchWithAuth('/api/collections'),
 
@@ -199,7 +188,6 @@ export const api = {
       fetchWithAuth(`/api/collections/${collectionId}/products`),
   },
 
-  // Reviews
   reviews: {
     getAll: (): Promise<ApiResponse> =>
       fetchWithAuth('/api/reviews'),
@@ -217,7 +205,6 @@ export const api = {
       }),
   },
 
-  // Admin
   admin: {
     login: (username: string, password: string): Promise<ApiResponse> =>
       fetchWithAuth('/api/admin/login', null, {
@@ -230,7 +217,6 @@ export const api = {
         headers: { Authorization: `Basic ${credentials}` },
       }),
 
-    // Categories
     categories: {
       getAll: (credentials: string): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/categories', null, {
@@ -258,7 +244,38 @@ export const api = {
         }),
     },
 
-    // Products
+    brands: {
+      getAll: (credentials: string): Promise<ApiResponse> =>
+        fetchWithAuth('/api/admin/brands', null, {
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+
+      getById: (credentials: string, id: string): Promise<ApiResponse> =>
+        fetchWithAuth(`/api/admin/brands/${id}`, null, {
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+
+      create: (credentials: string, data: any): Promise<ApiResponse> =>
+        fetchWithAuth('/api/admin/brands', null, {
+          method: 'POST',
+          headers: { Authorization: `Basic ${credentials}` },
+          body: JSON.stringify(data),
+        }),
+
+      update: (credentials: string, id: string, data: any): Promise<ApiResponse> =>
+        fetchWithAuth(`/api/admin/brands/${id}`, null, {
+          method: 'PUT',
+          headers: { Authorization: `Basic ${credentials}` },
+          body: JSON.stringify(data),
+        }),
+
+      delete: (credentials: string, id: string): Promise<ApiResponse> =>
+        fetchWithAuth(`/api/admin/brands/${id}`, null, {
+          method: 'DELETE',
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+    },
+
     products: {
       getAll: (credentials: string, filters?: Record<string, any>): Promise<ApiResponse> => {
         const query = filters ? `?${new URLSearchParams(filters)}` : '';
@@ -293,7 +310,6 @@ export const api = {
         }),
     },
 
-    // Colors
     colors: {
       getAll: (credentials: string): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/colors', null, {
@@ -321,7 +337,6 @@ export const api = {
         }),
     },
 
-    // Inventory
     inventory: {
       update: (credentials: string, id: string, data: any): Promise<ApiResponse> =>
         fetchWithAuth(`/api/admin/inventory/${id}`, null, {
@@ -345,7 +360,6 @@ export const api = {
         }),
     },
 
-    // Collections
     collections: {
       getAll: (credentials: string): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/collections', null, {
@@ -387,7 +401,6 @@ export const api = {
         }),
     },
 
-    // Reviews
     reviews: {
       getAll: (credentials: string, filters?: Record<string, any>): Promise<ApiResponse> => {
         const query = filters ? `?${new URLSearchParams(filters)}` : '';
@@ -449,7 +462,6 @@ export const api = {
     },
   },
 
-  // Chat
   chat: {
     sendMessage: (message: string, history: any[]): Promise<ApiResponse> =>
       fetchWithAuth('/api/chat', null, {

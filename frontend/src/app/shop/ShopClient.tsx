@@ -1,13 +1,27 @@
-'use client';
+﻿'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import ProductGrid from '@/components/ProductGrid';
 import ShopFilters, { FilterState } from '@/components/ShopFilters';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useToast } from '@/contexts/ToastContext';
 
+type Product = {
+    _id?: string;
+    name: string;
+    slug: string;
+    price: number;
+    category: string;
+    brand?: { name?: string } | null;
+    department?: string;
+    origin?: string;
+    status?: string;
+    variations?: Array<{ colorSlug?: string; size?: string }>;
+};
+
 interface ShopClientProps {
-    initialProducts: any[];
+    initialProducts: Product[];
     colors: any[];
     categories: any[];
 }
@@ -16,6 +30,8 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
     const router = useRouter();
     const searchParams = useSearchParams();
     const { addToast } = useToast();
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+    const [sortOrder, setSortOrder] = useState('featured');
 
     useEffect(() => {
         if (searchParams.get('payment') === 'success') {
@@ -24,7 +40,6 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
         }
     }, [searchParams, addToast, router]);
 
-    // Initialize filters from URL if needed, or default
     const [filters, setFilters] = useState<FilterState>({
         priceRange: [0, 10000],
         selectedColors: searchParams.get('color') ? [searchParams.get('color')!] : [],
@@ -34,72 +49,101 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
         origin: 'All',
     });
 
-    // Use initial data, but filter client-side for interactivity
-    // In a larger app, you might re-fetch from server on filter change
     const filteredProducts = useMemo(() => {
         if (!initialProducts) return [];
 
-        return initialProducts.filter((product: any) => {
-            // Price filter
+        const visible = initialProducts.filter((product) => {
             if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
                 return false;
             }
 
-            // Stock filter
             if (filters.inStockOnly && product.status === 'out-of-stock') {
                 return false;
             }
 
-            // Category filter
-            if (filters.categories.length > 0) {
-                if (!filters.categories.includes(product.category)) {
-                    return false;
-                }
+            if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
+                return false;
             }
 
-            // Color filter (if colors selected)
             if (filters.selectedColors.length > 0) {
-                const productHasColor = product.variations?.some((v: any) =>
-                    filters.selectedColors.includes(v.colorSlug)
+                const productHasColor = product.variations?.some((variation) =>
+                    filters.selectedColors.includes(variation.colorSlug || '')
                 );
                 if (!productHasColor) return false;
             }
 
-            // Size filter (if sizes selected)
             if (filters.selectedSizes.length > 0) {
-                const productHasSize = product.variations?.some((v: any) =>
-                    filters.selectedSizes.includes(v.size)
+                const productHasSize = product.variations?.some((variation) =>
+                    filters.selectedSizes.includes(variation.size || '')
                 );
                 if (!productHasSize) return false;
             }
 
-            // Origin filter
-            if (filters.origin !== 'All') {
-                if (product.origin !== filters.origin) {
-                    return false;
-                }
+            if (filters.origin !== 'All' && product.origin !== filters.origin) {
+                return false;
             }
 
             return true;
         });
-    }, [initialProducts, filters]);
+
+        const sorted = [...visible];
+        switch (sortOrder) {
+            case 'price-asc':
+                sorted.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-desc':
+                sorted.sort((a, b) => b.price - a.price);
+                break;
+            case 'newest':
+                sorted.sort((a, b) => (b._id || '').localeCompare(a._id || ''));
+                break;
+            default:
+                break;
+        }
+
+        return sorted;
+    }, [initialProducts, filters, sortOrder]);
+
+    const resetFilters = () => {
+        setFilters({
+            priceRange: [0, 10000],
+            selectedColors: [],
+            selectedSizes: [],
+            inStockOnly: false,
+            categories: [],
+            origin: 'All',
+        });
+    };
 
     return (
         <div className="min-h-screen">
-            {/* Page Header */}
-            <div className="bg-warm-beige py-12">
-                <div className="container-custom">
-                    <h1 className="text-4xl md:text-5xl font-serif mb-2">Shop All</h1>
-                    <p className="text-neutral">Discover our complete collection</p>
+            <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.3),rgba(14,14,14,0.86))]" />
+                <div className="container-custom relative flex min-h-[22vh] items-end py-8 sm:min-h-[24vh] sm:py-10 lg:min-h-[26vh] lg:py-12">
+                    <div className="max-w-4xl">
+                        <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Shop All</p>
+                        <h1 className="mt-3 max-w-4xl text-3xl leading-[0.98] sm:text-5xl lg:text-6xl">A fuller storefront for fashion, skincare, lighting, and everyday essentials.</h1>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            {/* Main Content */}
-            <div className="container-custom py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                    {/* Filters - Desktop */}
-                    <aside className="lg:col-span-1">
-                        <div className="sticky top-24">
+            <div className="container-custom py-10 sm:py-12 lg:py-16">
+                <div className="mb-8 flex flex-wrap justify-end gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setMobileFiltersOpen(true)}
+                        className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.28em] text-contrast lg:hidden"
+                    >
+                        Open Filters
+                    </button>
+                    <Link href="/collections" className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.28em] text-contrast">
+                        View Collections
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 gap-10 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-12">
+                    <aside className="hidden lg:block">
+                        <div className="sticky top-28 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm">
                             <ShopFilters
                                 onFilterChange={setFilters}
                                 colors={colors || []}
@@ -109,52 +153,77 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
                         </div>
                     </aside>
 
-                    {/* Products */}
-                    <div className="lg:col-span-3">
-                        {/* Results Count */}
-                        <div className="mb-6 flex justify-between items-center">
-                            <p className="text-sm text-neutral">
-                                {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
-                            </p>
-
-                            {/* Sort Options */}
-                            <select className="text-sm border border-neutral/30 px-4 py-2 rounded bg-white">
-                                <option>Featured</option>
-                                <option>Price: Low to High</option>
-                                <option>Price: High to Low</option>
-                                <option>Newest</option>
-                            </select>
+                    <div>
+                        <div className="mb-8 flex justify-end">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                                <button
+                                    type="button"
+                                    onClick={resetFilters}
+                                    className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.24em] text-contrast"
+                                >
+                                    Reset Filters
+                                </button>
+                                <select
+                                    value={sortOrder}
+                                    onChange={(e) => setSortOrder(e.target.value)}
+                                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-sm text-contrast focus:outline-none"
+                                >
+                                    <option value="featured">Featured</option>
+                                    <option value="price-asc">Price: Low to High</option>
+                                    <option value="price-desc">Price: High to Low</option>
+                                    <option value="newest">Newest</option>
+                                </select>
+                            </div>
                         </div>
 
-                        {/* Product Grid */}
                         <ProductGrid products={filteredProducts} />
 
-                        {/* No Results */}
                         {filteredProducts.length === 0 && (
-                            <div className="text-center py-16">
-                                <svg className="w-16 h-16 mx-auto text-neutral/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="mt-8 rounded-[2rem] border border-black/10 bg-white/75 px-6 py-14 text-center backdrop-blur-sm">
+                                <svg className="mx-auto mb-4 h-16 w-16 text-neutral/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
-                                <h3 className="text-xl font-serif mb-2">No products found</h3>
-                                <p className="text-neutral mb-4">Try adjusting your filters</p>
-                                <button
-                                    onClick={() => setFilters({
-                                        priceRange: [0, 10000],
-                                        selectedColors: [],
-                                        selectedSizes: [],
-                                        inStockOnly: false,
-                                        categories: [],
-                                        origin: 'All',
-                                    })}
-                                    className="btn-ghost"
-                                >
-                                    Clear Filters
-                                </button>
+                                <h3 className="mb-2 text-2xl font-serif">No products found</h3>
+                                <p className="mb-6 text-neutral">Try widening your filters or browsing a curated collection instead.</p>
+                                <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                                    <button onClick={resetFilters} className="btn-secondary">Clear Filters</button>
+                                    <Link href="/collections" className="btn-primary inline-block">Browse Collections</Link>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
+
+            {mobileFiltersOpen && (
+                <div className="fixed inset-0 z-[60] bg-black/55 p-4 lg:hidden">
+                    <div className="ml-auto flex h-full max-w-md flex-col rounded-[2rem] bg-[#fbf8f4] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
+                        <div className="mb-5 flex items-center justify-between">
+                            <div>
+                                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-neutral">Filters</p>
+                                <p className="mt-1 text-sm text-neutral">Narrow the storefront quickly.</p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setMobileFiltersOpen(false)}
+                                className="rounded-full border border-black/15 px-3 py-2 text-sm text-contrast"
+                            >
+                                Close
+                            </button>
+                        </div>
+
+                        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+                            <ShopFilters
+                                onFilterChange={setFilters}
+                                colors={colors || []}
+                                categories={categories || []}
+                                initialFilters={filters}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+

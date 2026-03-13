@@ -13,6 +13,55 @@ interface Message {
     payload?: any;
 }
 
+function ProductPreview({ product, onClick }: { product: any; onClick: () => void }) {
+    const productMedia = getPreferredMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const [hovered, setHovered] = useState(false);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        if (hovered) {
+            video.currentTime = 0;
+            void video.play().catch(() => {});
+        } else {
+            video.pause();
+            video.currentTime = 0;
+        }
+    }, [hovered]);
+
+    return (
+        <Link
+            href={`/product/${product.slug}`}
+            className="group w-32 flex-shrink-0 overflow-hidden rounded-md border border-neutral/10 bg-white transition-shadow hover:shadow-md"
+            onClick={onClick}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
+            <div className="relative aspect-[3/4] bg-neutral/5">
+                {productMedia ? (
+                    productMedia.type === 'video' ? (
+                        <>
+                            <video ref={videoRef} src={productMedia.url} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" muted playsInline loop preload="metadata" />
+</>
+                    ) : (
+                        <Image src={productMedia.url} alt={product.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="128px" />
+                    )
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center text-neutral/30">
+                        <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    </div>
+                )}
+            </div>
+            <div className="p-2">
+                <p className="truncate text-xs font-medium">{product.name}</p>
+                <p className="mt-0.5 text-xs text-neutral">{formatPrice(product.price)}</p>
+            </div>
+        </Link>
+    );
+}
+
 export default function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -96,36 +145,9 @@ export default function Chatbot() {
 
                                 {msg.payload?.products?.length > 0 && (
                                     <div className="flex gap-3 overflow-x-auto px-1 pb-2 pt-1">
-                                        {msg.payload.products.map((product: any) => {
-                                            const productMedia = getPreferredMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
-
-                                            return (
-                                                <Link
-                                                    href={`/product/${product.slug}`}
-                                                    key={product._id}
-                                                    className="w-32 flex-shrink-0 overflow-hidden rounded-md border border-neutral/10 bg-white transition-shadow hover:shadow-md group"
-                                                    onClick={() => setIsOpen(false)}
-                                                >
-                                                    <div className="relative aspect-[3/4] bg-neutral/5">
-                                                        {productMedia ? (
-                                                            productMedia.type === 'video' ? (
-                                                                <video src={productMedia.url} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" muted playsInline autoPlay loop />
-                                                            ) : (
-                                                                <Image src={productMedia.url} alt={product.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="128px" />
-                                                            )
-                                                        ) : (
-                                                            <div className="flex h-full w-full items-center justify-center text-neutral/30">
-                                                                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="p-2">
-                                                        <p className="truncate text-xs font-medium">{product.name}</p>
-                                                        <p className="mt-0.5 text-xs text-neutral">{formatPrice(product.price)}</p>
-                                                    </div>
-                                                </Link>
-                                            );
-                                        })}
+                                        {msg.payload.products.map((product: any) => (
+                                            <ProductPreview key={product._id} product={product} onClick={() => setIsOpen(false)} />
+                                        ))}
                                     </div>
                                 )}
 
@@ -196,3 +218,4 @@ export default function Chatbot() {
         </>
     );
 }
+

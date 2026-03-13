@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,8 @@ interface Product {
   images?: string[];
   mainMedia?: MediaItem[];
   category: string;
+  brand?: { name?: string } | null;
+  department?: string;
   status?: string;
 }
 
@@ -31,10 +33,26 @@ interface ProductCardProps {
   priority?: boolean;
 }
 
+const departmentLabel = (value?: string) => {
+  switch (value) {
+    case 'skincare':
+      return 'Skincare';
+    case 'lighting':
+      return 'Lighting';
+    case 'electricals':
+      return 'Electricals';
+    case 'home-living':
+      return 'Home & Living';
+    default:
+      return 'Clothing';
+  }
+};
+
 export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const router = useRouter();
 
   const mediaItems = normalizeMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
@@ -52,6 +70,19 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
     return () => clearInterval(interval);
   }, [isHovering, mediaItems.length]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isHovering) {
+      video.currentTime = 0;
+      void video.play().catch(() => {});
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, [isHovering, currentImageIndex]);
+
   const currentMedia = mediaItems[currentImageIndex];
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -62,9 +93,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   };
 
   return (
-    <div className="group block relative cursor-pointer" onClick={handleCardClick}>
+    <div className="group relative block cursor-pointer" onClick={handleCardClick}>
       <div
-        className="image-overlay aspect-[3/4] mb-3 sm:mb-4 bg-sand/20 relative overflow-hidden rounded-sm"
+        className="image-overlay relative mb-4 aspect-[3/4] overflow-hidden rounded-[1.5rem] border border-black/8 bg-sand/20"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
@@ -75,14 +106,17 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         >
           {currentMedia ? (
             currentMedia.type === 'video' ? (
-              <video
-                src={currentMedia.url}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                muted
-                playsInline
-                autoPlay
-                loop
-              />
+              <div className="relative h-full w-full">
+                <video
+                  ref={videoRef}
+                  src={currentMedia.url}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  muted
+                  playsInline
+                  loop
+                  preload="metadata"
+                />
+              </div>
             ) : (
               <Image
                 src={currentMedia.url}
@@ -102,28 +136,41 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
           )}
         </Link>
 
-        <div className="absolute right-2 top-2 z-10 opacity-100 sm:right-3 sm:top-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-          <WishlistButton productId={product._id || ''} productName={product.name} size="sm" />
+        <div className="absolute inset-x-0 top-0 z-10 flex items-start justify-between p-3 sm:p-4">
+          <div className="rounded-full bg-black/30 px-3 py-2 text-[0.65rem] uppercase tracking-[0.25em] text-cream backdrop-blur-sm">
+            {product.brand?.name || departmentLabel(product.department)}
+          </div>
+          <div className="opacity-100 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
+            <WishlistButton productId={product._id || ''} productName={product.name} size="sm" />
+          </div>
         </div>
 
-        <div className="absolute inset-x-2 bottom-2 z-10 translate-y-0 opacity-100 sm:left-3 sm:right-3 sm:bottom-3 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-200">
+        <div className="absolute inset-x-3 bottom-3 z-10 translate-y-0 opacity-100 transition-all duration-200 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setShowQuickView(true);
             }}
-            className="btn-secondary w-full py-2 text-xs sm:text-sm"
+            className="btn-secondary w-full border-white/60 bg-black/20 py-2 text-xs text-cream backdrop-blur-sm hover:border-white hover:bg-black/50 sm:text-sm"
           >
             Quick View
           </button>
         </div>
       </div>
 
-      <Link href={`/product/${product.slug}`} className="block space-y-1" onClick={(e) => e.preventDefault()}>
-        <h3 className="text-sm font-medium uppercase tracking-wide transition-colors group-hover:text-neutral sm:text-base">
-          {product.name}
-        </h3>
+      <Link href={`/product/${product.slug}`} className="block space-y-2" onClick={(e) => e.preventDefault()}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[0.68rem] uppercase tracking-[0.22em] text-neutral">{departmentLabel(product.department)}</p>
+            <h3 className="mt-2 text-sm font-medium uppercase tracking-wide transition-colors group-hover:text-neutral sm:text-base">
+              {product.name}
+            </h3>
+          </div>
+          {product.status === 'out-of-stock' ? (
+            <span className="rounded-full bg-red-50 px-2 py-1 text-[0.62rem] uppercase tracking-[0.18em] text-red-600">Out</span>
+          ) : null}
+        </div>
         <div className="flex items-center gap-2">
           {product.discountPrice && product.discountPrice < product.price ? (
             <>
@@ -134,9 +181,6 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
             <p className="text-sm text-neutral">{formatPrice(product.price)}</p>
           )}
         </div>
-        {product.status === 'out-of-stock' && (
-          <p className="text-xs uppercase tracking-wide text-red-600">Out of Stock</p>
-        )}
       </Link>
 
       <QuickViewModal product={product} isOpen={showQuickView} onClose={() => setShowQuickView(false)} />

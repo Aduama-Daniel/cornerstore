@@ -1,12 +1,14 @@
-import { api } from '@/lib/api';
+﻿import { api } from '@/lib/api';
 import ProductImages from '@/components/ProductImages';
 import ProductInfo from '@/components/ProductInfo';
 import ProductGrid from '@/components/ProductGrid';
 import ProductDetailsSection from '@/components/ProductDetailsSection';
 import ProductReviewsSection from '@/components/ProductReviewsSection';
-import ProductViewTracker from '@/components/ProductViewTracker';
 import RecentlyViewed from '@/components/RecentlyViewed';
+import ProductViewTracker from '@/components/ProductViewTracker';
 import Link from 'next/link';
+
+const formatLabel = (value: string) => value.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const response = await api.products.getBySlug(params.slug);
@@ -15,8 +17,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
   if (!product) {
     return (
       <div className="container-custom section-padding text-center">
-        <h1 className="text-3xl font-serif mb-4">Product Not Found</h1>
-        <p className="text-neutral mb-8">The product you're looking for doesn't exist or has been removed.</p>
+        <h1 className="mb-4 text-3xl font-serif">Product Not Found</h1>
+        <p className="mb-8 text-neutral">The product you're looking for doesn't exist or has been removed.</p>
         <Link href="/shop" className="btn-primary inline-block">
           Continue Shopping
         </Link>
@@ -24,66 +26,54 @@ export default async function ProductPage({ params }: { params: { slug: string }
     );
   }
 
-  // Fetch related products
   const relatedResponse = await api.products.getByCategory(product.category, { limit: 4 });
-  const relatedProducts = relatedResponse.data?.filter((p: any) => p.slug !== product.slug) || [];
+  const relatedProducts = relatedResponse.data?.filter((item: any) => item.slug !== product.slug) || [];
 
-  // Normalize media for backward compatibility
+  const categoryLabel = formatLabel(product.category);
   const mainMedia = product.mainMedia || (product.images ? product.images.map((url: string) => ({ url, type: 'image' })) : []);
   const additionalMedia = product.additionalMedia || [];
 
   return (
     <div className="min-h-screen">
-      {/* Track product view */}
       <ProductViewTracker productId={product._id} />
 
-      {/* Breadcrumb */}
-      <div className="container-custom py-6">
-        <nav className="flex items-center space-x-2 text-sm text-neutral">
-          <Link href="/" className="hover:text-contrast transition-colors">Home</Link>
+      <div className="container-custom py-8 sm:py-10">
+        <nav className="flex flex-wrap items-center gap-2 text-[0.72rem] uppercase tracking-[0.24em] text-neutral/70">
+          <Link href="/" className="transition-colors hover:text-contrast">Home</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-contrast transition-colors">Shop</Link>
+          <Link href="/shop" className="transition-colors hover:text-contrast">Shop</Link>
           <span>/</span>
-          <Link
-            href={`/collections/${product.category}`}
-            className="hover:text-contrast transition-colors capitalize"
-          >
-            {product.category.replace('-', ' ')}
+          <Link href={`/collections/${product.category}`} className="transition-colors hover:text-contrast">
+            {categoryLabel}
           </Link>
           <span>/</span>
           <span className="text-contrast">{product.name}</span>
         </nav>
       </div>
 
-      {/* Product Details */}
-      <div className="container-custom pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="container-custom pb-10 sm:pb-12 lg:pb-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <ProductImages images={mainMedia} productName={product.name} />
           <ProductInfo product={product} />
         </div>
       </div>
 
-      {/* Additional Details Section */}
       <ProductDetailsSection additionalMedia={additionalMedia} />
-
-      {/* Reviews Section */}
       <ProductReviewsSection productId={product._id} />
 
-      {/* Recently Viewed */}
       <div className="container-custom py-12">
         <RecentlyViewed />
       </div>
 
-      {/* Related Products */}
       {relatedProducts.length > 0 && (
         <div className="bg-warm-beige py-16">
           <div className="container-custom">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-serif">You May Also Like</h2>
-              <Link
-                href={`/collections/${product.category}`}
-                className="text-sm uppercase tracking-wide link-underline"
-              >
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-neutral">Related Picks</p>
+                <h2 className="mt-3 text-2xl font-serif sm:text-3xl">You May Also Like</h2>
+              </div>
+              <Link href={`/collections/${product.category}`} className="text-[0.72rem] uppercase tracking-[0.25em] link-underline">
                 View All
               </Link>
             </div>

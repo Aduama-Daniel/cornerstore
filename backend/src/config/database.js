@@ -34,6 +34,9 @@ const createIndexes = async (database) => {
 
     await database.collection('categories').createIndex({ slug: 1 }, { unique: true });
 
+    await database.collection('brands').createIndex({ slug: 1 }, { unique: true });
+    await database.collection('brands').createIndex({ name: 1 });
+
     await database.collection('orders').createIndex({ userId: 1 });
     await database.collection('orders').createIndex({ createdAt: -1 });
     await database.collection('orders').createIndex({ status: 1 });
