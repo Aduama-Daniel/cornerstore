@@ -8,9 +8,13 @@
   * {
     @apply border-neutral/20;
   }
-  
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-cream text-contrast font-sans antialiased;
+    @apply bg-cream text-contrast font-sans antialiased overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -20,38 +24,38 @@
 
 @layer components {
   .btn-primary {
-    @apply px-8 py-4 bg-contrast text-cream font-medium tracking-wide uppercase text-sm 
-           hover:bg-contrast/90 transition-all duration-300 disabled:opacity-50 
+    @apply px-5 py-3 sm:px-8 sm:py-4 bg-contrast text-cream font-medium tracking-wide uppercase text-xs sm:text-sm
+           hover:bg-contrast/90 transition-all duration-300 disabled:opacity-50
            disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply px-8 py-4 border-2 border-contrast text-contrast font-medium tracking-wide 
-           uppercase text-sm hover:bg-contrast hover:text-cream transition-all duration-300;
+    @apply px-5 py-3 sm:px-8 sm:py-4 border-2 border-contrast text-contrast font-medium tracking-wide
+           uppercase text-xs sm:text-sm hover:bg-contrast hover:text-cream transition-all duration-300;
   }
 
   .btn-ghost {
-    @apply px-6 py-3 text-contrast font-medium tracking-wide uppercase text-sm 
+    @apply px-4 py-3 sm:px-6 text-contrast font-medium tracking-wide uppercase text-xs sm:text-sm
            hover:text-neutral transition-colors duration-300;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-neutral/30 bg-cream text-contrast 
-           placeholder:text-neutral/50 focus:outline-none focus:border-contrast 
+    @apply w-full px-4 py-3 border border-neutral/30 bg-cream text-contrast
+           placeholder:text-neutral/50 focus:outline-none focus:border-contrast
            transition-colors duration-200;
   }
 
   .section-padding {
-    @apply py-16 md:py-24 lg:py-32;
+    @apply py-12 md:py-20 lg:py-28;
   }
 
   .container-custom {
-    @apply max-w-8xl mx-auto px-6 md:px-8 lg:px-12;
+    @apply mx-auto max-w-8xl px-4 sm:px-6 md:px-8 lg:px-12;
   }
 
   .link-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-px 
-           after:w-0 after:bg-current after:transition-all after:duration-300 
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-px
+           after:w-0 after:bg-current after:transition-all after:duration-300
            hover:after:w-full;
   }
 
@@ -69,7 +73,7 @@
   }
 
   .editorial-spacing {
-    @apply space-y-6 leading-relaxed;
+    @apply space-y-5 sm:space-y-6 leading-relaxed;
   }
 }
 
@@ -109,7 +113,6 @@
   }
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -127,7 +130,6 @@
   background: #2E2E2C;
 }
 
-/* Selection */
 ::selection {
   background: #E8DDCF;
   color: #2E2E2C;
