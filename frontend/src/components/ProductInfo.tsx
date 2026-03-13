@@ -190,26 +190,26 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   if (loading) {
     return (
-      <div className="space-y-6 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm animate-pulse sm:p-8">
-        <div className="h-5 w-32 rounded bg-gray-200"></div>
-        <div className="h-10 w-3/4 rounded bg-gray-200"></div>
-        <div className="h-20 rounded bg-gray-200"></div>
-        <div className="h-12 rounded bg-gray-200"></div>
+      <div className="animate-pulse space-y-4 rounded-[1.5rem] border border-black/10 bg-white/72 p-5 backdrop-blur-sm sm:p-6">
+        <div className="h-4 w-28 rounded bg-gray-200"></div>
+        <div className="h-8 w-3/4 rounded bg-gray-200"></div>
+        <div className="h-16 rounded bg-gray-200"></div>
+        <div className="h-10 rounded bg-gray-200"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm sm:p-8 lg:p-10">
+    <div className="space-y-4 rounded-[1.5rem] border border-black/10 bg-white/72 p-5 backdrop-blur-sm sm:p-6 lg:max-h-[70vh] lg:overflow-y-auto lg:p-7">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+        <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
           {product.brand?.name || 'Cornerstore'}
         </span>
-        <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+        <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
           {product.category.replace('-', ' ')}
         </span>
         {product.origin ? (
-          <span className="rounded-full border border-black/10 px-3 py-2 text-[0.68rem] uppercase tracking-[0.22em] text-neutral">
+          <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
             {product.origin}
           </span>
         ) : null}
@@ -217,34 +217,34 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       <div>
         <div className="flex flex-wrap items-center gap-2">
-          {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
-          {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
+          {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
+          {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
         </div>
-        <div className="mt-5 flex items-end justify-between gap-4">
+        <div className="mt-4 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-serif sm:text-4xl">{product.name}</h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral">{product.description}</p>
+            <h2 className="text-2xl font-serif sm:text-3xl">{product.name}</h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral">{product.description}</p>
           </div>
           <WishlistButton productId={product._id} productName={product.name} size="lg" showLabel={false} />
         </div>
       </div>
 
-      <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
-        <p className="text-[0.68rem] uppercase tracking-[0.3em] text-neutral">Price</p>
-        <div className="mt-3 flex items-center gap-3">
+      <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
+        <p className="text-[0.64rem] uppercase tracking-[0.3em] text-neutral">Price</p>
+        <div className="mt-3 flex flex-wrap items-center gap-3">
           {isOnSale ? (
             <>
-              <p className="text-3xl font-medium text-red-600">{formatPrice(discountedPrice)}</p>
-              <p className="text-lg text-gray-400 line-through">{formatPrice(price)}</p>
+              <p className="text-2xl font-medium text-red-600 sm:text-3xl">{formatPrice(discountedPrice)}</p>
+              <p className="text-base text-gray-400 line-through sm:text-lg">{formatPrice(price)}</p>
             </>
           ) : (
-            <p className="text-3xl font-medium text-contrast">{formatPrice(price)}</p>
+            <p className="text-2xl font-medium text-contrast sm:text-3xl">{formatPrice(price)}</p>
           )}
         </div>
       </div>
 
       {productColors.filter((color) => color.slug !== '').length > 0 && (
-        <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+        <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
           <ColorSelector
             colors={productColors.filter((color) => color.slug !== '')}
             selectedColor={selectedColor}
@@ -255,7 +255,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )}
 
       {(selectedColor || availableColorSlugs.filter((item) => item !== '').length === 0) && availableSizes.filter((item) => item !== '').length > 0 && (
-        <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+        <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
           <SizeSelector
             sizes={availableSizes.filter((item) => item !== '')}
             selectedSize={selectedSize}
@@ -267,7 +267,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {currentVariant && <StockIndicator available={currentVariant.enabled && currentVariant.stockQuantity > 0} stockQuantity={currentVariant.stockQuantity} lowStockThreshold={5} />}
 
-      <div className="rounded-[1.5rem] border border-black/10 bg-[#fbf8f4] p-5">
+      <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
         <label className="mb-3 block text-sm font-medium uppercase tracking-wide">Quantity</label>
         <div className="flex w-fit items-center overflow-hidden rounded-full border border-neutral/20 bg-white">
           <button
@@ -279,7 +279,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
-          <span className="min-w-[4rem] border-x border-neutral/20 px-6 py-3 text-center">{quantity}</span>
+          <span className="min-w-[4rem] border-x border-neutral/20 px-5 py-3 text-center">{quantity}</span>
           <button
             onClick={() => setQuantity(Math.min(effectiveVariant?.stockQuantity || 1, quantity + 1))}
             className="px-4 py-3 transition-colors hover:bg-sand/30"
@@ -292,7 +292,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 pt-1">
         <button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
@@ -315,8 +315,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         )}
       </div>
 
-      <div className="space-y-4 border-t border-black/10 pt-6">
-        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+      <div className="space-y-3 border-t border-black/10 pt-5">
+        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
           <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Product Details</span>
             <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -330,7 +330,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </div>
         </details>
 
-        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
           <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Shipping & Returns</span>
             <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,7 +344,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </div>
         </details>
 
-        <details className="group rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] px-5 py-4">
+        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
           <summary className="flex cursor-pointer list-none items-center justify-between">
             <span className="text-sm font-medium uppercase tracking-wide">Care Instructions</span>
             <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,3 +361,4 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     </div>
   );
 }
+

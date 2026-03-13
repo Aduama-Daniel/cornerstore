@@ -120,8 +120,8 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
     <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,247,242,0.16),transparent_42%),linear-gradient(135deg,rgba(10,10,10,0.15),rgba(10,10,10,0.7))]" />
       <div className="container-custom relative z-10 py-6 sm:py-8 lg:py-10">
-        <div className="grid min-h-[78vh] gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
-          <div className="relative min-h-[78vh] overflow-hidden rounded-[2rem] border border-cream/10 bg-black/20">
+        <div className="grid min-h-[46vh] gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+          <div className="relative min-h-[46vh] overflow-hidden rounded-[2rem] border border-cream/10 bg-black/20">
             {slides.map((slide, index) => (
               <div
                 key={`${slide.title}-${index}`}
@@ -139,9 +139,7 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,15,15,0.08),rgba(15,15,15,0.6)),linear-gradient(90deg,rgba(15,15,15,0.72),rgba(15,15,15,0.08))]" />
                 <div className="absolute inset-0 flex items-end p-6 sm:p-8 lg:p-12">
-                  <div className="flex min-h-[28rem] max-w-xl animate-slide-up flex-col justify-end">
-                    <p className="mb-4 text-[0.7rem] uppercase tracking-[0.45em] text-cream/70">{slide.eyebrow}</p>
-                    <h1 className="max-w-lg text-5xl leading-[0.95] sm:text-7xl xl:text-[6.5rem]">{slide.title}</h1>
+                  <div className="flex min-h-[15rem] max-w-xl animate-slide-up flex-col justify-end">                    <h1 className="max-w-lg text-5xl leading-[0.95] sm:text-7xl xl:text-[6.5rem]">{slide.title}</h1>
                     <p className="mt-5 max-w-md text-sm leading-relaxed text-cream/78 sm:text-base">{slide.description}</p>
                     {slide.price ? <p className="mt-5 text-sm uppercase tracking-[0.25em] text-cream/70">From {formatPrice(slide.price)}</p> : null}
                     <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -156,21 +154,6 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
                 </div>
               </div>
             ))}
-
-            <div className="absolute bottom-5 left-5 right-5 z-20 flex items-center gap-3 sm:bottom-7 sm:left-7 sm:right-7">
-              {slides.map((slide, index) => (
-                <button
-                  key={`${slide.title}-trigger-${index}`}
-                  type="button"
-                  onClick={() => setActiveIndex(index)}
-                  className="group flex min-w-0 flex-1 items-center gap-3 rounded-full bg-black/25 px-3 py-2 text-left backdrop-blur-sm transition hover:bg-black/40"
-                  aria-label={`Show ${slide.title}`}
-                >
-                  <span className={`h-1.5 rounded-full transition-all ${index === activeIndex ? 'w-8 bg-cream' : 'w-3 bg-cream/40 group-hover:bg-cream/60'}`} />
-                  <span className="truncate text-[0.65rem] uppercase tracking-[0.28em] text-cream/70 sm:text-[0.7rem]">{slide.eyebrow}</span>
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-1">
@@ -196,7 +179,7 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
               </div>
             </div>
 
-            <div className="relative min-h-[18rem] overflow-hidden rounded-[2rem]">
+            <div className="relative min-h-[11rem] overflow-hidden rounded-[2rem]">
               <Image
                 src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80"
                 alt="Multi-brand storefront styling"
@@ -216,4 +199,8 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
     </section>
   );
 }
+
+
+
+
 

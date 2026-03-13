@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
       </div>
 
       <div className="container-custom pb-10 sm:pb-12 lg:pb-16">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(24rem,0.82fr)] lg:items-start lg:gap-10">
           <ProductImages images={mainMedia} productName={product.name} />
           <ProductInfo product={product} />
         </div>
@@ -84,3 +84,4 @@ export default async function ProductPage({ params }: { params: { slug: string }
     </div>
   );
 }
+
