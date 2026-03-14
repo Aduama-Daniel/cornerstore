@@ -30,7 +30,6 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
     const router = useRouter();
     const searchParams = useSearchParams();
     const { addToast } = useToast();
-    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState('featured');
 
     useEffect(() => {
@@ -128,19 +127,6 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
             </section>
 
             <div className="container-custom py-10 sm:py-12 lg:py-16">
-                <div className="mb-8 flex flex-wrap justify-end gap-3">
-                    <button
-                        type="button"
-                        onClick={() => setMobileFiltersOpen(true)}
-                        className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.28em] text-contrast lg:hidden"
-                    >
-                        Open Filters
-                    </button>
-                    <Link href="/collections" className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.28em] text-contrast">
-                        View Collections
-                    </Link>
-                </div>
-
                 <div className="grid grid-cols-1 gap-10 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-12">
                     <aside className="hidden lg:block">
                         <div className="sticky top-28 rounded-[2rem] border border-black/10 bg-white/72 p-6 backdrop-blur-sm">
@@ -154,28 +140,6 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
                     </aside>
 
                     <div>
-                        <div className="mb-8 flex justify-end">
-                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                                <button
-                                    type="button"
-                                    onClick={resetFilters}
-                                    className="rounded-full border border-black/15 px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.24em] text-contrast"
-                                >
-                                    Reset Filters
-                                </button>
-                                <select
-                                    value={sortOrder}
-                                    onChange={(e) => setSortOrder(e.target.value)}
-                                    className="rounded-full border border-black/15 bg-white px-4 py-2 text-sm text-contrast focus:outline-none"
-                                >
-                                    <option value="featured">Featured</option>
-                                    <option value="price-asc">Price: Low to High</option>
-                                    <option value="price-desc">Price: High to Low</option>
-                                    <option value="newest">Newest</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <ProductGrid products={filteredProducts} />
 
                         {filteredProducts.length === 0 && (
@@ -195,34 +159,6 @@ export default function ShopClient({ initialProducts, colors, categories }: Shop
                 </div>
             </div>
 
-            {mobileFiltersOpen && (
-                <div className="fixed inset-0 z-[60] bg-black/55 p-4 lg:hidden">
-                    <div className="ml-auto flex h-full max-w-md flex-col rounded-[2rem] bg-[#fbf8f4] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
-                        <div className="mb-5 flex items-center justify-between">
-                            <div>
-                                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-neutral">Filters</p>
-                                <p className="mt-1 text-sm text-neutral">Narrow the storefront quickly.</p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setMobileFiltersOpen(false)}
-                                className="rounded-full border border-black/15 px-3 py-2 text-sm text-contrast"
-                            >
-                                Close
-                            </button>
-                        </div>
-
-                        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
-                            <ShopFilters
-                                onFilterChange={setFilters}
-                                colors={colors || []}
-                                categories={categories || []}
-                                initialFilters={filters}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

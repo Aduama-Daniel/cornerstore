@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -65,14 +65,14 @@ export default function CartItem({ item }: CartItemProps) {
   const itemTotal = formatPrice(item.price * item.quantity);
 
   return (
-    <div className="flex flex-col gap-4 border-b border-neutral/20 py-5 sm:flex-row sm:gap-6 sm:py-6">
-      <Link href={`/product/${item.product?.slug || ''}`} className="mx-auto w-full max-w-[10rem] flex-shrink-0 sm:mx-0 sm:w-auto">
-        <div className="relative h-40 w-full overflow-hidden rounded bg-sand/20 sm:h-32 sm:w-24">
+    <div className="grid grid-cols-1 gap-4 border-b border-neutral/20 p-5 last:border-b-0 sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:gap-5 sm:p-6">
+      <Link href={`/product/${item.product?.slug || ''}`} className="mx-auto block w-full max-w-[12rem] sm:mx-0 sm:max-w-none">
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.25rem] bg-sand/20">
           {itemMedia ? (
             itemMedia.type === 'video' ? (
               <video src={itemMedia.url} className="h-full w-full object-cover" muted playsInline preload="metadata" />
             ) : (
-              <Image src={itemMedia.url} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="160px" />
+              <Image src={itemMedia.url} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="(max-width: 640px) 45vw, 112px" />
             )
           ) : (
             <div className="flex h-full w-full items-center justify-center">
@@ -84,40 +84,41 @@ export default function CartItem({ item }: CartItemProps) {
         </div>
       </Link>
 
-      <div className="flex-grow">
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <div>
-            <Link href={`/product/${item.product?.slug || ''}`} className="font-medium transition-colors hover:text-neutral">
+      <div className="min-w-0">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-[0.68rem] uppercase tracking-[0.24em] text-neutral">Cart Item</p>
+            <Link href={`/product/${item.product?.slug || ''}`} className="mt-2 block truncate text-base font-medium transition-colors hover:text-neutral sm:text-lg">
               {item.product?.name || 'Product'}
             </Link>
-            <div className="mt-2 flex flex-wrap items-center gap-3">
+            <div className="mt-3 flex flex-wrap gap-2">
               {item.colorSlug && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-neutral">Color:</span>
+                <div className="flex min-w-0 items-center gap-2 rounded-full bg-[#f7f2eb] px-3 py-2 text-sm">
+                  <span className="text-neutral">Color</span>
                   <ColorDisplay colorSlug={item.colorSlug} />
                 </div>
               )}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-neutral">Size:</span>
-                <span className="text-sm font-medium">{item.size}</span>
+              <div className="flex items-center gap-2 rounded-full bg-[#f7f2eb] px-3 py-2 text-sm">
+                <span className="text-neutral">Size</span>
+                <span className="font-medium">{item.size}</span>
               </div>
             </div>
           </div>
-          <button onClick={() => removeItem(item.id)} className="text-neutral transition-colors hover:text-contrast" aria-label="Remove item">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={() => removeItem(item.id)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-black/10 text-neutral transition-colors hover:border-black/20 hover:text-contrast" aria-label="Remove item">
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center border border-neutral/30 self-start">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="inline-flex items-center self-start rounded-full border border-neutral/20 bg-white">
             <button onClick={() => handleQuantityChange(item.quantity - 1)} className="px-3 py-2 transition-colors hover:bg-sand/30" aria-label="Decrease quantity">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
               </svg>
             </button>
-            <span className="min-w-[3rem] border-x border-neutral/30 px-4 py-2 text-center">{item.quantity}</span>
+            <span className="min-w-[2.75rem] border-x border-neutral/20 px-3 py-2 text-center text-sm font-medium">{item.quantity}</span>
             <button onClick={() => handleQuantityChange(item.quantity + 1)} className="px-3 py-2 transition-colors hover:bg-sand/30" aria-label="Increase quantity">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -125,9 +126,10 @@ export default function CartItem({ item }: CartItemProps) {
             </button>
           </div>
 
-          <div className="text-left sm:text-right">
-            <p className="font-medium">{itemTotal}</p>
-            {item.quantity > 1 && <p className="text-xs text-neutral">{formatPrice(item.price)} each</p>}
+          <div className="rounded-[1.25rem] bg-[#f7f2eb] px-4 py-3 text-left sm:min-w-[9rem] sm:text-right">
+            <p className="text-xs uppercase tracking-[0.24em] text-neutral">Item Total</p>
+            <p className="mt-2 font-medium text-contrast">{itemTotal}</p>
+            {item.quantity > 1 && <p className="mt-1 text-xs text-neutral">{formatPrice(item.price)} each</p>}
           </div>
         </div>
       </div>

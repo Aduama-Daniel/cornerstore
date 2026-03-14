@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
@@ -125,31 +125,39 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <div className="bg-warm-beige py-8">
-        <div className="container-custom">
-          <h1 className="text-3xl font-serif">Checkout</h1>
-          <div className="flex items-center gap-4 mt-4 text-sm">
-            <span className={`${!orderId ? 'text-contrast font-medium' : 'text-neutral'}`}>
+      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
+        <div className="container-custom relative flex min-h-[28vh] items-end py-8 sm:min-h-[30vh] sm:py-10 lg:min-h-[32vh] lg:py-12">
+          <div className="max-w-4xl">
+            <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Checkout</p>
+            <h1 className="mt-4 text-4xl font-serif leading-[0.95] sm:text-5xl lg:text-6xl">Complete your order</h1>
+            <p className="mt-4 max-w-2xl text-sm text-cream/72 sm:text-base">
+              Delivery details first, then secure payment. Your order summary stays visible while you move through the flow.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="container-custom py-10 sm:py-12 lg:py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 flex flex-wrap gap-3 text-sm">
+            <span className={`rounded-full px-4 py-2 ${!orderId ? 'bg-contrast text-cream' : 'bg-black/5 text-neutral'}`}>
               1. Delivery
             </span>
-            <span className="text-neutral">?</span>
-            <span className={`${orderId ? 'text-contrast font-medium' : 'text-neutral'}`}>
+            <span className={`rounded-full px-4 py-2 ${orderId ? 'bg-contrast text-cream' : 'bg-black/5 text-neutral'}`}>
               2. Payment
             </span>
           </div>
-        </div>
-      </div>
 
-      <div className="container-custom py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.55fr)_22rem] xl:grid-cols-[minmax(0,1.7fr)_24rem]">
           <div className="lg:col-span-2">
             {!orderId ? (
               <CheckoutForm onSubmit={handleShippingSubmit} loading={loading} />
             ) : (
-              <div className="bg-white p-8 rounded-lg shadow">
-                <h2 className="text-2xl font-serif mb-6">Complete Payment</h2>
+              <div className="rounded-[2rem] border border-black/10 bg-white/80 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
+                <h2 className="mb-6 text-2xl font-serif">Complete Payment</h2>
 
-                <div className="mb-8 p-4 bg-warm-beige rounded-lg">
+                <div className="mb-8 rounded-[1.5rem] bg-warm-beige p-4 sm:p-5">
                   <h3 className="font-medium mb-2">Delivering To:</h3>
                   <p className="text-sm text-neutral">
                     {shippingInfo?.fullName}<br />
@@ -171,7 +179,7 @@ export default function CheckoutPage() {
 
                 <div className="mb-6">
                   <h3 className="font-medium mb-4">Payment Method</h3>
-                  <div className="flex items-center gap-3 p-4 border-2 border-gray-900 rounded-lg">
+                  <div className="flex items-center gap-3 rounded-[1.25rem] border-2 border-gray-900 p-4">
                     <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
                       <span className="text-xs font-bold">Card</span>
                     </div>
@@ -194,7 +202,7 @@ export default function CheckoutPage() {
                   }}
                 />
 
-                <p className="text-xs text-center text-neutral mt-4">
+                <p className="mt-4 text-center text-xs text-neutral">
                   Secure payment powered by Paystack
                 </p>
               </div>
@@ -202,8 +210,11 @@ export default function CheckoutPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-warm-beige p-8 sticky top-24">
-              <h2 className="text-xl font-serif mb-6">Order Summary</h2>
+            <div className="sticky top-24 rounded-[2rem] border border-black/10 bg-[#fbf8f4] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
+              <div className="mb-6 border-b border-neutral/20 pb-6">
+                <p className="text-[0.72rem] uppercase tracking-[0.28em] text-neutral">Order Summary</p>
+                <h2 className="mt-3 text-2xl font-serif">Review totals</h2>
+              </div>
 
               <div className="space-y-4 mb-6 pb-6 border-b border-neutral/20">
                 {items.map((item) => (
@@ -234,6 +245,7 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

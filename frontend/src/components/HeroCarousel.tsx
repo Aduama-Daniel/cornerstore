@@ -120,7 +120,45 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
     <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,247,242,0.16),transparent_42%),linear-gradient(135deg,rgba(10,10,10,0.15),rgba(10,10,10,0.7))]" />
       <div className="container-custom relative z-10 py-6 sm:py-8 lg:py-10">
-        <div className="grid min-h-[46vh] gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+        <div className="grid min-h-[calc(100svh-7.5rem)] gap-5 sm:hidden">
+          <div className="relative min-h-[calc(100svh-7.5rem)] overflow-hidden rounded-[2rem] border border-cream/10 bg-black/20">
+            {slides.map((slide, index) => (
+              <div
+                key={`mobile-${slide.title}-${index}`}
+                className={`absolute inset-0 transition-all duration-700 ${
+                  index === activeIndex ? 'opacity-100 scale-100' : 'pointer-events-none opacity-0 scale-[1.02]'
+                }`}
+              >
+                <Image
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  priority={index === 0}
+                  className="object-cover"
+                  sizes="100vw"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,15,15,0.08),rgba(15,15,15,0.6)),linear-gradient(90deg,rgba(15,15,15,0.72),rgba(15,15,15,0.08))]" />
+                <div className="absolute inset-0 flex items-end p-6">
+                  <div className="flex min-h-[15rem] max-w-xl animate-slide-up flex-col justify-end">
+                    <h1 className="max-w-lg text-5xl leading-[0.95]">{slide.title}</h1>
+                    <p className="mt-5 max-w-md text-sm leading-relaxed text-cream/78">{slide.description}</p>
+                    {slide.price ? <p className="mt-5 text-sm uppercase tracking-[0.25em] text-cream/70">From {formatPrice(slide.price)}</p> : null}
+                    <div className="mt-8 flex flex-col gap-3">
+                      <Link href={slide.href} className="btn-primary inline-block text-center">
+                        {slide.ctaLabel}
+                      </Link>
+                      <Link href={slide.secondaryHref} className="btn-secondary inline-block border-cream/60 text-center text-cream hover:border-contrast">
+                        {slide.secondaryLabel}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden min-h-[46vh] gap-5 sm:grid lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
           <div className="relative min-h-[46vh] overflow-hidden rounded-[2rem] border border-cream/10 bg-black/20">
             {slides.map((slide, index) => (
               <div
@@ -139,7 +177,8 @@ export default function HeroCarousel({ products = [] }: { products?: HeroProduct
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,15,15,0.08),rgba(15,15,15,0.6)),linear-gradient(90deg,rgba(15,15,15,0.72),rgba(15,15,15,0.08))]" />
                 <div className="absolute inset-0 flex items-end p-6 sm:p-8 lg:p-12">
-                  <div className="flex min-h-[15rem] max-w-xl animate-slide-up flex-col justify-end">                    <h1 className="max-w-lg text-5xl leading-[0.95] sm:text-7xl xl:text-[6.5rem]">{slide.title}</h1>
+                  <div className="flex min-h-[15rem] max-w-xl animate-slide-up flex-col justify-end">
+                    <h1 className="max-w-lg text-5xl leading-[0.95] sm:text-7xl xl:text-[6.5rem]">{slide.title}</h1>
                     <p className="mt-5 max-w-md text-sm leading-relaxed text-cream/78 sm:text-base">{slide.description}</p>
                     {slide.price ? <p className="mt-5 text-sm uppercase tracking-[0.25em] text-cream/70">From {formatPrice(slide.price)}</p> : null}
                     <div className="mt-8 flex flex-col gap-3 sm:flex-row">

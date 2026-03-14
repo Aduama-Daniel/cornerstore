@@ -1,13 +1,17 @@
 ﻿import { api } from '@/lib/api';
-import ProductGrid from '@/components/ProductGrid';
+import CollectionProductsClient from './CollectionProductsClient';
 import Link from 'next/link';
 
 export default async function CollectionPage({ params }: { params: { slug: string } }) {
-  const response = await api.products.getByCategory(params.slug);
+  const [response, categoryResponse, colorsResponse] = await Promise.all([
+    api.products.getByCategory(params.slug),
+    api.categories.getBySlug(params.slug),
+    api.colors.getAll(),
+  ]);
   const products = response.data || [];
 
-  const categoryResponse = await api.categories.getBySlug(params.slug);
   const category = categoryResponse.data;
+  const colors = colorsResponse.data || [];
 
   const categoryName = category?.name || params.slug.split('-').map((word: string) =>
     word.charAt(0).toUpperCase() + word.slice(1)
@@ -58,7 +62,7 @@ export default async function CollectionPage({ params }: { params: { slug: strin
             </div>
           </div>
         ) : (
-          <ProductGrid products={products} />
+          <CollectionProductsClient products={products} colors={colors} />
         )}
       </div>
     </div>
