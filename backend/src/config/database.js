@@ -45,6 +45,7 @@ const createIndexes = async (database) => {
 
     await database.collection('users').createIndex({ firebaseUid: 1 }, { unique: true });
     await database.collection('users').createIndex({ email: 1 });
+    await database.collection('admins').createIndex({ email: 1 }, { unique: true });
 
     await database.collection('colors').createIndex({ slug: 1 }, { unique: true });
     await database.collection('colors').createIndex({ name: 1 });

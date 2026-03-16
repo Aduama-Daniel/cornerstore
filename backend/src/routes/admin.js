@@ -24,7 +24,6 @@ import {
 
 export default async function adminRoutes(fastify, options) {
 
-    // Login endpoint (no auth required)
     fastify.post('/login', async (request, reply) => {
         try {
             const { username, password } = request.body;
@@ -36,7 +35,7 @@ export default async function adminRoutes(fastify, options) {
                 });
             }
 
-            if (!verifyAdmin(username, password)) {
+            if (!(await verifyAdmin(fastify.db, username, password))) {
                 return reply.status(401).send({
                     error: true,
                     message: 'Invalid credentials'
@@ -59,7 +58,6 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
-    // Dashboard stats
     fastify.get('/stats', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const stats = await getAdminStats(fastify.db);
@@ -77,7 +75,6 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
-    // ===== CATEGORIES =====
     fastify.get('/categories', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const categories = await getAllCategories(fastify.db);
@@ -137,7 +134,6 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
-    // ===== BRANDS =====
     fastify.get('/brands', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const brands = await getAllBrands(fastify.db);
@@ -213,7 +209,6 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
-    // ===== PRODUCTS =====
     fastify.get('/products', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const filters = {
@@ -297,7 +292,6 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
-    // Upload media endpoint (images and videos)
     fastify.post('/upload', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const data = await request.file();

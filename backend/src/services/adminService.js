@@ -3,19 +3,67 @@ import cloudinary from '../config/cloudinary.js';
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const ADMINS_COLLECTION = 'admins';
 
 export const hashPassword = (password) => {
     return crypto.createHash('sha256').update(password).digest('hex');
 };
 
-export const verifyAdmin = (username, password) => {
+const verifyAdminFromEnv = (username, password) => {
     if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH) {
-        console.error('Admin credentials are not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD_HASH environment variables.');
         return false;
     }
 
     const passwordHash = hashPassword(password);
     return username === ADMIN_USERNAME && passwordHash === ADMIN_PASSWORD_HASH;
+};
+
+export const verifyAdmin = async (db, username, password) => {
+    const passwordHash = hashPassword(password);
+
+    if (db) {
+        const admin = await db.collection(ADMINS_COLLECTION).findOne({
+            email: username,
+            active: { $ne: false }
+        });
+
+        if (admin) {
+            return admin.passwordHash === passwordHash;
+        }
+    }
+
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH) {
+        console.error('Admin credentials are not configured in the database or env.');
+        return false;
+    }
+
+    return verifyAdminFromEnv(username, password);
+};
+
+export const upsertAdmin = async (db, email, password) => {
+    const now = new Date();
+    const passwordHash = hashPassword(password);
+
+    await db.collection(ADMINS_COLLECTION).updateOne(
+        { email },
+        {
+            $set: {
+                email,
+                passwordHash,
+                active: true,
+                updatedAt: now
+            },
+            $setOnInsert: {
+                createdAt: now
+            }
+        },
+        { upsert: true }
+    );
+
+    return {
+        email,
+        passwordHash
+    };
 };
 
 export const getAdminStats = async (db) => {
@@ -30,7 +78,6 @@ export const getAdminStats = async (db) => {
         productsCollection.countDocuments({ status: 'active' })
     ]);
 
-    // Get recent products
     const recentProducts = await productsCollection
         .find({})
         .sort({ createdAt: -1 })
@@ -46,7 +93,6 @@ export const getAdminStats = async (db) => {
     };
 };
 
-// Helper function to detect media type from filename
 const getMediaType = (filename) => {
     const ext = filename.toLowerCase().split('.').pop();
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
@@ -59,7 +105,6 @@ const getMediaType = (filename) => {
 
 export const uploadMedia = async (fileBuffer, filename) => {
     try {
-        // Verify Cloudinary is configured
         if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
             console.error('Cloudinary credentials not configured');
             throw new Error('Cloudinary is not properly configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables.');
@@ -67,13 +112,12 @@ export const uploadMedia = async (fileBuffer, filename) => {
 
         const mediaType = getMediaType(filename);
 
-        // Upload to Cloudinary using upload_stream
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
                     folder: 'cornerstore/products',
                     resource_type: mediaType === 'video' ? 'video' : 'auto',
-                    public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}` // Remove extension, Cloudinary adds it
+                    public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`
                 },
                 (error, result) => {
                     if (error) {
@@ -88,7 +132,7 @@ export const uploadMedia = async (fileBuffer, filename) => {
                             type: result.resource_type === 'video' ? 'video' : 'image',
                             width: result.width,
                             height: result.height,
-                            duration: result.duration || null // Video duration in seconds
+                            duration: result.duration || null
                         });
                     }
                 }
@@ -107,7 +151,4 @@ export const uploadMedia = async (fileBuffer, filename) => {
     }
 };
 
-// Keep backward compatibility
 export const uploadImage = uploadMedia;
-
-
