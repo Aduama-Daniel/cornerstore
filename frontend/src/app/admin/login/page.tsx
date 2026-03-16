@@ -56,13 +56,14 @@ export default function AdminLogin() {
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                                Username
+                                Email
                             </label>
                             <input
                                 id="username"
                                 name="username"
-                                type="text"
+                                type="email"
                                 required
+                                placeholder="dannywonda2@gmail.com"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
@@ -95,7 +96,7 @@ export default function AdminLogin() {
                 </form>
 
                 <p className="text-xs text-center text-gray-500 mt-4">
-                    Default: admin / admin123
+                    Use your admin email and password
                 </p>
             </div>
         </div>
