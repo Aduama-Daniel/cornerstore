@@ -19,30 +19,19 @@ export default async function CollectionPage({ params }: { params: { slug: strin
 
   return (
     <div className="min-h-screen">
-      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.3),rgba(14,14,14,0.86))]" />
-        <div className="container-custom relative flex min-h-[22vh] items-end py-8 sm:min-h-[24vh] sm:py-10 lg:min-h-[26vh] lg:py-12">
-          <div className="w-full">
-            <nav className="mb-5 flex items-center gap-2 text-[0.72rem] uppercase tracking-[0.24em] text-cream/55">
-              <Link href="/" className="transition-colors hover:text-cream">Home</Link>
-              <span>/</span>
-              <Link href="/collections" className="transition-colors hover:text-cream">Collections</Link>
-              <span>/</span>
-              <span className="text-cream">{categoryName}</span>
-            </nav>
-
-            <div className="max-w-4xl">
-              <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Collection View</p>
-              <h1 className="mt-3 text-3xl leading-[0.98] sm:text-5xl lg:text-6xl">{categoryName}</h1>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/shop" className="rounded-full border border-cream/20 px-4 py-2 text-[0.72rem] uppercase tracking-[0.25em] text-cream transition-colors hover:bg-white/10">
-                  Shop All
-                </Link>
-                <Link href="/collections" className="rounded-full border border-cream/20 px-4 py-2 text-[0.72rem] uppercase tracking-[0.25em] text-cream transition-colors hover:bg-white/10">
-                  More Collections
-                </Link>
-              </div>
-            </div>
+      <section className="border-b border-sand bg-white">
+        <div className="container-custom py-8 sm:py-10">
+          <nav className="flex items-center gap-2 text-xs font-medium text-neutral">
+            <Link href="/" className="hover:text-contrast">Home</Link>
+            <span>/</span>
+            <Link href="/collections" className="hover:text-contrast">Categories</Link>
+            <span>/</span>
+            <span className="text-contrast">{categoryName}</span>
+          </nav>
+          <h1 className="mt-3 text-2xl font-bold capitalize sm:text-3xl">{categoryName}</h1>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            <Link href="/shop" className="btn-secondary px-5 py-2.5">Shop all</Link>
+            <Link href="/collections" className="btn-ghost border border-sand">More categories</Link>
           </div>
         </div>
       </section>

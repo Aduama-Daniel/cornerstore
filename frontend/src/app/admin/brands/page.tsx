@@ -68,7 +68,8 @@ export default function AdminBrands() {
 
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-                    <table className="min-w-full divide-y divide-gray-200">
+                    <div className="overflow-x-auto">
+                    <table className="min-w-[44rem] w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Brand</th>
@@ -97,6 +98,7 @@ export default function AdminBrands() {
                             ))}
                         </tbody>
                     </table>
+                    </div>
 
                     {brands.length === 0 && <div className="py-12 text-center text-gray-500">No brands found. Create your first brand.</div>}
                 </div>

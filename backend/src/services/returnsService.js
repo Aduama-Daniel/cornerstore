@@ -15,7 +15,7 @@ export async function createReturn(db, orderId, items, reason, customerId) {
         throw new Error('Order not found or does not belong to customer');
     }
 
-    if (order.paymentStatus !== 'paid') {
+    if (!['paid', 'item_paid'].includes(order.paymentStatus)) {
         throw new Error('Cannot return unpaid order');
     }
 
@@ -63,7 +63,11 @@ export async function getReturns(db, filters = {}, options = {}) {
     if (filters.dateFrom || filters.dateTo) {
         query.requestedAt = {};
         if (filters.dateFrom) query.requestedAt.$gte = new Date(filters.dateFrom);
-        if (filters.dateTo) query.requestedAt.$lte = new Date(filters.dateTo);
+        if (filters.dateTo) {
+            const end = new Date(filters.dateTo);
+            end.setHours(23, 59, 59, 999);
+            query.requestedAt.$lte = end;
+        }
     }
 
     const limit = options.limit || 20;
@@ -135,7 +139,7 @@ export async function updateReturnStatus(db, returnId, status, adminId, notes = 
         { returnDocument: 'after' }
     );
 
-    return result.value;
+    return result;
 }
 
 // Process refund for return
@@ -177,7 +181,11 @@ export async function getReturnStats(db, dateRange = {}) {
     if (dateRange.from || dateRange.to) {
         query.requestedAt = {};
         if (dateRange.from) query.requestedAt.$gte = new Date(dateRange.from);
-        if (dateRange.to) query.requestedAt.$lte = new Date(dateRange.to);
+        if (dateRange.to) {
+            const end = new Date(dateRange.to);
+            end.setHours(23, 59, 59, 999);
+            query.requestedAt.$lte = end;
+        }
     }
 
     const [totalReturns, byStatus, totalRefunded] = await Promise.all([

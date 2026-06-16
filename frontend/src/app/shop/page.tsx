@@ -1,12 +1,15 @@
 import { Suspense } from 'react';
 import { api } from '@/lib/api';
 import ShopClient from './ShopClient';
+import { getServerMode } from '@/lib/serverMode';
+import { filterByMode } from '@/lib/modes';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 async function getProducts() {
   try {
-    const response = await api.products.getAll();
+    const response = await api.products.getAll({ limit: '100' });
     return response.success ? response.data : [];
   } catch (error) {
     console.error('Failed to fetch products:', error);
@@ -14,36 +17,15 @@ async function getProducts() {
   }
 }
 
-async function getColors() {
-  try {
-    const response = await api.colors.getAll();
-    return response.success ? response.data : [];
-  } catch (error) {
-    console.error('Failed to fetch colors:', error);
-    return [];
-  }
-}
-
-async function getCategories() {
-  try {
-    const response = await api.categories.getAll();
-    return response.success ? response.data : [];
-  } catch (error) {
-    console.error('Failed to fetch categories:', error);
-    return [];
-  }
-}
-
 export default async function ShopPage() {
-  const [products, colors, categories] = await Promise.all([
-    getProducts(),
-    getColors(),
-    getCategories()
-  ]);
+  const mode = getServerMode();
+  const products = await getProducts();
+
+  const modeProducts = filterByMode(products as Array<{ department?: string; category?: string }>, mode) as typeof products;
 
   return (
     <Suspense fallback={null}>
-      <ShopClient initialProducts={products} colors={colors} categories={categories} />
+      <ShopClient initialProducts={modeProducts} />
     </Suspense>
   );
 }

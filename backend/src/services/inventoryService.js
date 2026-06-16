@@ -151,7 +151,10 @@ export const getLowStockVariants = async (db, threshold = 5) => {
             }
         },
         {
-            $unwind: '$color'
+            $unwind: {
+                path: '$color',
+                preserveNullAndEmptyArrays: true
+            }
         },
         {
             $sort: { stockQuantity: 1 }
@@ -191,7 +194,10 @@ export const getOutOfStockVariants = async (db) => {
             }
         },
         {
-            $unwind: '$color'
+            $unwind: {
+                path: '$color',
+                preserveNullAndEmptyArrays: true
+            }
         }
     ]).toArray();
 

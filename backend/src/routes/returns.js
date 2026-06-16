@@ -6,8 +6,10 @@ import {
     processReturnRefund,
     getReturnStats
 } from '../services/returnsService.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 export default async function returnsRoutes(fastify, options) {
+    fastify.addHook('preHandler', adminAuth);
 
     // Get all returns with filters
     fastify.get('/', async (request, reply) => {

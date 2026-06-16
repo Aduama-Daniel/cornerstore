@@ -5,8 +5,10 @@ import {
     getShippingMetrics,
     getRefundStats
 } from '../services/orderAnalyticsService.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 export default async function analyticsAdminRoutes(fastify, options) {
+    fastify.addHook('preHandler', adminAuth);
 
     // Get dashboard overview
     fastify.get('/dashboard', async (request, reply) => {

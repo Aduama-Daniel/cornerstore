@@ -60,6 +60,15 @@ export default async function colorRoutes(fastify, options) {
 
 // Admin routes (separate registration)
 export async function adminColorRoutes(fastify, options) {
+    fastify.get('/', { preHandler: adminAuth }, async (request, reply) => {
+        try {
+            const colors = await getAllColors(fastify.db);
+            return { success: true, data: colors };
+        } catch (error) {
+            fastify.log.error(error);
+            return reply.status(500).send({ error: true, message: 'Failed to fetch colors' });
+        }
+    });
 
     // Create color
     fastify.post('/', { preHandler: adminAuth }, async (request, reply) => {

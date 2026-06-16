@@ -24,33 +24,31 @@ export default function WishlistPage() {
 
     return (
         <div className="min-h-screen">
-            <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
-                <div className="container-custom relative flex min-h-[36vh] items-end py-12 sm:py-14 lg:min-h-[42vh] lg:py-16">
-                    <div className="max-w-4xl">
-                        <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Saved Items</p>
-                        <h1 className="mt-4 text-4xl font-serif leading-[0.95] sm:text-6xl lg:text-7xl">My Wishlist</h1>
-                        <p className="mt-4 max-w-2xl text-sm text-cream/72 sm:text-base">
-                            Keep products you want to revisit in one calmer shortlist.
-                        </p>
-                    </div>
+            <section className="border-b border-sand bg-white">
+                <div className="container-custom py-8 sm:py-10">
+                    <p className="text-xs font-bold uppercase tracking-wider text-brand">Saved items</p>
+                    <h1 className="mt-2 text-2xl font-bold sm:text-3xl">My wishlist</h1>
+                    <p className="mt-2 max-w-2xl text-sm text-neutral">
+                        Keep products you want to revisit in one handy shortlist.
+                    </p>
                 </div>
             </section>
 
-            <div className="container-custom py-10 sm:py-12 lg:py-16">
+            <div className="container-custom py-8 sm:py-10 lg:py-12">
                 {wishlist.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
                         {wishlist.map((product) => (
                             <ProductCard key={product._id || product.slug} product={product} />
                         ))}
                     </div>
                 ) : (
-                    <div className="rounded-[2rem] border border-black/10 bg-white/75 px-6 py-20 text-center backdrop-blur-sm">
-                        <h2 className="mb-4 text-2xl font-serif">Your wishlist is empty</h2>
-                        <p className="mb-8 text-neutral">Save items you love to revisit them later.</p>
-                        <Link href="/shop" className="btn-primary inline-block">
-                            Explore Collection
-                        </Link>
+                    <div className="card flex flex-col items-center px-6 py-16 text-center sm:py-20">
+                        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light text-brand">
+                            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        </span>
+                        <h2 className="mb-2 mt-6 text-xl font-bold sm:text-2xl">Your wishlist is empty</h2>
+                        <p className="mb-8 max-w-sm text-neutral">Tap the heart on any product to save it here and revisit it later.</p>
+                        <Link href="/shop" className="btn-primary inline-flex">Start shopping</Link>
                     </div>
                 )}
             </div>

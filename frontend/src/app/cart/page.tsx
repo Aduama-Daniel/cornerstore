@@ -34,15 +34,15 @@ export default function CartPage() {
   if (itemCount === 0) {
     return (
       <div className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="mx-auto max-w-3xl rounded-[2rem] border border-black/10 bg-white/75 px-6 py-16 text-center backdrop-blur-sm sm:px-10">
-          <svg className="mx-auto mb-6 h-24 w-24 text-neutral/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          <h1 className="mb-4 text-3xl font-serif">Your Bag is Empty</h1>
-          <p className="mb-8 text-neutral">Start adding items to begin your order.</p>
-          <Link href="/shop" className="btn-primary inline-block">
-            Continue Shopping
-          </Link>
+        <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-sand bg-white px-6 py-16 text-center shadow-card sm:px-10">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light text-brand">
+            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </span>
+          <h1 className="mb-2 mt-6 text-xl font-bold sm:text-2xl">Your cart is empty</h1>
+          <p className="mb-8 max-w-sm text-neutral">Browse the store and add items to start your order.</p>
+          <Link href="/shop" className="btn-primary inline-flex">Continue shopping</Link>
         </div>
       </div>
     );
@@ -50,16 +50,13 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen">
-      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
-        <div className="container-custom relative flex min-h-[28vh] items-end py-8 sm:min-h-[30vh] sm:py-10 lg:min-h-[32vh] lg:py-12">
-          <div className="max-w-4xl">
-            <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Checkout</p>
-            <h1 className="mt-4 text-4xl font-serif leading-[0.95] sm:text-5xl lg:text-6xl">Review your bag</h1>
-            <p className="mt-4 max-w-2xl text-sm text-cream/72 sm:text-base">
-              Check your items, update quantities, then move straight into secure checkout.
-            </p>
-          </div>
+      <section className="border-b border-sand bg-white">
+        <div className="container-custom py-8 sm:py-10">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand">Your cart</p>
+          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Review your cart</h1>
+          <p className="mt-2 max-w-2xl text-sm text-neutral">
+            Check your items, update quantities, then move straight into secure checkout.
+          </p>
         </div>
       </section>
 
@@ -67,7 +64,7 @@ export default function CartPage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-6 flex flex-wrap gap-3 text-sm">
             <span className="rounded-full bg-contrast px-4 py-2 text-cream">
-              1. Bag
+              1. Cart
             </span>
             <span className="rounded-full bg-black/5 px-4 py-2 text-neutral">
               2. Checkout

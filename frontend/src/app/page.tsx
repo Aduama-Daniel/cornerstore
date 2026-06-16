@@ -2,11 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import HeroCarousel from '@/components/HeroCarousel';
 import ProductGrid from '@/components/ProductGrid';
+import FeaturedSpotlight, { type SpotlightProduct } from '@/components/FeaturedSpotlight';
 import { api } from '@/lib/api';
-import { formatPrice } from '@/lib/currency';
+import { getServerMode } from '@/lib/serverMode';
+import { MODE_CONFIG, filterByMode } from '@/lib/modes';
 import { getPreferredMedia } from '@/lib/media';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 type Product = {
   _id?: string;
@@ -17,51 +19,25 @@ type Product = {
   discountPrice?: number | null;
   category: string;
   department?: string;
-  brand?: {
-    id?: string;
-    name?: string;
-    slug?: string;
-  } | null;
+  brand?: { id?: string; name?: string; slug?: string } | null;
   images?: string[];
   mainMedia?: Array<{ url: string; type?: 'image' | 'video' }>;
-  heroAdvert?: boolean;
-  heroHeadline?: string;
-  heroSubtext?: string;
-  heroCtaLabel?: string;
+  status?: string;
+  trending?: boolean;
 };
 
-type BrandShowcase = {
-  name: string;
-  slug: string;
-  count: number;
-  departments: string[];
-};
+const steps = [
+  { title: 'Browse or search', desc: 'Find what you need from our catalogue of everyday essentials.', icon: 'M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z' },
+  { title: 'Place your order', desc: 'Checkout securely with Paystack, or send your order on WhatsApp.', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { title: 'We confirm it', desc: 'We confirm local availability before anything is dispatched.', icon: 'm5 12 4 4L19 6' },
+  { title: 'Get it delivered', desc: 'Your items are delivered to your address across Ghana.', icon: 'M3 7h13v8H3zM16 10h3l2 2v3h-5z' },
+];
 
-const departmentCards = [
-  {
-    name: 'Clothing',
-    description: 'Primary category with statement pieces, wardrobe staples, and fashion-led drops.',
-    image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80',
-    href: '/shop',
-  },
-  {
-    name: 'Skincare',
-    description: 'Daily essentials and wellness-driven product stories now have a clear place on the homepage.',
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80',
-    href: '/shop',
-  },
-  {
-    name: 'Lighting',
-    description: 'Decorative and practical lighting products positioned as part of the broader lifestyle mix.',
-    image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
-    href: '/shop',
-  },
-  {
-    name: 'Electrical Appliances',
-    description: 'Appliances and everyday essentials designed to scale with future product expansion.',
-    image: 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=1200&q=80',
-    href: '/shop',
-  },
+const reassurance = [
+  { title: 'Clear Ghanaian pricing', desc: 'Every price is shown in GH₵ with no surprises at checkout.', icon: 'M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6' },
+  { title: 'Availability confirmed', desc: 'We verify the item is obtainable before promising fulfilment.', icon: 'm5 12 4 4L19 6' },
+  { title: 'Secure payment', desc: 'Card and mobile money payments are handled by Paystack.', icon: 'M5 11V7a7 7 0 0114 0v4M4 11h16v9H4z' },
+  { title: 'Real support', desc: 'Ask our assistant or reach us on WhatsApp before you buy.', icon: 'M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z' },
 ];
 
 async function getProducts(params?: Record<string, string>) {
@@ -74,151 +50,169 @@ async function getProducts(params?: Record<string, string>) {
   }
 }
 
-function getBrandShowcase(products: Product[]): BrandShowcase[] {
-  const map = new Map<string, BrandShowcase>();
-
-  for (const product of products) {
-    if (!product.brand?.name) {
-      continue;
-    }
-
-    const key = product.brand.slug || product.brand.name;
-    const existing = map.get(key);
-    const department = product.department || 'fashion';
-
-    if (existing) {
-      existing.count += 1;
-      if (!existing.departments.includes(department)) {
-        existing.departments.push(department);
-      }
-      continue;
-    }
-
-    map.set(key, {
-      name: product.brand.name,
-      slug: product.brand.slug || '',
-      count: 1,
-      departments: [department],
-    });
-  }
-
-  return Array.from(map.values()).sort((a, b) => b.count - a.count).slice(0, 6);
-}
-
-function getDepartmentLabel(value?: string) {
-  switch (value) {
-    case 'skincare':
-      return 'Skincare';
-    case 'lighting':
-      return 'Lighting';
-    case 'electricals':
-      return 'Electrical Appliances';
-    case 'home-living':
-      return 'Home & Living';
-    default:
-      return 'Clothing';
-  }
-}
-
 export default async function HomePage() {
-  const [heroProducts, fashionProducts, skincareProducts, lightingProducts, electricalProducts] = await Promise.all([
-    getProducts({ heroAdvert: 'true', limit: '5' }),
-    getProducts({ department: 'fashion', limit: '8' }),
-    getProducts({ department: 'skincare', limit: '4' }),
-    getProducts({ department: 'lighting', limit: '4' }),
-    getProducts({ department: 'electricals', limit: '4' }),
-  ]);
+  const mode = getServerMode();
+  const cfg = MODE_CONFIG[mode];
 
-  const combinedProducts = [...fashionProducts, ...skincareProducts, ...lightingProducts, ...electricalProducts];
-  const brands = getBrandShowcase(combinedProducts);
-  const skincareLead = skincareProducts[0];
-  const essentials = [...lightingProducts, ...electricalProducts].slice(0, 4);
-  const skincareLeadMedia = skincareLead ? getPreferredMedia(skincareLead.mainMedia?.length ? skincareLead.mainMedia : skincareLead.images || []) : null;
+  const departmentResults = mode === 'fashion'
+    ? [await getProducts({ limit: '100' })]
+    : await Promise.all(
+        cfg.departments.map((department) => getProducts({ department, limit: '100' })),
+      );
+  const catalogProducts = departmentResults.flat();
+
+  const seen = new Set<string>();
+  const uniqueProducts = catalogProducts.filter((p) => {
+    const key = p._id || p.slug;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const modeProducts = filterByMode(uniqueProducts, mode);
+
+  const trending = [...modeProducts]
+    .sort((a, b) => Number(Boolean(b.trending)) - Number(Boolean(a.trending)))
+    .slice(0, 12);
+
+  const featured: SpotlightProduct[] = modeProducts
+    .map((p) => {
+      const media = getPreferredMedia(p.mainMedia?.length ? p.mainMedia : p.images || []);
+      if (!media || media.type !== 'image') return null;
+      return { slug: p.slug, name: p.name, price: p.price, discountPrice: p.discountPrice ?? null, category: p.category, image: media.url };
+    })
+    .filter((p) => p !== null)
+    .slice(0, 5) as SpotlightProduct[];
 
   return (
     <div className="animate-fade-in">
-      <HeroCarousel products={heroProducts} />
+      <HeroCarousel mode={mode} />
 
-      <section data-header-theme="light" className="section-padding">
-        <div className="container-custom">
-          <div className="mb-10 flex flex-col gap-4 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-[0.72rem] uppercase tracking-[0.45em] text-neutral">Marketplace Categories</p>
-              <h2 className="mt-3 max-w-3xl text-4xl sm:text-5xl">Clothing stays front and center, with skincare and home essentials built into the same shopping journey.</h2>
-            </div>
-            <p className="max-w-xl text-sm leading-relaxed text-neutral sm:text-base">
-              The homepage now reflects the full store model: multiple brands, multiple categories, and room to scale without losing the fashion-first point of view.
-            </p>
+      {/* Category shortcuts (mode-aware) */}
+      <section className="border-y border-sand bg-white">
+        <div className="container-custom py-8 sm:py-10">
+          <div className="mb-6 flex items-end justify-between">
+            <h2 className="text-xl font-bold sm:text-2xl">Shop {cfg.label.toLowerCase()} by category</h2>
+            <Link href="/shop" className="text-sm font-semibold hover:opacity-80" style={{ color: cfg.accent }}>View all →</Link>
           </div>
-
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {departmentCards.map((card) => (
-              <Link key={card.name} href={card.href} className="group relative min-h-[24rem] overflow-hidden rounded-[2rem]">
-                <Image
-                  src={card.image}
-                  alt={card.name}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(16,16,16,0.12),rgba(16,16,16,0.82))]" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-cream sm:p-7">
-                  <p className="text-[0.68rem] uppercase tracking-[0.38em] text-cream/70">Department</p>
-                  <h2 className="mt-3 text-3xl">{card.name}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-cream/80">{card.description}</p>
-                </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+            {cfg.categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/shop?category=${cat.slug}`}
+                className="group flex items-center justify-between gap-2 border-b border-sand px-1 py-4 transition-colors hover:text-brand"
+                style={{ ['--hover-accent' as string]: cfg.accent }}
+              >
+                <span className="text-sm font-semibold text-contrast">{cat.label}</span>
+                <svg className="h-4 w-4 text-neutral transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5l7 7-7 7" /></svg>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section data-header-theme="light" className="section-padding bg-[linear-gradient(180deg,#f1e7da_0%,#faf7f2_100%)]">
+      {/* Trending products (mode-aware) */}
+      <section className="section-padding">
         <div className="container-custom">
-          <div className="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mb-8 flex items-end justify-between gap-4">
             <div>
-              <p className="text-[0.72rem] uppercase tracking-[0.45em] text-neutral">Brand Ecosystem</p>
-              <h2 className="mt-3 text-3xl sm:text-5xl">A multi-brand storefront with room for different product worlds.</h2>
+              <h2 className="text-2xl font-bold sm:text-3xl">Trending in {cfg.label.toLowerCase()}</h2>
             </div>
-            <p className="max-w-xl text-sm leading-relaxed text-neutral sm:text-base">
-              Brands can be onboarded independently and assigned directly to products, making it easy to grow the catalog without reworking the homepage structure.
-            </p>
+            <Link href="/shop" className="btn-secondary hidden shrink-0 sm:inline-flex">Shop all</Link>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {brands.length > 0 ? brands.map((brand) => (
-              <div key={brand.slug || brand.name} className="rounded-[1.75rem] border border-contrast/10 bg-cream/70 p-6 backdrop-blur-sm">
-                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-neutral">Brand</p>
-                <h3 className="mt-3 text-2xl">{brand.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-neutral">
-                  {brand.count} product{brand.count === 1 ? '' : 's'} across {brand.departments.map(getDepartmentLabel).join(', ')}.
-                </p>
+          {trending.length > 0 ? (
+            <ProductGrid products={trending} />
+          ) : (
+            <div className="card flex flex-col items-center px-6 py-16 text-center sm:py-20">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full text-white" style={{ backgroundColor: cfg.accent }}>
+                <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14l-1 12H6L5 8zM9 8V6a3 3 0 016 0v2" /></svg>
+              </span>
+              <h3 className="mb-2 mt-6 text-xl font-bold sm:text-2xl">The {cfg.label.toLowerCase()} collection is on the way</h3>
+              <p className="mb-8 max-w-md text-neutral">We&apos;re still adding {cfg.label.toLowerCase()} products. Switch modes in the menu, search, or ask our assistant to help you find an item.</p>
+              <Link href="/shop" className="btn-primary" style={{ backgroundColor: cfg.accent }}>Browse the full store</Link>
+            </div>
+          )}
+
+          {trending.length > 0 && (
+            <div className="mt-8 text-center sm:hidden">
+              <Link href="/shop" className="btn-secondary w-full">Shop all products</Link>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Featured spotlight band (mode-aware) */}
+      <section className="section-padding pt-0">
+        <div className="container-custom">
+          {featured.length > 0 ? (
+            <FeaturedSpotlight products={featured} />
+          ) : (
+            <div className="grid items-stretch gap-0 overflow-hidden rounded-3xl border border-sand bg-white shadow-card lg:grid-cols-2">
+              <div className="relative min-h-[15rem] lg:min-h-full">
+                <Image src={cfg.heroImage} alt={`${cfg.label} at Cornerstore`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
               </div>
-            )) : (
-              <div className="rounded-[1.75rem] border border-contrast/10 bg-cream/70 p-6 text-neutral backdrop-blur-sm sm:col-span-2 xl:col-span-3">
-                Brand stories will appear here automatically as products are assigned to brands in admin.
+              <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-14">
+                <span className="inline-flex w-fit items-center rounded-full px-3 py-1.5 text-xs font-semibold" style={{ backgroundColor: cfg.accentSoft, color: cfg.accent }}>{cfg.label}</span>
+                <h2 className="mt-4 text-2xl font-bold sm:text-3xl">{cfg.heroTitle}</h2>
+                <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral sm:text-base">{cfg.heroSubtitle}</p>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link href="/shop" className="btn-primary" style={{ backgroundColor: cfg.accent }}>Shop {cfg.label.toLowerCase()}</Link>
+                  <Link href="/collections" className="btn-secondary">All categories</Link>
+                </div>
               </div>
-            )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* How ordering works */}
+      <section className="bg-white">
+        <div className="container-custom section-padding">
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">How ordering works</h2>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, index) => (
+              <div key={step.title} className="relative border-t border-sand py-5">
+                <span className="absolute right-1 top-5 text-sm font-semibold text-neutral/50">0{index + 1}</span>
+                <span className="flex h-10 w-10 items-center justify-center" style={{ color: cfg.accent }}>
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d={step.icon} /></svg>
+                </span>
+                <h3 className="mt-3 text-base font-bold">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-neutral">{step.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section data-header-theme="light" className="section-padding">
+      {/* Delivery & payment reassurance */}
+      <section className="section-padding">
         <div className="container-custom">
-          <div className="mb-8 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-[0.72rem] uppercase tracking-[0.45em] text-neutral">Clothing Spotlight</p>
-              <h2 className="mt-3 text-3xl sm:text-4xl">The primary category still leads the storefront.</h2>
+          <div className="overflow-hidden rounded-3xl bg-contrast text-white">
+            <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+              <div>
+                <h2 className="text-2xl font-bold sm:text-3xl">Shop with confidence</h2>
+                <div className="mt-7 flex flex-wrap gap-3">
+                  <Link href="/shop" className="btn-primary" style={{ backgroundColor: cfg.accent }}>Start shopping</Link>
+                  <Link href="/faq" className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/20">Read FAQs</Link>
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {reassurance.map((item) => (
+                  <div key={item.title} className="border-t border-white/15 py-5">
+                    <span className="flex h-8 w-8 items-center justify-center text-white" style={{ color: cfg.accent }}>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d={item.icon} /></svg>
+                    </span>
+                    <h3 className="mt-3 text-sm font-bold">{item.title}</h3>
+                  </div>
+                ))}
+              </div>
             </div>
-            <Link href="/shop" className="btn-secondary hidden sm:inline-block">Shop All</Link>
           </div>
-
-          <ProductGrid products={fashionProducts.slice(0, 8)} />
         </div>
       </section>
     </div>
   );
 }
-
-
-

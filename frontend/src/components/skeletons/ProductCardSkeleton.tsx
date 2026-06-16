@@ -1,14 +1,12 @@
 export default function ProductCardSkeleton() {
     return (
-        <div className="animate-pulse">
-            {/* Image skeleton */}
-            <div className="aspect-[3/4] mb-4 bg-neutral/10 rounded" />
-
-            {/* Title skeleton */}
-            <div className="h-4 bg-neutral/10 rounded mb-2 w-3/4" />
-
-            {/* Price skeleton */}
-            <div className="h-4 bg-neutral/10 rounded w-1/2" />
+        <div className="overflow-hidden rounded-2xl border border-sand bg-white shadow-card">
+            <div className="aspect-square animate-pulse bg-sand/50" />
+            <div className="p-3 sm:p-4">
+                <div className="h-3 w-1/3 animate-pulse rounded bg-sand/70" />
+                <div className="mt-2 h-4 w-3/4 animate-pulse rounded bg-sand/70" />
+                <div className="mt-4 h-5 w-1/2 animate-pulse rounded bg-sand/70" />
+            </div>
         </div>
     );
 }

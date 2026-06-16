@@ -8,7 +8,11 @@ export async function getDashboardStats(db, dateRange = {}) {
     if (dateRange.from || dateRange.to) {
         query.createdAt = {};
         if (dateRange.from) query.createdAt.$gte = new Date(dateRange.from);
-        if (dateRange.to) query.createdAt.$lte = new Date(dateRange.to);
+        if (dateRange.to) {
+            const end = new Date(dateRange.to);
+            end.setHours(23, 59, 59, 999);
+            query.createdAt.$lte = end;
+        }
     }
 
     // Get previous period for comparison
@@ -23,6 +27,15 @@ export async function getDashboardStats(db, dateRange = {}) {
         };
     }
 
+    const paidQuery = {
+        ...query,
+        paymentStatus: { $in: ['paid', 'item_paid'] }
+    };
+
+    const previousPaidQuery = previousQuery.createdAt
+        ? { ...previousQuery, paymentStatus: { $in: ['paid', 'item_paid'] } }
+        : {};
+
     const [
         currentStats,
         previousStats,
@@ -31,11 +44,11 @@ export async function getDashboardStats(db, dateRange = {}) {
     ] = await Promise.all([
         // Current period stats
         ordersCollection.aggregate([
-            { $match: query },
+            { $match: paidQuery },
             {
                 $group: {
                     _id: null,
-                    totalOrders: { $sum: 1 },
+                    paidOrders: { $sum: 1 },
                     totalRevenue: { $sum: '$total' },
                     avgOrderValue: { $avg: '$total' }
                 }
@@ -44,11 +57,11 @@ export async function getDashboardStats(db, dateRange = {}) {
 
         // Previous period stats
         previousQuery.createdAt ? ordersCollection.aggregate([
-            { $match: previousQuery },
+            { $match: previousPaidQuery },
             {
                 $group: {
                     _id: null,
-                    totalOrders: { $sum: 1 },
+                    paidOrders: { $sum: 1 },
                     totalRevenue: { $sum: '$total' }
                 }
             }
@@ -68,15 +81,20 @@ export async function getDashboardStats(db, dateRange = {}) {
             .toArray()
     ]);
 
-    const current = currentStats[0] || { totalOrders: 0, totalRevenue: 0, avgOrderValue: 0 };
-    const previous = previousStats[0] || { totalOrders: 0, totalRevenue: 0 };
+    const current = currentStats[0] || { paidOrders: 0, totalRevenue: 0, avgOrderValue: 0 };
+    const previous = previousStats[0] || { paidOrders: 0, totalRevenue: 0 };
+    const totalOrders = Object.values(statusBreakdown.reduce((acc, item) => {
+        acc[item._id || 'unknown'] = item.count;
+        return acc;
+    }, {})).reduce((sum, count) => sum + count, 0);
 
     return {
-        totalOrders: current.totalOrders,
+        totalOrders,
+        paidOrders: current.paidOrders,
         totalRevenue: current.totalRevenue,
         avgOrderValue: current.avgOrderValue,
-        orderGrowth: previous.totalOrders > 0
-            ? ((current.totalOrders - previous.totalOrders) / previous.totalOrders * 100).toFixed(1)
+        orderGrowth: previous.paidOrders > 0
+            ? ((current.paidOrders - previous.paidOrders) / previous.paidOrders * 100).toFixed(1)
             : 0,
         revenueGrowth: previous.totalRevenue > 0
             ? ((current.totalRevenue - previous.totalRevenue) / previous.totalRevenue * 100).toFixed(1)
@@ -93,11 +111,15 @@ export async function getDashboardStats(db, dateRange = {}) {
 export async function getRevenueByPeriod(db, period = 'daily', dateRange = {}) {
     const collection = db.collection('orders');
 
-    const query = { paymentStatus: 'paid' };
+    const query = { paymentStatus: { $in: ['paid', 'item_paid'] } };
     if (dateRange.from || dateRange.to) {
         query.createdAt = {};
         if (dateRange.from) query.createdAt.$gte = new Date(dateRange.from);
-        if (dateRange.to) query.createdAt.$lte = new Date(dateRange.to);
+        if (dateRange.to) {
+            const end = new Date(dateRange.to);
+            end.setHours(23, 59, 59, 999);
+            query.createdAt.$lte = end;
+        }
     }
 
     let groupBy;
@@ -144,11 +166,15 @@ export async function getRevenueByPeriod(db, period = 'daily', dateRange = {}) {
 export async function getTopProducts(db, limit = 10, dateRange = {}, sortBy = 'revenue') {
     const collection = db.collection('orders');
 
-    const query = { paymentStatus: 'paid' };
+    const query = { paymentStatus: { $in: ['paid', 'item_paid'] } };
     if (dateRange.from || dateRange.to) {
         query.createdAt = {};
         if (dateRange.from) query.createdAt.$gte = new Date(dateRange.from);
-        if (dateRange.to) query.createdAt.$lte = new Date(dateRange.to);
+        if (dateRange.to) {
+            const end = new Date(dateRange.to);
+            end.setHours(23, 59, 59, 999);
+            query.createdAt.$lte = end;
+        }
     }
 
     const sortField = sortBy === 'quantity' ? 'totalQuantity' : 'totalRevenue';

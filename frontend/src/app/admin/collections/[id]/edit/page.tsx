@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import AdminLayout from '@/components/admin/AdminLayout';
 import MediaUpload from '@/components/admin/MediaUpload';
 import ConfirmDialog from '@/components/admin/ConfirmDialog';
+import { formatPrice } from '@/lib/currency';
 
 interface Product {
     _id: string;
@@ -44,15 +45,15 @@ export default function EditCollectionPage() {
             router.push('/admin/login');
             return;
         }
-        loadData();
+        loadData(credentials);
     }, [router, collectionId]);
 
-    const loadData = async () => {
+    const loadData = async (credentials: string) => {
         try {
             setLoading(true);
             const [collectionRes, productsRes] = await Promise.all([
-                api.collections.getBySlug(collectionId),
-                api.products.getAll()
+                api.admin.collections.getById(credentials, collectionId),
+                api.admin.products.getAll(credentials)
             ]);
 
             if (collectionRes.success && collectionRes.data) {
@@ -302,7 +303,7 @@ export default function EditCollectionPage() {
                                 />
                                 <div className="flex-1">
                                     <div className="font-medium text-gray-900">{product.name}</div>
-                                    <div className="text-sm text-gray-500">${product.price}</div>
+                                    <div className="text-sm text-gray-500">{formatPrice(product.price)}</div>
                                 </div>
                             </div>
                         ))}

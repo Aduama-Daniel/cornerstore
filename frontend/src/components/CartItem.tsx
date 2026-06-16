@@ -93,15 +93,17 @@ export default function CartItem({ item }: CartItemProps) {
             </Link>
             <div className="mt-3 flex flex-wrap gap-2">
               {item.colorSlug && (
-                <div className="flex min-w-0 items-center gap-2 rounded-full bg-[#f7f2eb] px-3 py-2 text-sm">
+                <div className="flex min-w-0 items-center gap-2 rounded-full bg-cream px-3 py-2 text-sm">
                   <span className="text-neutral">Color</span>
                   <ColorDisplay colorSlug={item.colorSlug} />
                 </div>
               )}
-              <div className="flex items-center gap-2 rounded-full bg-[#f7f2eb] px-3 py-2 text-sm">
-                <span className="text-neutral">Size</span>
-                <span className="font-medium">{item.size}</span>
-              </div>
+              {item.size && (
+                <div className="flex items-center gap-2 rounded-full bg-cream px-3 py-2 text-sm">
+                  <span className="text-neutral">Size</span>
+                  <span className="font-medium">{item.size}</span>
+                </div>
+              )}
             </div>
           </div>
           <button onClick={() => removeItem(item.id)} className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-black/10 text-neutral transition-colors hover:border-black/20 hover:text-contrast" aria-label="Remove item">
@@ -126,8 +128,8 @@ export default function CartItem({ item }: CartItemProps) {
             </button>
           </div>
 
-          <div className="rounded-[1.25rem] bg-[#f7f2eb] px-4 py-3 text-left sm:min-w-[9rem] sm:text-right">
-            <p className="text-xs uppercase tracking-[0.24em] text-neutral">Item Total</p>
+          <div className="rounded-2xl bg-cream px-4 py-3 text-left sm:min-w-[9rem] sm:text-right">
+            <p className="text-xs font-semibold uppercase tracking-wider text-neutral">Item Total</p>
             <p className="mt-2 font-medium text-contrast">{itemTotal}</p>
             {item.quantity > 1 && <p className="mt-1 text-xs text-neutral">{formatPrice(item.price)} each</p>}
           </div>

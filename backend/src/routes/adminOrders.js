@@ -7,8 +7,10 @@ import {
     getOrderStatusHistory,
     addOrderNote
 } from '../services/orderService.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 export default async function adminOrderRoutes(fastify, options) {
+    fastify.addHook('preHandler', adminAuth);
 
     // Get all orders with filters and pagination
     fastify.get('/', async (request, reply) => {
@@ -20,6 +22,7 @@ export default async function adminOrderRoutes(fastify, options) {
                 dateTo,
                 customer,
                 paymentMethod,
+                search,
                 page = 1,
                 limit = 20,
                 sortBy = 'createdAt',
@@ -33,6 +36,7 @@ export default async function adminOrderRoutes(fastify, options) {
             if (dateTo) filters.dateTo = dateTo;
             if (customer) filters.customer = customer;
             if (paymentMethod) filters.paymentMethod = paymentMethod;
+            if (search) filters.search = search;
 
             const options = {
                 limit: parseInt(limit),
@@ -275,6 +279,11 @@ export default async function adminOrderRoutes(fastify, options) {
                     error: true,
                     message: 'Status is required'
                 });
+            }
+
+            const validStatuses = ['pending', 'payment_confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'];
+            if (!validStatuses.includes(status)) {
+                return reply.status(400).send({ error: true, message: 'Invalid status' });
             }
 
             const updates = await Promise.all(

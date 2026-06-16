@@ -63,7 +63,7 @@ export async function markAsPaidManually(db, orderId, adminId, notes = '') {
         { returnDocument: 'after' }
     );
 
-    return result.value;
+    return result;
 }
 
 // Process refund
@@ -77,7 +77,7 @@ export async function processRefund(db, orderId, amount, reason, adminId) {
         throw new Error('Order not found');
     }
 
-    if (order.paymentStatus !== 'paid') {
+    if (!['paid', 'item_paid'].includes(order.paymentStatus)) {
         throw new Error('Cannot refund unpaid order');
     }
 
@@ -110,7 +110,7 @@ export async function processRefund(db, orderId, amount, reason, adminId) {
     // In production, you would call Paystack refund API here
     // await initiatePaystackRefund(order.paystackReference, refundAmount);
 
-    return result.value;
+    return result;
 }
 
 // Get payment statistics

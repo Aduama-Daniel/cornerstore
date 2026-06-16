@@ -50,7 +50,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
   return (
     <>
       <div className="space-y-3 lg:sticky lg:top-24">
-        <div className="group relative aspect-[4/5] max-h-[70vh] overflow-hidden rounded-[1.5rem] border border-black/10 bg-sand/20 lg:mx-auto lg:w-[min(100%,32rem)] lg:aspect-[3/4] lg:h-auto lg:max-h-[68vh]">
+        <div className="group relative mx-auto aspect-[4/5] w-full max-w-[30rem] overflow-hidden rounded-xl bg-sand/20 lg:max-w-[28rem] lg:aspect-[3/4]">
           {currentMedia.type === 'video' ? (
             <video
               src={currentMedia.url}
@@ -76,13 +76,11 @@ export default function ProductImages({ images, productName }: ProductImagesProp
             </Zoom>
           )}
 
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,17,17,0.03),rgba(17,17,17,0.2))]" />
-
           {mediaItems.length > 1 && (
             <>
               <button
                 onClick={handlePrevious}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/30 p-2.5 text-cream opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
                 aria-label="Previous image"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +89,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
               </button>
               <button
                 onClick={handleNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-black/30 p-2.5 text-cream opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
                 aria-label="Next image"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +102,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
           {currentMedia.type === 'image' && (
             <button
               onClick={() => setShowLightbox(true)}
-              className="absolute bottom-3 right-3 rounded-full border border-white/15 bg-black/30 p-2.5 text-cream opacity-0 shadow-lg backdrop-blur-sm transition-opacity group-hover:opacity-100"
+              className="absolute bottom-3 right-3 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
               aria-label="View fullscreen"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -115,12 +113,12 @@ export default function ProductImages({ images, productName }: ProductImagesProp
         </div>
 
         {mediaItems.length > 1 && (
-          <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
+          <div className="mx-auto grid max-w-[28rem] grid-cols-5 gap-2">
             {mediaItems.map((media, index) => (
               <button
                 key={index}
                 onClick={() => setSelectedImage(index)}
-                className={`relative aspect-[3/4] overflow-hidden rounded-[1rem] border transition-all ${selectedImage === index ? 'border-contrast ring-2 ring-black/8' : 'border-black/10 opacity-70 hover:opacity-100'}`}
+                className={`relative aspect-square overflow-hidden rounded-lg border transition-opacity ${selectedImage === index ? 'border-contrast' : 'border-transparent opacity-60 hover:opacity-100'}`}
               >
                 {media.type === 'video' ? (
                   <div className="relative h-full w-full bg-black">
@@ -195,5 +193,3 @@ export default function ProductImages({ images, productName }: ProductImagesProp
     </>
   );
 }
-
-

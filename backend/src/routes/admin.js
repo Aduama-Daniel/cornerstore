@@ -85,6 +85,17 @@ export default async function adminRoutes(fastify, options) {
         }
     });
 
+    fastify.get('/categories/:id', { preHandler: adminAuth }, async (request, reply) => {
+        try {
+            const category = await getCategoryById(fastify.db, request.params.id);
+            if (!category) return reply.status(404).send({ error: true, message: 'Category not found' });
+            return { success: true, data: category };
+        } catch (error) {
+            fastify.log.error(error);
+            return reply.status(500).send({ error: true, message: 'Failed to fetch category' });
+        }
+    });
+
     fastify.post('/categories', { preHandler: adminAuth }, async (request, reply) => {
         try {
             const categoryData = request.body;

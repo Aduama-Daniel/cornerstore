@@ -125,16 +125,13 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
-        <div className="container-custom relative flex min-h-[28vh] items-end py-8 sm:min-h-[30vh] sm:py-10 lg:min-h-[32vh] lg:py-12">
-          <div className="max-w-4xl">
-            <p className="text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">Checkout</p>
-            <h1 className="mt-4 text-4xl font-serif leading-[0.95] sm:text-5xl lg:text-6xl">Complete your order</h1>
-            <p className="mt-4 max-w-2xl text-sm text-cream/72 sm:text-base">
-              Delivery details first, then secure payment. Your order summary stays visible while you move through the flow.
-            </p>
-          </div>
+      <section className="border-b border-sand bg-white">
+        <div className="container-custom py-8 sm:py-10">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand">Checkout</p>
+          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Complete your order</h1>
+          <p className="mt-2 max-w-2xl text-sm text-neutral">
+            Delivery details first, then secure payment. Your order summary stays visible while you move through the flow.
+          </p>
         </div>
       </section>
 

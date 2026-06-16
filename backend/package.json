@@ -8,6 +8,11 @@
     "dev": "node --watch server.js",
     "start": "node server.js",
     "seed": "node src/scripts/seed.js",
+    "catalog:validate": "node src/scripts/importCatalog.js",
+    "catalog:import": "node src/scripts/importCatalog.js --apply",
+    "catalog:validate:fashion": "node src/scripts/importCatalog.js --manifest=backend/src/scripts/catalog/fashion-manifest.json",
+    "catalog:import:fashion": "node src/scripts/importCatalog.js --manifest=backend/src/scripts/catalog/fashion-manifest.json --apply",
+    "catalog:replace-media": "node src/scripts/replaceCatalogMedia.js",
     "migrate": "node src/scripts/migrateToVariations.js",
     "create-admin": "node src/scripts/createAdmin.js"
   },
@@ -30,8 +35,5 @@
     "firebase-admin": "^12.0.0",
     "mongodb": "^6.3.0",
     "nanoid": "^5.0.5"
-  },
-  "devDependencies": {
-    "pino-pretty": "^10.3.1"
   }
 }

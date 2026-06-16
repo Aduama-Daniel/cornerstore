@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-interface Color {
+export interface ProductColor {
     _id?: string;
     name: string;
     slug: string;
     hexCode: string;
 }
 
-interface Variation {
+export interface ProductVariation {
     size: string;
     colorSlug: string;
     stockQuantity: number;
@@ -18,252 +18,227 @@ interface Variation {
 }
 
 interface VariationManagerProps {
-    variations: Variation[];
-    availableColors: Color[];
-    onVariationsChange: (variations: Variation[]) => void;
+    variations: ProductVariation[];
+    availableColors: ProductColor[];
+    onVariationsChange: (variations: ProductVariation[]) => void;
 }
+
+const variationKey = (size: string, colorSlug: string) => `${size}::${colorSlug}`;
 
 export default function VariationManager({
     variations,
     availableColors,
     onVariationsChange
 }: VariationManagerProps) {
-    const [sizes, setSizes] = useState<string[]>(['S', 'M', 'L', 'XL']);
-    const [selectedColors, setSelectedColors] = useState<string[]>(
-        availableColors.length > 0 ? [availableColors[0].slug] : []
+    const derivedSizes = useMemo(
+        () => [...new Set(variations.map((variation) => variation.size).filter(Boolean))],
+        [variations]
     );
+    const derivedColors = useMemo(
+        () => [...new Set(variations.map((variation) => variation.colorSlug).filter(Boolean))],
+        [variations]
+    );
+    const [sizes, setSizes] = useState<string[]>(derivedSizes);
+    const [selectedColors, setSelectedColors] = useState<string[]>(derivedColors);
     const [newSize, setNewSize] = useState('');
 
-    // Generate all possible combinations
-    const generateVariations = (sizeList: string[], colorList: string[]) => {
-        const newVariations: Variation[] = [];
+    useEffect(() => {
+        setSizes(derivedSizes);
+        setSelectedColors(derivedColors);
+    }, [derivedColors, derivedSizes]);
 
-        sizeList.forEach(size => {
-            colorList.forEach(colorSlug => {
-                // Find existing variation or create new
-                const existing = variations.find(
-                    v => v.size === size && v.colorSlug === colorSlug
-                );
+    const buildVariations = (sizeList: string[], colorList: string[]) => {
+        const colors = colorList.length > 0 ? colorList : [''];
+        const current = new Map(
+            variations.map((variation) => [variationKey(variation.size, variation.colorSlug), variation])
+        );
 
-                newVariations.push(existing || {
-                    size,
-                    colorSlug,
-                    stockQuantity: 0,
-                    priceOverride: undefined,
-                    enabled: true
-                });
-            });
-        });
-
-        return newVariations;
+        return sizeList.flatMap((size) =>
+            colors.map((colorSlug) => current.get(variationKey(size, colorSlug)) || {
+                size,
+                colorSlug,
+                stockQuantity: 0,
+                priceOverride: undefined,
+                enabled: true
+            })
+        );
     };
 
     const handleSizeAdd = () => {
-        if (newSize && !sizes.includes(newSize)) {
-            const updatedSizes = [...sizes, newSize];
-            setSizes(updatedSizes);
-            onVariationsChange(generateVariations(updatedSizes, selectedColors));
-            setNewSize('');
-        }
+        const size = newSize.trim().toUpperCase();
+        if (!size || sizes.includes(size)) return;
+
+        const updatedSizes = [...sizes, size];
+        setSizes(updatedSizes);
+        onVariationsChange(buildVariations(updatedSizes, selectedColors));
+        setNewSize('');
     };
 
     const handleSizeRemove = (size: string) => {
-        const updatedSizes = sizes.filter(s => s !== size);
+        const updatedSizes = sizes.filter((item) => item !== size);
         setSizes(updatedSizes);
-        onVariationsChange(generateVariations(updatedSizes, selectedColors));
+        onVariationsChange(buildVariations(updatedSizes, selectedColors));
     };
 
     const handleColorToggle = (colorSlug: string) => {
         const updatedColors = selectedColors.includes(colorSlug)
-            ? selectedColors.filter(c => c !== colorSlug)
+            ? selectedColors.filter((item) => item !== colorSlug)
             : [...selectedColors, colorSlug];
 
         setSelectedColors(updatedColors);
-        onVariationsChange(generateVariations(sizes, updatedColors));
+        onVariationsChange(buildVariations(sizes, updatedColors));
     };
 
-    const handleVariationUpdate = (size: string, colorSlug: string, field: keyof Variation, value: any) => {
-        const updated = variations.map(v => {
-            if (v.size === size && v.colorSlug === colorSlug) {
-                return { ...v, [field]: value };
-            }
-            return v;
-        });
-        onVariationsChange(updated);
+    const handleVariationUpdate = (
+        size: string,
+        colorSlug: string,
+        field: keyof ProductVariation,
+        value: number | boolean | undefined
+    ) => {
+        onVariationsChange(variations.map((variation) =>
+            variation.size === size && variation.colorSlug === colorSlug
+                ? { ...variation, [field]: value }
+                : variation
+        ));
     };
 
-    const getColorBySlug = (slug: string) => {
-        return availableColors.find(c => c.slug === slug);
-    };
+    const colorBySlug = new Map(availableColors.map((color) => [color.slug, color]));
 
     return (
-        <div className="space-y-6">
-            {/* Size Management */}
+        <section className="space-y-6 rounded-lg border border-gray-200 p-5">
             <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Available Sizes</h3>
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {sizes.map(size => (
-                        <div
-                            key={size}
-                            className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-md"
-                        >
-                            <span className="text-sm font-medium">{size}</span>
+                <h2 className="text-lg font-semibold text-gray-900">Variants and inventory</h2>
+                <p className="mt-1 text-sm text-gray-500">
+                    Add sizes, optionally assign colors, then set the stock available for each combination.
+                </p>
+            </div>
+
+            <div>
+                <label htmlFor="new-variant-size" className="text-sm font-medium text-gray-700">Sizes</label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                    {sizes.map((size) => (
+                        <span key={size} className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800">
+                            {size}
                             <button
                                 type="button"
                                 onClick={() => handleSizeRemove(size)}
-                                className="text-red-600 hover:text-red-800"
+                                className="ml-2 text-gray-500 hover:text-gray-900"
+                                aria-label={`Remove size ${size}`}
                             >
-                                ×
+                                x
                             </button>
-                        </div>
+                        </span>
                     ))}
+                    {sizes.length === 0 && <span className="text-sm text-gray-500">No sized variants.</span>}
                 </div>
-                <div className="flex gap-2">
+                <div className="mt-3 flex max-w-md gap-2">
                     <input
+                        id="new-variant-size"
                         type="text"
                         value={newSize}
-                        onChange={(e) => setNewSize(e.target.value)}
-                        placeholder="Add size (e.g., XXL)"
-                        className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                        onKeyPress={(e) => e.key === 'Enter' && handleSizeAdd()}
+                        onChange={(event) => setNewSize(event.target.value)}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                                handleSizeAdd();
+                            }
+                        }}
+                        placeholder="For example: M or 42"
+                        className="min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm"
                     />
-                    <button
-                        type="button"
-                        onClick={handleSizeAdd}
-                        className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 text-sm"
-                    >
-                        Add Size
+                    <button type="button" onClick={handleSizeAdd} className="rounded-md bg-gray-900 px-4 py-2 text-sm text-white hover:bg-black">
+                        Add size
                     </button>
                 </div>
             </div>
 
-            {/* Color Selection */}
-            <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Available Colors</h3>
-                <div className="flex flex-wrap gap-3">
-                    {availableColors.map(color => (
-                        <button
-                            key={color.slug}
-                            type="button"
-                            onClick={() => handleColorToggle(color.slug)}
-                            className={`flex items-center gap-2 px-3 py-2 border-2 rounded-md transition-all ${selectedColors.includes(color.slug)
-                                    ? 'border-gray-800 bg-gray-50'
-                                    : 'border-gray-200 hover:border-gray-400'
-                                }`}
-                        >
-                            <div
-                                className="w-6 h-6 rounded-full border border-gray-300"
-                                style={{ backgroundColor: color.hexCode }}
-                            />
-                            <span className="text-sm font-medium">{color.name}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Variation Grid */}
-            {variations.length > 0 && (
+            {availableColors.length > 0 && (
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Variant Inventory ({variations.length} combinations)
-                    </h3>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Size
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Color
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Stock
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Price Override
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Enabled
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {variations.map((variation, index) => {
-                                    const color = getColorBySlug(variation.colorSlug);
-                                    return (
-                                        <tr key={`${variation.size}-${variation.colorSlug}`} className="hover:bg-gray-50">
-                                            <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                                                {variation.size}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm">
-                                                <div className="flex items-center gap-2">
-                                                    {color && (
-                                                        <div
-                                                            className="w-5 h-5 rounded-full border border-gray-300"
-                                                            style={{ backgroundColor: color.hexCode }}
-                                                        />
-                                                    )}
-                                                    <span>{color?.name || variation.colorSlug}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    value={variation.stockQuantity}
-                                                    onChange={(e) =>
-                                                        handleVariationUpdate(
-                                                            variation.size,
-                                                            variation.colorSlug,
-                                                            'stockQuantity',
-                                                            parseInt(e.target.value) || 0
-                                                        )
-                                                    }
-                                                    className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    step="0.01"
-                                                    value={variation.priceOverride || ''}
-                                                    onChange={(e) =>
-                                                        handleVariationUpdate(
-                                                            variation.size,
-                                                            variation.colorSlug,
-                                                            'priceOverride',
-                                                            e.target.value ? parseFloat(e.target.value) : undefined
-                                                        )
-                                                    }
-                                                    placeholder="Optional"
-                                                    className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
-                                                />
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={variation.enabled}
-                                                    onChange={(e) =>
-                                                        handleVariationUpdate(
-                                                            variation.size,
-                                                            variation.colorSlug,
-                                                            'enabled',
-                                                            e.target.checked
-                                                        )
-                                                    }
-                                                    className="w-4 h-4 text-gray-800 border-gray-300 rounded focus:ring-gray-500"
-                                                />
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                    <p className="text-sm font-medium text-gray-700">Colors</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        {availableColors.map((color) => {
+                            const selected = selectedColors.includes(color.slug);
+                            return (
+                                <button
+                                    key={color.slug}
+                                    type="button"
+                                    onClick={() => handleColorToggle(color.slug)}
+                                    aria-pressed={selected}
+                                    className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm ${selected ? 'border-gray-900 bg-gray-50' : 'border-gray-200 hover:border-gray-400'}`}
+                                >
+                                    <span className="h-5 w-5 rounded-full border border-gray-300" style={{ backgroundColor: color.hexCode }} />
+                                    {color.name}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             )}
-        </div>
+
+            {variations.length > 0 ? (
+                <div className="overflow-x-auto rounded-lg border border-gray-200">
+                    <table className="min-w-[680px] divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                {['Size', 'Color', 'Stock', 'Price override', 'Sellable'].map((heading) => (
+                                    <th key={heading} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">{heading}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white">
+                            {variations.map((variation) => {
+                                const color = colorBySlug.get(variation.colorSlug);
+                                return (
+                                    <tr key={variationKey(variation.size, variation.colorSlug)}>
+                                        <td className="px-4 py-3 text-sm font-medium text-gray-900">{variation.size}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-700">
+                                            <span className="flex items-center gap-2">
+                                                {color && <span className="h-4 w-4 rounded-full border border-gray-300" style={{ backgroundColor: color.hexCode }} />}
+                                                {color?.name || 'Default'}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <input
+                                                aria-label={`Stock for ${variation.size} ${color?.name || 'default'}`}
+                                                type="number"
+                                                min="0"
+                                                value={variation.stockQuantity}
+                                                onChange={(event) => handleVariationUpdate(variation.size, variation.colorSlug, 'stockQuantity', Math.max(0, Number(event.target.value)))}
+                                                className="w-24 rounded border border-gray-300 px-2 py-1 text-sm"
+                                            />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <input
+                                                aria-label={`Price override for ${variation.size} ${color?.name || 'default'}`}
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={variation.priceOverride ?? ''}
+                                                onChange={(event) => handleVariationUpdate(variation.size, variation.colorSlug, 'priceOverride', event.target.value ? Number(event.target.value) : undefined)}
+                                                placeholder="Use base price"
+                                                className="w-32 rounded border border-gray-300 px-2 py-1 text-sm"
+                                            />
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <input
+                                                aria-label={`Sell ${variation.size} ${color?.name || 'default'}`}
+                                                type="checkbox"
+                                                checked={variation.enabled}
+                                                onChange={(event) => handleVariationUpdate(variation.size, variation.colorSlug, 'enabled', event.target.checked)}
+                                                className="h-4 w-4 rounded border-gray-300"
+                                            />
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="rounded-md bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                    This product will use a single inventory record. Add a size to manage variant stock.
+                </div>
+            )}
+        </section>
     );
 }

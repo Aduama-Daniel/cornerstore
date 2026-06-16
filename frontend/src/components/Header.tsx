@@ -1,21 +1,94 @@
-﻿'use client';
+'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { usePathname } from 'next/navigation';
+import { useMode } from '@/contexts/ModeContext';
+import { MODES, MODE_CONFIG } from '@/lib/modes';
+
+const navLinks = [
+  { href: '/shop', label: 'Shop' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Help' },
+];
+
+function ModeTabs({ overHero }: { overHero: boolean }) {
+  const { mode, setMode } = useMode();
+  return (
+    <nav className="flex items-center gap-1 sm:gap-3" role="tablist" aria-label="Department">
+      {MODES.map((m) => {
+        const cfg = MODE_CONFIG[m];
+        const activeMode = m === mode;
+        return (
+          <button
+            key={m}
+            type="button"
+            role="tab"
+            aria-selected={activeMode}
+            onClick={() => setMode(m)}
+            className={`relative px-2 py-2.5 text-sm font-semibold transition-colors sm:px-3 ${
+              activeMode
+                ? ''
+                : overHero
+                  ? 'text-white/75 hover:text-white'
+                  : 'text-neutral hover:text-contrast'
+            }`}
+            style={activeMode ? { color: overHero ? '#ffffff' : cfg.accent } : undefined}
+          >
+            {cfg.label}
+            {activeMode && (
+              <span
+                className="absolute inset-x-2 -bottom-px h-0.5 rounded-full sm:inset-x-3"
+                style={{ backgroundColor: cfg.accent }}
+              />
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
 
 export default function Header() {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const { mode } = useMode();
+  const modeCfg = MODE_CONFIG[mode];
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [hasPassedHero, setHasPassedHero] = useState(false);
+  const [query, setQuery] = useState('');
   const pathname = usePathname();
-  const [pageTheme, setPageTheme] = useState<'light' | 'dark'>('light');
-  const headerRef = useRef<HTMLElement | null>(null);
+  const router = useRouter();
+  const isHome = pathname === '/';
+  const overHero = isHome && !hasPassedHero && !mobileMenuOpen;
+  const showHeaderSearch = !isHome || hasPassedHero;
+
+  useEffect(() => {
+    if (!isHome) {
+      setHasPassedHero(true);
+      return;
+    }
+
+    const updateHeader = () => {
+      const hero = document.querySelector<HTMLElement>('[data-home-hero]');
+      const threshold = hero ? hero.offsetTop + hero.offsetHeight - 80 : window.innerHeight * 0.7;
+      setHasPassedHero(window.scrollY >= threshold);
+    };
+
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('resize', updateHeader);
+    return () => {
+      window.removeEventListener('scroll', updateHeader);
+      window.removeEventListener('resize', updateHeader);
+    };
+  }, [isHome]);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
@@ -29,204 +102,224 @@ export default function Header() {
     setUserMenuOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    let frame = 0;
-
-    const updateTheme = () => {
-      frame = 0;
-
-      if (!headerRef.current) {
-        return;
-      }
-
-      const headerRect = headerRef.current.getBoundingClientRect();
-      const probeX = Math.round(window.innerWidth / 2);
-      const probeY = Math.min(window.innerHeight - 1, Math.max(Math.round(headerRect.bottom + 12), 0));
-      const target = document.elementFromPoint(probeX, probeY) as HTMLElement | null;
-      const themedSection = target?.closest('[data-header-theme]') as HTMLElement | null;
-      const theme = themedSection?.dataset.headerTheme;
-
-      setPageTheme(theme === 'dark' ? 'dark' : 'light');
-    };
-
-    const requestUpdate = () => {
-      if (frame) {
-        return;
-      }
-      frame = window.requestAnimationFrame(updateTheme);
-    };
-
-    requestUpdate();
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-
-    return () => {
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-      window.removeEventListener('scroll', requestUpdate);
-      window.removeEventListener('resize', requestUpdate);
-    };
-  }, [pathname]);
-
   const isActive = (path: string) => pathname === path;
 
-  const navLinks = [
-    { href: '/shop', label: 'Shop' },
-    { href: '/collections/womens', label: 'Women\'s' },
-    { href: '/collections/mens', label: 'Men\'s' },
-    { href: '/collections/accessories', label: 'Accessories' },
-    { href: '/about', label: 'About' },
-  ];
-
-  const useDarkHeader = pageTheme === 'dark';
-
-  const headerTone = useDarkHeader
-    ? 'border-b border-cream/10 bg-black text-cream backdrop-blur-xl shadow-[0_10px_28px_rgba(0,0,0,0.24)]'
-    : 'border-b border-neutral/15 bg-cream/95 text-contrast backdrop-blur-xl shadow-[0_12px_32px_rgba(0,0,0,0.08)]';
-
-  const mutedTone = useDarkHeader ? 'text-cream/82 hover:text-cream' : 'text-neutral hover:text-contrast';
-  const activeTone = useDarkHeader ? 'text-cream' : 'text-contrast';
-  const badgeTone = useDarkHeader ? 'bg-cream text-contrast' : 'bg-contrast text-cream';
-  const panelTone = useDarkHeader
-    ? 'border border-cream/10 bg-[#151515] text-cream shadow-[0_24px_80px_rgba(0,0,0,0.35)]'
-    : 'border border-neutral/15 bg-cream/98 text-contrast shadow-[0_20px_60px_rgba(0,0,0,0.08)]';
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) {
+      router.push('/search');
+      return;
+    }
+    router.push(`/search?q=${encodeURIComponent(q)}`);
+    setMobileMenuOpen(false);
+  };
 
   return (
-    <header ref={headerRef} className={`sticky top-0 z-50 transition-[background-color,color,border-color,box-shadow] duration-300 ${headerTone}`}>
-      <nav className="container-custom py-3 sm:py-4">
-        <div className="flex items-center justify-between gap-3">
-          <Link href="/" className="group min-w-0">
-            <span className={`text-lg font-semibold tracking-[0.22em] transition-colors sm:text-2xl sm:tracking-[0.3em] ${useDarkHeader ? 'group-hover:text-cream/80' : 'group-hover:text-neutral'}`}>
-              CORNERSTORE
-            </span>
+    <header
+      className={`${isHome ? 'fixed' : 'sticky'} top-0 z-50 w-full transition-all duration-300 ${
+        overHero
+          ? 'border-b border-white/15 bg-transparent text-white'
+          : 'border-b border-sand bg-white/95 text-contrast shadow-sm backdrop-blur-xl'
+      }`}
+    >
+      <nav className="container-custom py-3">
+        <div className="flex items-center gap-3 lg:gap-6">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`-ml-1 rounded-lg p-2 transition-colors lg:hidden ${
+              overHero ? 'text-white hover:bg-white/10' : 'text-contrast hover:bg-sand/60'
+            }`}
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
+          </button>
+
+          <Link href="/" className="flex shrink-0 items-center" aria-label="Cornerstore home">
+            <Image
+              src="/logo.png"
+              alt="Cornerstore"
+              width={667}
+              height={106}
+              priority
+              className={`h-6 w-auto transition-[filter] sm:h-7 ${overHero ? 'brightness-0 invert' : ''}`}
+            />
           </Link>
 
-          <div className="hidden items-center gap-7 lg:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-[0.72rem] uppercase tracking-[0.28em] transition-colors ${isActive(link.href) ? activeTone : mutedTone}`}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="hidden lg:block">
+            <ModeTabs overHero={overHero} />
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-5">
-            <Link href="/search" className={`transition-colors ${mutedTone}`} aria-label="Search">
+          {/* Search returns after the homepage hero, and remains available elsewhere. */}
+          <form onSubmit={submitSearch} className={`${showHeaderSearch ? 'hidden flex-1 lg:block' : 'hidden'}`}>
+            <div className="relative mx-auto max-w-2xl">
+              <svg className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
+              </svg>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search for products, brands and essentials"
+                className="w-full rounded-full border border-sand bg-cream py-2.5 pl-12 pr-28 text-sm text-contrast placeholder:text-neutral/70 transition-shadow focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+              />
+              <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-brand px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-brand-dark">
+                Search
+              </button>
+            </div>
+          </form>
+
+          <div className="ml-auto flex items-center gap-1 sm:gap-2 lg:ml-0">
+            {showHeaderSearch && (
+            <Link
+              href="/search"
+              className="rounded-lg p-2 text-contrast transition-colors hover:bg-sand/60 lg:hidden"
+              aria-label="Search"
+            >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
               </svg>
             </Link>
+            )}
 
             {user ? (
               <div className="relative hidden sm:block">
-                <button onClick={() => setUserMenuOpen(!userMenuOpen)} className={`transition-colors ${mutedTone}`} aria-label="Account">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className={`rounded-lg p-2 transition-colors ${
+                    overHero ? 'text-white hover:bg-white/10' : 'text-contrast hover:bg-sand/60'
+                  }`}
+                  aria-label="Account"
+                >
                   <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </button>
-
                 {userMenuOpen && (
-                  <div className={`absolute right-0 mt-3 w-56 rounded-[1.25rem] ${panelTone}`}>
-                    <div className="border-b border-current/10 px-5 py-4">
-                      <p className={`text-[0.65rem] uppercase tracking-[0.3em] ${useDarkHeader ? 'text-cream/50' : 'text-neutral'}`}>
-                        Account
-                      </p>
-                      <p className="mt-2 text-sm">Signed in</p>
+                  <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl border border-sand bg-white shadow-soft">
+                    <div className="border-b border-sand px-5 py-4">
+                      <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-neutral">Account</p>
+                      <p className="mt-1 truncate text-sm font-medium">{user.email || 'Signed in'}</p>
                     </div>
-                    <div className="py-2">
-                      <Link href="/account" className="block px-5 py-3 text-sm transition-colors hover:bg-white/5">
-                        My Account
-                      </Link>
-                      <Link href="/account/orders" className="block px-5 py-3 text-sm transition-colors hover:bg-white/5">
-                        Orders
-                      </Link>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setUserMenuOpen(false);
-                        }}
-                        className="block w-full px-5 py-3 text-left text-sm transition-colors hover:bg-white/5"
-                      >
-                        Sign Out
-                      </button>
+                    <div className="py-1.5">
+                      <Link href="/account" className="block px-5 py-2.5 text-sm transition-colors hover:bg-sand/50">My Account</Link>
+                      <Link href="/account/orders" className="block px-5 py-2.5 text-sm transition-colors hover:bg-sand/50">Orders</Link>
+                      <button onClick={() => { logout(); setUserMenuOpen(false); }} className="block w-full px-5 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-50">Sign Out</button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <Link href="/login" className={`hidden text-[0.72rem] uppercase tracking-[0.28em] transition-colors sm:block ${mutedTone}`}>
-                Sign In
+              <Link
+                href="/login"
+                className={`hidden rounded-full px-3 py-2 text-sm font-medium transition-colors sm:block ${
+                  overHero ? 'text-white hover:bg-white/10' : 'text-contrast hover:bg-sand/60'
+                }`}
+              >
+                Sign in
               </Link>
             )}
 
-            <Link href="/wishlist" className={`relative transition-colors ${mutedTone}`} aria-label="Wishlist">
+            <Link
+              href="/wishlist"
+              className={`relative rounded-lg p-2 transition-colors ${
+                overHero ? 'text-white hover:bg-white/10' : 'text-contrast hover:bg-sand/60'
+              }`}
+              aria-label="Wishlist"
+            >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               {wishlistCount > 0 && (
-                <span className={`absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full text-[0.65rem] font-medium ${badgeTone}`}>
-                  {wishlistCount}
-                </span>
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-contrast px-1 text-[0.6rem] font-semibold text-white">{wishlistCount}</span>
               )}
             </Link>
 
-            <Link href="/cart" className={`relative transition-colors ${mutedTone}`} aria-label="Shopping bag">
+            <Link
+              href="/cart"
+              className={`relative rounded-lg p-2 transition-colors ${
+                overHero ? 'text-white hover:bg-white/10' : 'text-contrast hover:bg-sand/60'
+              }`}
+              aria-label="Shopping bag"
+            >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {itemCount > 0 && (
-                <span className={`absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full text-[0.65rem] font-medium ${badgeTone}`}>
-                  {itemCount}
-                </span>
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[0.6rem] font-semibold text-white">{itemCount}</span>
               )}
             </Link>
-
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`lg:hidden transition-colors ${mutedTone}`} aria-label="Menu">
-              {mobileMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
           </div>
         </div>
+
       </nav>
 
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className={`lg:hidden ${panelTone}`}>
-          <div className="container-custom py-6">
-            <div className="mb-6 rounded-[1.5rem] border border-current/10 px-5 py-5">
-              <p className={`text-[0.65rem] uppercase tracking-[0.3em] ${useDarkHeader ? 'text-cream/50' : 'text-neutral'}`}>
-                Current Mood
-              </p>
-              <p className="mt-3 max-w-xs text-xl">Editorial fashion, portrait-led imagery, and a sharper storefront flow.</p>
+        <div className="border-t border-sand bg-white lg:hidden">
+          <div className="container-custom py-5">
+            <div className="mb-4">
+              <ModeTabs overHero={false} />
             </div>
+            <form onSubmit={submitSearch} className="mb-5">
+              <div className="relative">
+                <svg className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
+                </svg>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full rounded-full border border-sand bg-cream py-3 pl-12 pr-4 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                />
+              </div>
+            </form>
 
-            <div className="mb-6 grid grid-cols-2 gap-3">
-              {user ? (
-                <>
-                  <Link href="/account" className="rounded-[1rem] border border-current/10 px-4 py-3 text-sm font-medium">My Account</Link>
-                  <button onClick={() => logout()} className="rounded-[1rem] border border-current/10 px-4 py-3 text-left text-sm font-medium">Sign Out</button>
-                </>
-              ) : (
-                <Link href="/login" className="rounded-[1rem] border border-current/10 px-4 py-3 text-sm font-medium">Sign In</Link>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className={`text-sm uppercase tracking-[0.28em] transition-colors ${isActive(link.href) ? activeTone : mutedTone}`}>
-                  {link.label}
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-neutral">{modeCfg.label} categories</p>
+            <div className="mb-4 flex flex-wrap gap-2">
+              <Link href="/shop" className="chip border-sand bg-cream font-semibold text-contrast">All</Link>
+              {modeCfg.categories.map((cat) => (
+                <Link key={cat.slug} href={`/shop?category=${cat.slug}`} className="chip border-sand bg-cream text-contrast">
+                  {cat.label}
                 </Link>
               ))}
+            </div>
+
+            <div className="flex flex-col">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center justify-between border-b border-sand py-3.5 text-base font-medium ${isActive(link.href) ? 'text-brand' : 'text-contrast'}`}
+                >
+                  {link.label}
+                  <svg className="h-4 w-4 text-neutral" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              {user ? (
+                <>
+                  <Link href="/account" className="btn-secondary">My Account</Link>
+                  <button onClick={() => logout()} className="btn-secondary">Sign Out</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="btn-secondary">Sign in</Link>
+                  <Link href="/signup" className="btn-primary">Create account</Link>
+                </>
+              )}
             </div>
           </div>
         </div>

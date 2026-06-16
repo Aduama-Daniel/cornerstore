@@ -1,0 +1,358 @@
+{
+  "version": 1,
+  "generatedRoot": "images/generated/fashion",
+  "sourceImageRoot": "images/fashion-items",
+  "generatedImageNames": ["01-catalog.png"],
+  "defaults": {
+    "status": "active",
+    "stockQuantity": 18,
+    "origin": "Imported",
+    "discountPrice": null,
+    "featured": false,
+    "trending": false,
+    "tags": ["fashion", "new-arrival"]
+  },
+  "categories": [
+    {
+      "name": "Clothing",
+      "slug": "clothing",
+      "department": "fashion"
+    },
+    {
+      "name": "Accessories",
+      "slug": "accessories",
+      "department": "fashion"
+    },
+    {
+      "name": "Jewelry",
+      "slug": "jewelry",
+      "department": "jewelry"
+    },
+    {
+      "name": "Lighting",
+      "slug": "lighting",
+      "department": "lighting"
+    }
+  ],
+  "products": [
+    {
+      "itemNumber": "F001",
+      "catalogKey": "smooth-black-balaclava",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.22.20 PM.png",
+        "Screenshot 2026-06-14 at 3.26.10 PM.png",
+        "Screenshot 2026-06-14 at 3.26.25 PM.png",
+        "Screenshot 2026-06-14 at 3.41.42 PM.png"
+      ],
+      "name": "Essential Stretch Balaclava",
+      "slug": "essential-stretch-balaclava-black",
+      "brand": "Cornerstore Select",
+      "price": 75,
+      "category": "accessories",
+      "subcategory": "balaclavas",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A smooth, lightweight face covering with full neck coverage.",
+      "description": "A lightweight stretch balaclava with a wide eye opening and extended neck coverage for riding, outdoor activities and streetwear layering.",
+      "tags": ["balaclava", "face-covering", "black", "unisex", "outdoor", "streetwear"],
+      "specifications": [
+        { "label": "Material", "value": "Lightweight stretch fabric" },
+        { "label": "Fit", "value": "One size, flexible fit" },
+        { "label": "Colour", "value": "Black" }
+      ],
+      "featured": true,
+      "trending": true
+    },
+    {
+      "itemNumber": "F002",
+      "catalogKey": "digital-camo-balaclava",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.22.33 PM.png"],
+      "name": "Night Camo Stretch Balaclava",
+      "slug": "night-camo-stretch-balaclava",
+      "brand": "Cornerstore Select",
+      "price": 85,
+      "category": "accessories",
+      "subcategory": "balaclavas",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A close-fitting balaclava in a dark digital camouflage print.",
+      "description": "A smooth stretch balaclava with a dark digital camouflage finish, wide eye opening and long neck for outdoor and streetwear use.",
+      "tags": ["balaclava", "camouflage", "face-covering", "unisex", "outdoor", "streetwear"],
+      "specifications": [
+        { "label": "Material", "value": "Lightweight stretch fabric" },
+        { "label": "Fit", "value": "One size, flexible fit" },
+        { "label": "Pattern", "value": "Dark digital camouflage" }
+      ],
+      "trending": true
+    },
+    {
+      "itemNumber": "F003",
+      "catalogKey": "rgb-corner-floor-lamp",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.28.05 PM.png",
+        "Screenshot 2026-06-14 at 3.28.16 PM.png",
+        "Screenshot 2026-06-14 at 3.28.25 PM.png"
+      ],
+      "name": "RGB Corner Floor Lamp with Remote",
+      "slug": "rgb-corner-floor-lamp-with-remote",
+      "brand": "Cornerstore Select",
+      "price": 320,
+      "category": "lighting",
+      "subcategory": "floor-lamps",
+      "department": "lighting",
+      "audience": "home",
+      "shortDescription": "A slim color-changing floor light for bedrooms and media spaces.",
+      "description": "A minimalist RGB corner floor lamp with a slim vertical light bar, tripod base and remote control for ambient room lighting.",
+      "tags": ["rgb", "floor-lamp", "corner-light", "remote-control", "ambient-lighting", "home-decor"],
+      "specifications": [
+        { "label": "Height", "value": "Approx. 130 cm" },
+        { "label": "Control", "value": "Remote control" },
+        { "label": "Lighting", "value": "Multicolour RGB" }
+      ],
+      "featured": true,
+      "trending": true
+    },
+    {
+      "itemNumber": "F004",
+      "catalogKey": "tattoo-arm-sleeves",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.28.44 PM.png",
+        "Screenshot 2026-06-14 at 3.29.02 PM.png"
+      ],
+      "name": "Ink Illusion Tattoo Arm Sleeves",
+      "slug": "ink-illusion-tattoo-arm-sleeves",
+      "brand": "Cornerstore Select",
+      "price": 55,
+      "category": "accessories",
+      "subcategory": "arm-sleeves",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A matching pair of stretch sleeves with a bold tattoo-inspired print.",
+      "description": "A pair of lightweight compression-style arm sleeves with a detailed tattoo-inspired print for cycling, costumes and casual styling.",
+      "tags": ["arm-sleeves", "tattoo-print", "compression-sleeves", "cycling", "costume", "unisex"],
+      "specifications": [
+        { "label": "Set", "value": "Pair" },
+        { "label": "Material", "value": "Stretch fabric" },
+        { "label": "Fit", "value": "One size, flexible fit" }
+      ],
+      "featured": true
+    },
+    {
+      "itemNumber": "F005",
+      "catalogKey": "s-curve-led-desk-lamp",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.29.51 PM.png"],
+      "name": "S-Curve LED Accent Desk Lamp",
+      "slug": "s-curve-led-accent-desk-lamp",
+      "brand": "Cornerstore Select",
+      "price": 185,
+      "category": "lighting",
+      "subcategory": "desk-lamps",
+      "department": "lighting",
+      "audience": "home",
+      "shortDescription": "A sculptural LED lamp with a slim S-shaped frame.",
+      "description": "A modern S-curve LED desk lamp with a compact round base and soft integrated light for desks, bedside tables and reading corners.",
+      "tags": ["desk-lamp", "led-lamp", "accent-light", "modern-decor", "bedside-lamp"],
+      "specifications": [
+        { "label": "Light source", "value": "Integrated LED" },
+        { "label": "Style", "value": "S-curve accent lamp" },
+        { "label": "Colour", "value": "Black" }
+      ],
+      "featured": true
+    },
+    {
+      "itemNumber": "F006",
+      "catalogKey": "faux-leather-eye-patch",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.30.36 PM.png"],
+      "name": "Minimal Faux-Leather Eye Patch",
+      "slug": "minimal-faux-leather-eye-patch",
+      "brand": "Cornerstore Select",
+      "price": 45,
+      "category": "accessories",
+      "subcategory": "costume-accessories",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A contoured black eye patch with an adjustable strap.",
+      "description": "A minimal contoured faux-leather eye patch with a slim adjustable strap and silver-tone rivet details for costumes and creative styling.",
+      "tags": ["eye-patch", "costume", "faux-leather", "black", "adjustable", "unisex"],
+      "specifications": [
+        { "label": "Material", "value": "Faux leather" },
+        { "label": "Strap", "value": "Adjustable" },
+        { "label": "Colour", "value": "Black" }
+      ]
+    },
+    {
+      "itemNumber": "F007",
+      "catalogKey": "metallic-masquerade-mask-set",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.30.53 PM.png"],
+      "name": "Venetian Metallic Masquerade Mask Set",
+      "slug": "venetian-metallic-masquerade-mask-set",
+      "brand": "Cornerstore Select",
+      "price": 110,
+      "category": "accessories",
+      "subcategory": "costume-accessories",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "Two embossed half masks in antique silver and bronze finishes.",
+      "description": "A coordinated set of two Venetian-style half masks with raised floral scrollwork, ribbon ties and aged metallic finishes.",
+      "tags": ["masquerade-mask", "venetian-mask", "costume", "party", "metallic", "unisex"],
+      "specifications": [
+        { "label": "Set", "value": "Two masks" },
+        { "label": "Finish", "value": "Antique silver and bronze" },
+        { "label": "Fastening", "value": "Ribbon ties" }
+      ],
+      "featured": true
+    },
+    {
+      "itemNumber": "F008",
+      "catalogKey": "distressed-knit-balaclava",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.31.24 PM.png",
+        "Screenshot 2026-06-14 at 3.32.42 PM.png",
+        "Screenshot 2026-06-14 at 3.32.49 PM.png",
+        "Screenshot 2026-06-14 at 3.33.06 PM.png",
+        "Screenshot 2026-06-14 at 3.33.21 PM.png"
+      ],
+      "name": "Rift Distressed Knit Balaclava",
+      "slug": "rift-distressed-knit-balaclava",
+      "brand": "Cornerstore Select",
+      "price": 105,
+      "category": "clothing",
+      "subcategory": "headwear",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "An open-knit statement balaclava with an intentionally distressed finish.",
+      "description": "A textured streetwear balaclava with layered open-knit distressing, a single eye opening and extended neck coverage.",
+      "tags": ["distressed-knit", "balaclava", "headwear", "streetwear", "alternative-fashion", "unisex"],
+      "specifications": [
+        { "label": "Construction", "value": "Distressed open knit" },
+        { "label": "Fit", "value": "One size, flexible fit" },
+        { "label": "Colour", "value": "Black" }
+      ],
+      "featured": true,
+      "trending": true
+    },
+    {
+      "itemNumber": "F009",
+      "catalogKey": "distressed-knit-arm-warmers",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.31.37 PM.png"],
+      "name": "Rift Distressed Knit Arm Warmers",
+      "slug": "rift-distressed-knit-arm-warmers",
+      "brand": "Cornerstore Select",
+      "price": 75,
+      "category": "clothing",
+      "subcategory": "gloves-arm-warmers",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "Long fingerless arm warmers with layered distressed knit texture.",
+      "description": "A matching pair of long black fingerless arm warmers with thumb openings and an intentionally shredded open-knit finish.",
+      "tags": ["arm-warmers", "fingerless-gloves", "distressed-knit", "streetwear", "alternative-fashion", "unisex"],
+      "specifications": [
+        { "label": "Set", "value": "Pair" },
+        { "label": "Style", "value": "Fingerless with thumb openings" },
+        { "label": "Colour", "value": "Black" }
+      ],
+      "trending": true
+    },
+    {
+      "itemNumber": "F010",
+      "catalogKey": "metallic-single-tooth-caps",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.34.24 PM.png",
+        "Screenshot 2026-06-14 at 3.34.49 PM.png",
+        "Screenshot 2026-06-14 at 3.35.56 PM.png"
+      ],
+      "name": "Metallic Single-Tooth Cap Set",
+      "slug": "metallic-single-tooth-cap-set",
+      "brand": "Cornerstore Select",
+      "price": 60,
+      "category": "jewelry",
+      "subcategory": "tooth-jewelry",
+      "department": "jewelry",
+      "audience": "unisex",
+      "shortDescription": "Three removable single-tooth fashion caps in mixed metallic tones.",
+      "description": "A three-piece set of removable single-tooth fashion caps in gold, rose-gold and silver-tone finishes for temporary styling.",
+      "tags": ["tooth-cap", "tooth-jewelry", "grillz", "gold-tone", "silver-tone", "fashion-accessory"],
+      "specifications": [
+        { "label": "Set", "value": "Three caps" },
+        { "label": "Colours", "value": "Gold, rose gold and silver tone" },
+        { "label": "Use", "value": "Temporary fashion accessory" }
+      ],
+      "needsReview": true
+    },
+    {
+      "itemNumber": "F011",
+      "catalogKey": "rhinestone-four-tooth-grills",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.36.43 PM.png",
+        "Screenshot 2026-06-14 at 3.37.01 PM.png",
+        "Screenshot 2026-06-14 at 3.37.42 PM.png"
+      ],
+      "name": "Four-Stone Tooth Grill Set",
+      "slug": "four-stone-tooth-grill-set",
+      "brand": "Cornerstore Select",
+      "price": 95,
+      "category": "jewelry",
+      "subcategory": "tooth-jewelry",
+      "department": "jewelry",
+      "audience": "unisex",
+      "shortDescription": "A removable two-piece grill set with four clear stones.",
+      "description": "A silver-tone and gold-tone pair of removable fashion grills, each finished with four clear round stones for statement styling.",
+      "tags": ["tooth-grill", "tooth-jewelry", "grillz", "rhinestone", "gold-tone", "silver-tone"],
+      "specifications": [
+        { "label": "Set", "value": "Two grills" },
+        { "label": "Detail", "value": "Four clear stones per grill" },
+        { "label": "Use", "value": "Temporary fashion accessory" }
+      ],
+      "featured": true,
+      "needsReview": true
+    },
+    {
+      "itemNumber": "F012",
+      "catalogKey": "airflow-panel-balaclava",
+      "sourceImages": ["Screenshot 2026-06-14 at 3.38.00 PM.png"],
+      "name": "Airflow Panel Balaclava",
+      "slug": "airflow-panel-balaclava",
+      "brand": "Cornerstore Select",
+      "price": 125,
+      "category": "accessories",
+      "subcategory": "balaclavas",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A full-coverage balaclava with a structured vented front panel.",
+      "description": "A smooth black outdoor balaclava with a wide eye opening, extended neck and structured front panel designed to improve airflow around the mouth.",
+      "tags": ["balaclava", "airflow", "face-covering", "riding", "outdoor", "unisex"],
+      "specifications": [
+        { "label": "Panel", "value": "Structured airflow front" },
+        { "label": "Fit", "value": "One size, flexible fit" },
+        { "label": "Colour", "value": "Black with red accents" }
+      ],
+      "featured": true
+    },
+    {
+      "itemNumber": "F013",
+      "catalogKey": "vented-sports-face-mask",
+      "sourceImages": [
+        "Screenshot 2026-06-14 at 3.38.23 PM.png",
+        "Screenshot 2026-06-14 at 3.38.38 PM.png"
+      ],
+      "name": "Vented Outdoor Sports Face Mask",
+      "slug": "vented-outdoor-sports-face-mask",
+      "brand": "Cornerstore Select",
+      "price": 90,
+      "category": "accessories",
+      "subcategory": "face-coverings",
+      "department": "fashion",
+      "audience": "unisex",
+      "shortDescription": "A contoured fabric face covering with adjustable nose and airflow details.",
+      "description": "A reusable outdoor sports face covering with a shaped black fabric body, adjustable nose detail, ear loops and side airflow vents.",
+      "tags": ["sports-mask", "face-covering", "outdoor", "cycling", "riding", "unisex"],
+      "specifications": [
+        { "label": "Fit", "value": "Contoured with ear loops" },
+        { "label": "Detail", "value": "Adjustable nose bridge and side vents" },
+        { "label": "Colour", "value": "Black" }
+      ],
+      "trending": true
+    }
+  ],
+  "exceptions": []
+}

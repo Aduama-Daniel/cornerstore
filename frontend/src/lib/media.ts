@@ -18,7 +18,7 @@ export const normalizeMedia = (items: Array<string | MediaLike> = []): MediaLike
 
       return {
         ...item,
-        type: item.type || (isVideoUrl(item.url) ? 'video' : 'image')
+        type: isVideoUrl(item.url) ? 'video' : (item.type || 'image')
       };
     });
 };

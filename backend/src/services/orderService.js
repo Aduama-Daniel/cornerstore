@@ -102,7 +102,7 @@ export const updateOrderStatus = async (db, orderId, status) => {
     { returnDocument: 'after' }
   );
 
-  return result.value;
+  return result;
 };
 
 export const updatePaymentStatus = async (db, orderId, paymentStatus) => {
@@ -120,7 +120,7 @@ export const updatePaymentStatus = async (db, orderId, paymentStatus) => {
     { returnDocument: 'after' }
   );
 
-  return result.value;
+  return result;
 };
 
 export const verifyOrderPayment = async (db, orderId, reference) => {
@@ -159,7 +159,7 @@ export const verifyOrderPayment = async (db, orderId, reference) => {
       },
       { returnDocument: 'after' }
     );
-    return result.value;
+    return result;
   } else {
     throw new Error('Payment verification failed: ' + paymentData.message);
   }
@@ -189,7 +189,9 @@ export const getOrdersWithFilters = async (db, filters = {}, options = {}) => {
       query.createdAt.$gte = new Date(filters.dateFrom);
     }
     if (filters.dateTo) {
-      query.createdAt.$lte = new Date(filters.dateTo);
+      const end = new Date(filters.dateTo);
+      end.setHours(23, 59, 59, 999);
+      query.createdAt.$lte = end;
     }
   }
 
@@ -207,9 +209,25 @@ export const getOrdersWithFilters = async (db, filters = {}, options = {}) => {
     query.paymentMethod = filters.paymentMethod;
   }
 
+  if (filters.search) {
+    const search = { $regex: filters.search, $options: 'i' };
+    query.$and = [
+      ...(query.$and || []),
+      {
+        $or: [
+          { orderNumber: search },
+          { userEmail: search },
+          { 'shippingAddress.name': search },
+          { 'shippingAddress.phone': search }
+        ]
+      }
+    ];
+  }
+
   const limit = options.limit || 20;
   const skip = options.skip || 0;
-  const sortBy = options.sortBy || 'createdAt';
+  const allowedSorts = ['createdAt', 'total', 'orderNumber', 'status', 'paymentStatus'];
+  const sortBy = allowedSorts.includes(options.sortBy) ? options.sortBy : 'createdAt';
   const sortOrder = options.sortOrder === 'asc' ? 1 : -1;
 
   const [orders, total] = await Promise.all([
@@ -266,7 +284,11 @@ export const getOrderStats = async (db, dateRange = {}) => {
   if (dateRange.from || dateRange.to) {
     query.createdAt = {};
     if (dateRange.from) query.createdAt.$gte = new Date(dateRange.from);
-    if (dateRange.to) query.createdAt.$lte = new Date(dateRange.to);
+    if (dateRange.to) {
+      const end = new Date(dateRange.to);
+      end.setHours(23, 59, 59, 999);
+      query.createdAt.$lte = end;
+    }
   }
 
   const [totalOrders, statusCounts, paymentCounts, revenue] = await Promise.all([
@@ -283,7 +305,7 @@ export const getOrderStats = async (db, dateRange = {}) => {
     ]).toArray(),
 
     collection.aggregate([
-      { $match: { ...query, paymentStatus: 'paid' } },
+      { $match: { ...query, paymentStatus: { $in: ['paid', 'item_paid'] } } },
       { $group: { _id: null, total: { $sum: '$total' } } }
     ]).toArray()
   ]);
@@ -326,7 +348,7 @@ export const updateOrderStatusWithHistory = async (db, orderId, newStatus, admin
     { returnDocument: 'after' }
   );
 
-  return result.value;
+  return result;
 };
 
 // Admin: Get order status history
@@ -376,7 +398,7 @@ export const addOrderNote = async (db, orderId, adminId, adminName, note) => {
     { returnDocument: 'after' }
   );
 
-  return result.value;
+  return result;
 };
 
 export const updateOrderTracking = async (db, orderId, trackingData) => {
@@ -397,5 +419,5 @@ export const updateOrderTracking = async (db, orderId, trackingData) => {
     { returnDocument: 'after' }
   );
 
-  return result.value;
+  return result;
 };

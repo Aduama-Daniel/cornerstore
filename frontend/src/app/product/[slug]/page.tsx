@@ -6,6 +6,8 @@ import ProductDetailsSection from '@/components/ProductDetailsSection';
 import ProductReviewsSection from '@/components/ProductReviewsSection';
 import RecentlyViewed from '@/components/RecentlyViewed';
 import ProductViewTracker from '@/components/ProductViewTracker';
+import ProductSpecifications from '@/components/ProductSpecifications';
+import ProductPurchaseDetails from '@/components/ProductPurchaseDetails';
 import Link from 'next/link';
 
 const formatLabel = (value: string) => value.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -16,12 +18,13 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   if (!product) {
     return (
-      <div className="container-custom section-padding text-center">
-        <h1 className="mb-4 text-3xl font-serif">Product Not Found</h1>
-        <p className="mb-8 text-neutral">The product you're looking for doesn't exist or has been removed.</p>
-        <Link href="/shop" className="btn-primary inline-block">
-          Continue Shopping
-        </Link>
+      <div className="container-custom section-padding flex flex-col items-center text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light text-brand">
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+        </span>
+        <h1 className="mb-3 mt-6 text-2xl font-bold sm:text-3xl">Product not found</h1>
+        <p className="mb-8 max-w-md text-neutral">This product doesn&apos;t exist or is no longer available. Browse the catalogue or ask our assistant to help you find it.</p>
+        <Link href="/shop" className="btn-primary inline-flex">Continue shopping</Link>
       </div>
     );
   }
@@ -37,27 +40,39 @@ export default async function ProductPage({ params }: { params: { slug: string }
     <div className="min-h-screen">
       <ProductViewTracker productId={product._id} />
 
-      <div className="container-custom py-8 sm:py-10">
-        <nav className="flex flex-wrap items-center gap-2 text-[0.72rem] uppercase tracking-[0.24em] text-neutral/70">
-          <Link href="/" className="transition-colors hover:text-contrast">Home</Link>
-          <span>/</span>
-          <Link href="/shop" className="transition-colors hover:text-contrast">Shop</Link>
-          <span>/</span>
-          <Link href={`/collections/${product.category}`} className="transition-colors hover:text-contrast">
+      <div className="container-custom py-6 sm:py-8">
+        <nav className="flex flex-wrap items-center gap-2 text-xs text-neutral">
+          <Link href="/" className="transition-colors hover:text-brand">Home</Link>
+          <span className="text-sand">/</span>
+          <Link href="/shop" className="transition-colors hover:text-brand">Shop</Link>
+          <span className="text-sand">/</span>
+          <Link href={`/shop?category=${product.category}`} className="transition-colors hover:text-brand">
             {categoryLabel}
           </Link>
-          <span>/</span>
-          <span className="text-contrast">{product.name}</span>
+          <span className="text-sand">/</span>
+          <span className="font-medium text-contrast">{product.name}</span>
         </nav>
       </div>
 
       <div className="container-custom pb-10 sm:pb-12 lg:pb-16">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.78fr)_minmax(24rem,0.82fr)] lg:items-start lg:gap-10">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.82fr)_minmax(22rem,0.78fr)] lg:items-start lg:gap-14">
           <ProductImages images={mainMedia} productName={product.name} />
           <ProductInfo product={product} />
         </div>
       </div>
 
+      <ProductPurchaseDetails
+        specifications={product.specifications}
+        includedItems={product.includedItems}
+        deliveryNote={product.deliveryNote}
+        availabilityNote={product.availabilityNote}
+        faq={product.faq}
+      />
+      <ProductSpecifications
+        modelNumber={product.modelNumber}
+        specifications={product.specifications}
+        researchSources={product.researchSources}
+      />
       <ProductDetailsSection additionalMedia={additionalMedia} />
       <ProductReviewsSection productId={product._id} />
 
@@ -66,15 +81,14 @@ export default async function ProductPage({ params }: { params: { slug: string }
       </div>
 
       {relatedProducts.length > 0 && (
-        <div className="bg-warm-beige py-16">
+        <div className="border-t border-sand bg-cream py-12 sm:py-16">
           <div className="container-custom">
             <div className="mb-8 flex items-end justify-between gap-4">
               <div>
-                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-neutral">Related Picks</p>
-                <h2 className="mt-3 text-2xl font-serif sm:text-3xl">You May Also Like</h2>
+                <h2 className="text-2xl font-bold sm:text-3xl">You may also like</h2>
               </div>
-              <Link href={`/collections/${product.category}`} className="text-[0.72rem] uppercase tracking-[0.25em] link-underline">
-                View All
+              <Link href={`/shop?category=${product.category}`} className="hidden text-sm font-semibold text-brand hover:text-brand-dark sm:inline">
+                View all →
               </Link>
             </div>
             <ProductGrid products={relatedProducts} />
@@ -84,4 +98,3 @@ export default async function ProductPage({ params }: { params: { slug: string }
     </div>
   );
 }
-

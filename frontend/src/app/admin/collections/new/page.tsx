@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import AdminLayout from '@/components/admin/AdminLayout';
 import MediaUpload from '@/components/admin/MediaUpload';
+import { formatPrice } from '@/lib/currency';
 
 interface Product {
     _id: string;
@@ -35,12 +36,12 @@ export default function NewCollectionPage() {
             router.push('/admin/login');
             return;
         }
-        loadProducts();
+        loadProducts(credentials);
     }, [router]);
 
-    const loadProducts = async () => {
+    const loadProducts = async (credentials: string) => {
         try {
-            const response = await api.products.getAll();
+            const response = await api.admin.products.getAll(credentials);
             if (response.success && response.data) {
                 setProducts(response.data);
             }
@@ -259,7 +260,7 @@ export default function NewCollectionPage() {
                                 />
                                 <div className="flex-1">
                                     <div className="font-medium text-gray-900">{product.name}</div>
-                                    <div className="text-sm text-gray-500">${product.price}</div>
+                                    <div className="text-sm text-gray-500">{formatPrice(product.price)}</div>
                                 </div>
                             </div>
                         ))}

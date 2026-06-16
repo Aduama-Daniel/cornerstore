@@ -78,13 +78,14 @@ console.log('[GEMINI] Environment check:', {
 
 const getGeminiModel = () => {
     const apiKey = process.env.GEMINI_API_KEY;
+    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
     if (!apiKey) {
         throw new Error('GEMINI_API_KEY is not configured');
     }
 
     return new GoogleGenerativeAI(apiKey).getGenerativeModel({
-        model: 'gemini-2.0-flash',
+        model,
         tools
     });
 };
@@ -324,4 +325,3 @@ export const generateResponse = async (db, message, history = [], userId = null)
         };
     }
 };
-

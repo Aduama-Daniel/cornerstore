@@ -28,36 +28,30 @@ export default function InfoPageTemplate({
 }: InfoPageTemplateProps) {
   return (
     <div className="min-h-screen bg-cream">
-      <section data-header-theme="dark" className="relative -mt-[4.5rem] overflow-hidden bg-contrast pt-[4.5rem] text-cream sm:-mt-[5rem] sm:pt-[5rem]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,238,228,0.12),transparent_28%),linear-gradient(135deg,rgba(14,14,14,0.28),rgba(14,14,14,0.88))]" />
-        <div className="container-custom relative flex min-h-[42vh] items-end py-12 sm:py-14 lg:min-h-[48vh] lg:py-16">
-          <div className="max-w-4xl">
-            <p className="mb-4 text-[0.7rem] uppercase tracking-[0.45em] text-cream/55">{eyebrow}</p>
-            <h1 className="max-w-4xl text-4xl font-serif leading-[0.95] sm:text-6xl lg:text-7xl">{title}</h1>
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-cream/72 sm:text-base">{intro}</p>
-          </div>
+      <section className="border-b border-sand bg-white">
+        <div className="container-custom py-10 sm:py-12 lg:py-14">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand">{eyebrow}</p>
+          <h1 className="mt-3 max-w-3xl text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{title}</h1>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-neutral sm:text-base">{intro}</p>
         </div>
       </section>
 
-      <section className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)] lg:gap-10">
-          <div className="space-y-5">
+      <section className="container-custom py-10 sm:py-12 lg:py-14">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,0.8fr)] lg:gap-8">
+          <div className="space-y-4">
             {sections.map((section) => (
-              <article key={section.title} className="rounded-[2rem] border border-neutral/10 bg-white/75 p-6 backdrop-blur-sm sm:p-7">
-                <p className="mb-3 text-[0.68rem] uppercase tracking-[0.3em] text-neutral">Guide</p>
-                <h2 className="mb-3 text-2xl font-serif">{section.title}</h2>
+              <article key={section.title} className="card p-6 sm:p-7">
+                <h2 className="mb-3 text-lg font-bold sm:text-xl">{section.title}</h2>
                 <p className="leading-relaxed text-neutral">{section.body}</p>
               </article>
             ))}
           </div>
 
-          <aside className="h-fit rounded-[2rem] border border-neutral/10 bg-contrast p-6 text-cream shadow-[0_24px_60px_rgba(0,0,0,0.12)] sm:p-8 lg:sticky lg:top-24">
-            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-cream/60">Cornerstore Care</p>
-            <h2 className="mb-3 text-3xl font-serif">{ctaTitle}</h2>
-            <p className="mb-6 leading-relaxed text-cream/75">{ctaBody}</p>
-            <Link href={ctaHref} className="inline-flex items-center rounded-full bg-cream px-5 py-3 text-sm font-medium uppercase tracking-[0.2em] text-contrast transition-colors hover:bg-cream/90">
-              {ctaLabel}
-            </Link>
+          <aside className="h-fit rounded-2xl bg-contrast p-7 text-white shadow-card sm:p-8 lg:sticky lg:top-28">
+            <p className="text-xs font-bold uppercase tracking-wider text-white/50">Cornerstore support</p>
+            <h2 className="mt-3 text-2xl font-bold">{ctaTitle}</h2>
+            <p className="mt-3 leading-relaxed text-white/70">{ctaBody}</p>
+            <Link href={ctaHref} className="btn-primary mt-6">{ctaLabel}</Link>
           </aside>
         </div>
       </section>

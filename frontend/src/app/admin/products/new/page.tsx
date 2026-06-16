@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import MediaUploadSection from '@/components/admin/MediaUploadSection';
+import VariationManager, { ProductColor, ProductVariation } from '@/components/admin/VariationManager';
 
 const departmentOptions = [
     { value: 'fashion', label: 'Fashion' },
@@ -18,6 +19,7 @@ export default function NewProduct() {
     const router = useRouter();
     const [categories, setCategories] = useState<any[]>([]);
     const [brands, setBrands] = useState<any[]>([]);
+    const [colors, setColors] = useState<ProductColor[]>([]);
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
@@ -27,19 +29,14 @@ export default function NewProduct() {
         category: '',
         department: 'fashion',
         brandId: '',
-        sizes: [] as string[],
+        variations: [] as ProductVariation[],
         mainMedia: [{ url: '', type: 'image' as 'image' | 'video' }],
         additionalMedia: [] as Array<{ url: string; type: 'image' | 'video' }>,
         status: 'active',
         tags: [] as string[],
-        origin: 'Ghana',
-        heroAdvert: false,
-        heroHeadline: '',
-        heroSubtext: '',
-        heroCtaLabel: 'Shop Now'
+        origin: 'Ghana'
     });
     const [tagInput, setTagInput] = useState('');
-    const [sizeInput, setSizeInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -54,12 +51,14 @@ export default function NewProduct() {
 
     const loadFormOptions = async (credentials: string) => {
         try {
-            const [categoriesResponse, brandsResponse] = await Promise.all([
+            const [categoriesResponse, brandsResponse, colorsResponse] = await Promise.all([
                 api.admin.categories.getAll(credentials),
                 api.admin.brands.getAll(credentials),
+                api.admin.colors.getAll(credentials),
             ]);
             if (categoriesResponse.success) setCategories(categoriesResponse.data || []);
             if (brandsResponse.success) setBrands(brandsResponse.data || []);
+            if (colorsResponse.success) setColors(colorsResponse.data || []);
         } catch (error) {
             console.error('Failed to load form options:', error);
         }
@@ -79,11 +78,21 @@ export default function NewProduct() {
         }
 
         try {
+            const price = Number(formData.price);
+            const discountPrice = formData.discountPrice ? Number(formData.discountPrice) : null;
+            if (!Number.isFinite(price) || price <= 0) {
+                throw new Error('Price must be greater than zero');
+            }
+            if (discountPrice !== null && (discountPrice <= 0 || discountPrice >= price)) {
+                throw new Error('Discount price must be greater than zero and lower than the regular price');
+            }
+
             const productData = {
                 ...formData,
+                sizes: [...new Set(formData.variations.map((variation) => variation.size))],
                 brand: selectedBrand ? { id: selectedBrand._id, name: selectedBrand.name, slug: selectedBrand.slug } : null,
-                price: parseFloat(formData.price),
-                discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
+                price,
+                discountPrice,
                 mainMedia: formData.mainMedia.filter((m) => m.url.trim() !== ''),
                 additionalMedia: formData.additionalMedia.filter((m) => m.url.trim() !== ''),
                 images: formData.mainMedia.filter((m) => m.url.trim() !== '').map((m) => m.url)
@@ -114,14 +123,6 @@ export default function NewProduct() {
     };
 
     const removeTag = (tag: string) => setFormData({ ...formData, tags: formData.tags.filter((t) => t !== tag) });
-    const addSize = () => {
-        if (sizeInput.trim() && !formData.sizes.includes(sizeInput.trim())) {
-            setFormData({ ...formData, sizes: [...formData.sizes, sizeInput.trim()] });
-            setSizeInput('');
-        }
-    };
-    const removeSize = (size: string) => setFormData({ ...formData, sizes: formData.sizes.filter((s) => s !== size) });
-
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white shadow-sm">
@@ -157,11 +158,11 @@ export default function NewProduct() {
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Price *</label>
-                                <input type="number" required step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                                <input type="number" required min="0.01" step="0.01" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Discount Price</label>
-                                <input type="number" step="0.01" value={formData.discountPrice} onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                                <input type="number" min="0.01" step="0.01" value={formData.discountPrice} onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Status</label>
@@ -199,32 +200,11 @@ export default function NewProduct() {
                             </div>
                         </div>
 
-                        <div className="rounded-lg border border-gray-200 p-5">
-                            <div className="flex items-center justify-between gap-4">
-                                <div>
-                                    <h2 className="text-lg font-semibold text-gray-900">Hero advert settings</h2>
-                                    <p className="text-sm text-gray-500">Use this product as a homepage hero campaign slide.</p>
-                                </div>
-                                <label className="flex items-center gap-3 text-sm font-medium text-gray-700">
-                                    <input type="checkbox" checked={formData.heroAdvert} onChange={(e) => setFormData({ ...formData, heroAdvert: e.target.checked })} />
-                                    Feature in hero
-                                </label>
-                            </div>
-                            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                                <input type="text" placeholder="Hero headline" value={formData.heroHeadline} onChange={(e) => setFormData({ ...formData, heroHeadline: e.target.value })} className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
-                                <input type="text" placeholder="CTA label" value={formData.heroCtaLabel} onChange={(e) => setFormData({ ...formData, heroCtaLabel: e.target.value })} className="rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
-                                <textarea rows={3} placeholder="Hero subtext" value={formData.heroSubtext} onChange={(e) => setFormData({ ...formData, heroSubtext: e.target.value })} className="md:col-span-2 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Sizes (Optional)</label>
-                            <div className="mb-2 flex gap-2">
-                                <input type="text" value={sizeInput} onChange={(e) => setSizeInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSize())} placeholder="Add size" className="flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
-                                <button type="button" onClick={addSize} className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300">Add</button>
-                            </div>
-                            <div className="flex flex-wrap gap-2">{formData.sizes.map((size) => <span key={size} className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-800">{size}<button type="button" onClick={() => removeSize(size)} className="ml-2 text-gray-500 hover:text-gray-700">x</button></span>)}</div>
-                        </div>
+                        <VariationManager
+                            variations={formData.variations}
+                            availableColors={colors}
+                            onVariationsChange={(variations) => setFormData({ ...formData, variations })}
+                        />
 
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">Tags</label>

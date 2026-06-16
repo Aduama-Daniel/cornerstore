@@ -35,13 +35,15 @@ export default function CollectionsPage() {
             router.push('/admin/login');
             return;
         }
-        loadCollections();
+        loadCollections(credentials);
     }, [router]);
 
-    const loadCollections = async () => {
+    const loadCollections = async (credentials?: string) => {
         try {
             setLoading(true);
-            const response = await api.collections.getAll();
+            const creds = credentials || localStorage.getItem('adminCredentials');
+            if (!creds) return;
+            const response = await api.admin.collections.getAll(creds);
             if (response.success && response.data) {
                 setCollections(response.data);
             }
@@ -79,7 +81,7 @@ export default function CollectionsPage() {
 
             const response = await api.admin.collections.delete(credentials, collection._id);
             if (response.success) {
-                await loadCollections();
+                await loadCollections(credentials);
             }
         } catch (error) {
             console.error('Failed to delete collection:', error);

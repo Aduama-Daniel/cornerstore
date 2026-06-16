@@ -43,13 +43,15 @@ export default function ReviewsPage() {
             router.push('/admin/login');
             return;
         }
-        loadReviews();
+        loadReviews(credentials);
     }, [router]);
 
-    const loadReviews = async () => {
+    const loadReviews = async (credentials?: string) => {
         try {
             setLoading(true);
-            const response = await api.reviews.getAll();
+            const creds = credentials || localStorage.getItem('adminCredentials');
+            if (!creds) return;
+            const response = await api.admin.reviews.getAll(creds);
             if (response.success && response.data) {
                 setReviews(response.data);
             }

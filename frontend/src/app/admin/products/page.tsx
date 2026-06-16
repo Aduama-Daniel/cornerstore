@@ -1,106 +1,168 @@
 'use client';
 
-import { formatPrice } from '@/lib/currency';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
+import { formatPrice } from '@/lib/currency';
+import { getAdminCredentials } from '@/lib/admin';
+import { getPreferredMedia } from '@/lib/media';
+import { useToast } from '@/contexts/ToastContext';
+import ConfirmDialog from '@/components/admin/ConfirmDialog';
+
+const departments = [
+  ['fashion', 'Fashion'],
+  ['skincare', 'Skincare'],
+  ['lighting', 'Lighting'],
+  ['electricals', 'Electrical appliances'],
+  ['home-living', 'Home & living'],
+];
 
 export default function AdminProducts() {
-    const router = useRouter();
-    const [products, setProducts] = useState<any[]>([]);
-    const [brands, setBrands] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [credentials, setCredentials] = useState('');
-    const [filters, setFilters] = useState({ category: '', status: '', search: '', department: '', brandSlug: '' });
+  const { addToast } = useToast();
+  const [products, setProducts] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [filters, setFilters] = useState({ category: '', status: '', department: '', brandSlug: '' });
+  const [sort, setSort] = useState('newest');
+  const [deleteProduct, setDeleteProduct] = useState<any | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-    useEffect(() => {
-        const creds = localStorage.getItem('adminCredentials');
-        if (!creds) {
-            router.push('/admin/login');
-            return;
-        }
-        setCredentials(creds);
-        loadProducts(creds);
-        loadBrands(creds);
-    }, [router]);
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => window.clearTimeout(timeout);
+  }, [search]);
 
-    const loadProducts = async (creds: string, filterParams = filters) => {
-        try {
-            const response = await api.admin.products.getAll(creds, filterParams);
-            if (response.success) setProducts(response.data || []);
-        } catch (error) {
-            console.error('Failed to load products:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const loadOptions = async () => {
+    try {
+      const credentials = getAdminCredentials();
+      const [brandResponse, categoryResponse] = await Promise.all([
+        api.admin.brands.getAll(credentials),
+        api.admin.categories.getAll(credentials),
+      ]);
+      setBrands(brandResponse.data || []);
+      setCategories(categoryResponse.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load filters');
+    }
+  };
 
-    const loadBrands = async (creds: string) => {
-        try {
-            const response = await api.admin.brands.getAll(creds);
-            if (response.success) setBrands(response.data || []);
-        } catch (error) {
-            console.error('Failed to load brands:', error);
-        }
-    };
+  const loadProducts = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await api.admin.products.getAll(getAdminCredentials(), {
+        ...filters,
+        search: debouncedSearch,
+      });
+      setProducts(response.data || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this product?')) return;
-        try {
-            await api.admin.products.delete(credentials, id);
-            loadProducts(credentials);
-        } catch (error) {
-            console.error('Failed to delete product:', error);
-            alert('Failed to delete product');
-        }
-    };
+  useEffect(() => {
+    void loadOptions();
+  }, []);
 
-    const handleFilterChange = (key: string, value: string) => {
-        const newFilters = { ...filters, [key]: value };
-        setFilters(newFilters);
-        loadProducts(credentials, newFilters);
-    };
+  useEffect(() => {
+    void loadProducts();
+  }, [debouncedSearch, filters]);
 
-    if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  const sortedProducts = useMemo(() => {
+    const copy = [...products];
+    if (sort === 'name') return copy.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+    if (sort === 'price-high') return copy.sort((a, b) => Number(b.price) - Number(a.price));
+    if (sort === 'price-low') return copy.sort((a, b) => Number(a.price) - Number(b.price));
+    return copy.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  }, [products, sort]);
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center space-x-4"><Link href="/admin" className="text-gray-600 hover:text-gray-900">Back</Link><h1 className="text-2xl font-bold text-gray-900">Products</h1></div>
-                    <Link href="/admin/products/new" className="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800">+ New Product</Link>
-                </div>
-            </header>
-            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                <div className="mb-6 rounded-lg bg-white p-4 shadow-sm">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-                        <input type="text" placeholder="Search products..." value={filters.search} onChange={(e) => handleFilterChange('search', e.target.value)} className="rounded-md border border-gray-300 px-3 py-2 focus:border-black focus:outline-none focus:ring-black" />
-                        <select value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)} className="rounded-md border border-gray-300 px-3 py-2 focus:border-black focus:outline-none focus:ring-black"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
-                        <select value={filters.department} onChange={(e) => handleFilterChange('department', e.target.value)} className="rounded-md border border-gray-300 px-3 py-2 focus:border-black focus:outline-none focus:ring-black"><option value="">All Departments</option><option value="fashion">Fashion</option><option value="skincare">Skincare</option><option value="lighting">Lighting</option><option value="electricals">Electrical Appliances</option><option value="home-living">Home & Living</option></select>
-                        <select value={filters.brandSlug} onChange={(e) => handleFilterChange('brandSlug', e.target.value)} className="rounded-md border border-gray-300 px-3 py-2 focus:border-black focus:outline-none focus:ring-black"><option value="">All Brands</option>{brands.map((brand) => <option key={brand._id} value={brand.slug}>{brand.name}</option>)}</select>
-                        <input type="text" placeholder="Category slug" value={filters.category} onChange={(e) => handleFilterChange('category', e.target.value)} className="rounded-md border border-gray-300 px-3 py-2 focus:border-black focus:outline-none focus:ring-black" />
-                    </div>
-                </div>
-                <div className="overflow-hidden rounded-lg bg-white shadow-sm">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Product</th><th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Brand</th><th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Department</th><th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Price</th><th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th><th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th></tr></thead>
-                        <tbody className="divide-y divide-gray-200 bg-white">
-                            {products.map((product) => (
-                                <tr key={product._id}>
-                                    <td className="whitespace-nowrap px-6 py-4"><div className="flex items-center"><div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-gray-200">{product.images && product.images[0] ? <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">No image</div>}</div><div className="ml-4"><div className="text-sm font-medium text-gray-900">{product.name}</div><div className="text-sm text-gray-500">{product.category}</div></div></div></td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">{product.brand?.name || 'Unassigned'}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">{product.department || 'fashion'}{product.heroAdvert ? <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Hero</span> : null}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{formatPrice(product.price || 0)}</td>
-                                    <td className="px-6 py-4"><span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>{product.status}</span></td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"><Link href={`/admin/products/${product._id}/edit`} className="mr-4 text-blue-600 hover:text-blue-900">Edit</Link><button onClick={() => handleDelete(product._id)} className="text-red-600 hover:text-red-900">Delete</button></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {products.length === 0 && <div className="py-12 text-center text-gray-500">No products found. Create your first product.</div>}
-                </div>
-            </div>
+  const confirmDelete = async () => {
+    if (!deleteProduct) return;
+    setDeleting(true);
+    try {
+      await api.admin.products.delete(getAdminCredentials(), deleteProduct._id);
+      setProducts((current) => current.filter((product) => product._id !== deleteProduct._id));
+      addToast('Product deleted', 'success');
+      setDeleteProduct(null);
+    } catch (err) {
+      addToast(err instanceof Error ? err.message : 'Failed to delete product', 'error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setFilters({ category: '', status: '', department: '', brandSlug: '' });
+    setSort('newest');
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-amber-700">Catalogue</p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Products</h1>
+          <p className="mt-2 text-sm text-slate-600">Manage listings, prices, availability, categories, and brands.</p>
         </div>
-    );
+        <Link href="/admin/products/new" className="rounded-xl bg-slate-900 px-4 py-2.5 text-center text-sm font-bold text-white">Add product</Link>
+      </div>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name or description" className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm xl:col-span-2" />
+          <select value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm"><option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option><option value="out-of-stock">Out of stock</option></select>
+          <select value={filters.department} onChange={(event) => setFilters({ ...filters, department: event.target.value })} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm"><option value="">All departments</option>{departments.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>
+          <select value={filters.brandSlug} onChange={(event) => setFilters({ ...filters, brandSlug: event.target.value })} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm"><option value="">All brands</option>{brands.map((brand) => <option key={brand._id} value={brand.slug}>{brand.name}</option>)}</select>
+          <select value={filters.category} onChange={(event) => setFilters({ ...filters, category: event.target.value })} className="rounded-xl border border-slate-200 px-3 py-2.5 text-sm"><option value="">All categories</option>{categories.map((category) => <option key={category._id} value={category.slug}>{category.name}</option>)}</select>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <button type="button" onClick={clearFilters} className="text-sm font-bold text-slate-600">Clear filters</button>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-500">{products.length} products</span>
+            <select value={sort} onChange={(event) => setSort(event.target.value)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option value="newest">Newest</option><option value="name">Name</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option></select>
+          </div>
+        </div>
+      </section>
+
+      {error && <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
+
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        {loading ? (
+          <div className="p-12 text-center text-sm text-slate-500">Loading products...</div>
+        ) : sortedProducts.length === 0 ? (
+          <div className="p-12 text-center"><p className="text-sm text-slate-500">No products match these filters.</p><button type="button" onClick={clearFilters} className="mt-3 text-sm font-bold text-amber-700">Clear filters</button></div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-[58rem] w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50"><tr>{['Product', 'Brand', 'Department', 'Price', 'Status', ''].map((label) => <th key={label} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">{label}</th>)}</tr></thead>
+              <tbody className="divide-y divide-slate-100">
+                {sortedProducts.map((product) => {
+                  const media = getPreferredMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
+                  return (
+                    <tr key={product._id} className="hover:bg-slate-50">
+                      <td className="px-4 py-4"><div className="flex items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-slate-100">{media?.type === 'image' ? <img src={media.url} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs text-slate-400">Media</div>}</div><div className="min-w-0"><p className="max-w-64 truncate text-sm font-bold">{product.name}</p><p className="text-xs text-slate-500">{product.category || 'Uncategorized'}</p></div></div></td>
+                      <td className="px-4 py-4 text-sm text-slate-600">{product.brand?.name || 'Unassigned'}</td>
+                      <td className="px-4 py-4 text-sm text-slate-600">{product.department || 'Unclassified'}</td>
+                      <td className="px-4 py-4 text-sm font-bold">{formatPrice(Number(product.price) || 0)}</td>
+                      <td className="px-4 py-4"><span className={`rounded-full px-2.5 py-1 text-xs font-bold ${product.status === 'active' ? 'bg-emerald-50 text-emerald-700' : product.status === 'out-of-stock' ? 'bg-red-50 text-red-700' : 'bg-slate-100 text-slate-600'}`}>{product.status || 'unknown'}</span></td>
+                      <td className="px-4 py-4 text-right"><Link href={`/admin/products/${product._id}/edit`} className="mr-4 text-sm font-bold text-amber-700">Edit</Link><button type="button" onClick={() => setDeleteProduct(product)} className="text-sm font-bold text-red-600">Delete</button></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <ConfirmDialog isOpen={Boolean(deleteProduct)} onClose={() => !deleting && setDeleteProduct(null)} onConfirm={confirmDelete} title="Delete product" message={`Delete "${deleteProduct?.name || 'this product'}"? This cannot be undone.`} confirmText={deleting ? 'Deleting...' : 'Delete'} variant="danger" />
+    </div>
+  );
 }

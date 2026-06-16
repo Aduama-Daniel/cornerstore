@@ -37,13 +37,15 @@ export default function ColorsPage() {
             router.push('/admin/login');
             return;
         }
-        loadColors();
+        loadColors(credentials);
     }, [router]);
 
-    const loadColors = async () => {
+    const loadColors = async (credentials?: string) => {
         try {
             setLoading(true);
-            const response = await api.colors.getAll();
+            const creds = credentials || localStorage.getItem('adminCredentials');
+            if (!creds) return;
+            const response = await api.admin.colors.getAll(creds);
             if (response.success && response.data) {
                 setColors(response.data);
             }
@@ -72,7 +74,7 @@ export default function ColorsPage() {
 
             const response = await api.admin.colors.create(credentials, newColor);
             if (response.success) {
-                await loadColors();
+                await loadColors(credentials);
                 setNewColor({ name: '', slug: '', hexCode: '#000000' });
                 setIsAdding(false);
             }
@@ -106,7 +108,7 @@ export default function ColorsPage() {
 
             const response = await api.admin.colors.delete(credentials, color._id);
             if (response.success) {
-                await loadColors();
+                await loadColors(credentials);
             }
         } catch (error) {
             console.error('Failed to delete color:', error);

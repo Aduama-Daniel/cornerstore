@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { use } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,29 +9,23 @@ import OrderStatusBadge from '@/components/admin/OrderStatusBadge';
 import PaymentStatusBadge from '@/components/admin/PaymentStatusBadge';
 import ShippingModal from '@/components/admin/ShippingModal';
 import { useToast } from '@/contexts/ToastContext';
+import { adminFetcher, adminRequest } from '@/lib/admin';
 
-export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    const resolvedParams = use(params);
+export default function OrderDetailsPage({ params }: { params: { id: string } }) {
     const { addToast } = useToast();
     const [updating, setUpdating] = useState(false);
     const [newStatus, setNewStatus] = useState('');
     const [statusNotes, setStatusNotes] = useState('');
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
-    const { data, error, isLoading, mutate } = useSWR(
-        `/api/admin/orders/${resolvedParams.id}`,
-        async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/orders/${resolvedParams.id}`);
-            return res.json();
-        }
+    const { data, error, isLoading, mutate } = useSWR<any>(
+        `/api/admin/orders/${params.id}`,
+        adminFetcher
     );
 
-    const { data: historyData, mutate: mutateHistory } = useSWR(
-        `/api/admin/orders/${resolvedParams.id}/history`,
-        async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/orders/${resolvedParams.id}/history`);
-            return res.json();
-        }
+    const { data: historyData, mutate: mutateHistory } = useSWR<any>(
+        `/api/admin/orders/${params.id}/history`,
+        adminFetcher
     );
 
     const order = data?.data;
@@ -46,23 +39,14 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
 
         try {
             setUpdating(true);
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/admin/orders/${resolvedParams.id}/status`,
-                {
+            await adminRequest(`/api/admin/orders/${params.id}/status`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: newStatus, notes: statusNotes })
-                }
-            );
-
-            if (res.ok) {
-                addToast('Order status updated successfully', 'success');
-                setNewStatus('');
-                setStatusNotes('');
-                mutate();
-            } else {
-                addToast('Failed to update status', 'error');
-            }
+                });
+            addToast('Order status updated successfully', 'success');
+            setNewStatus('');
+            setStatusNotes('');
+            await Promise.all([mutate(), mutateHistory()]);
         } catch (error) {
             addToast('Failed to update status', 'error');
         } finally {
@@ -333,11 +317,8 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h2 className="text-lg font-semibold mb-4">Actions</h2>
                             <div className="space-y-2">
-                                <button className="w-full btn-secondary text-sm">
+                                <button type="button" onClick={() => window.print()} className="w-full btn-secondary text-sm">
                                     Print Invoice
-                                </button>
-                                <button className="w-full btn-secondary text-sm">
-                                    Send Confirmation Email
                                 </button>
                                 <button
                                     onClick={() => setIsShippingModalOpen(true)}

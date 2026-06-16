@@ -83,6 +83,26 @@ export default async function collectionRoutes(fastify, options) {
 
 // Admin routes
 export async function adminCollectionRoutes(fastify, options) {
+    fastify.get('/', { preHandler: adminAuth }, async (request, reply) => {
+        try {
+            const collections = await getAllCollections(fastify.db, request.query.includeProducts === 'true');
+            return { success: true, data: collections };
+        } catch (error) {
+            fastify.log.error(error);
+            return reply.status(500).send({ error: true, message: 'Failed to fetch collections' });
+        }
+    });
+
+    fastify.get('/:id', { preHandler: adminAuth }, async (request, reply) => {
+        try {
+            const collection = await getCollectionById(fastify.db, request.params.id);
+            if (!collection) return reply.status(404).send({ error: true, message: 'Collection not found' });
+            return { success: true, data: collection };
+        } catch (error) {
+            fastify.log.error(error);
+            return reply.status(500).send({ error: true, message: 'Failed to fetch collection' });
+        }
+    });
 
     // Create collection
     fastify.post('/', { preHandler: adminAuth }, async (request, reply) => {

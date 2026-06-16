@@ -3,13 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { formatPrice } from '@/lib/currency';
 import { api } from '@/lib/api';
 import ColorSelector from './ColorSelector';
 import SizeSelector from './SizeSelector';
-import StockIndicator from './StockIndicator';
 import WishlistButton from './WishlistButton';
 
 interface Color {
@@ -40,6 +38,7 @@ interface Product {
   name: string;
   slug: string;
   description: string;
+  shortDescription?: string;
   price: number;
   discountPrice?: number;
   category: string;
@@ -49,6 +48,7 @@ interface Product {
   status: string;
   tags?: string[];
   origin?: 'Ghana' | 'China';
+  modelNumber?: string;
 }
 
 interface ProductInfoProps {
@@ -66,7 +66,6 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [currentVariant, setCurrentVariant] = useState<InventoryItem | null>(null);
 
   const { addItem } = useCart();
-  const { user } = useAuth();
   const { addToast } = useToast();
   const router = useRouter();
 
@@ -179,6 +178,18 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const discountedPrice = product.discountPrice;
   const isOnSale = discountedPrice && discountedPrice < price;
   const effectiveVariant = currentVariant || (inventory.length === 1 && inventory[0].size === '' && inventory[0].colorSlug === '' ? inventory[0] : null);
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, '');
+  const selectedOptions = [
+    selectedColor ? `Color: ${selectedColor}` : '',
+    selectedSize ? `Size: ${selectedSize}` : '',
+    `Quantity: ${quantity}`,
+  ].filter(Boolean);
+  const whatsappMessage = encodeURIComponent(
+    `Hello Cornerstore, I am interested in ${product.name}${product.modelNumber ? ` (${product.modelNumber})` : ''}.\n${selectedOptions.join('\n')}`
+  );
+  const whatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
+    : null;
 
   const isAddToCartDisabled = Boolean(
     isOutOfStock ||
@@ -190,7 +201,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   if (loading) {
     return (
-      <div className="animate-pulse space-y-4 rounded-[1.5rem] border border-black/10 bg-white/72 p-5 backdrop-blur-sm sm:p-6">
+      <div className="animate-pulse space-y-4 py-5 sm:py-6">
         <div className="h-4 w-28 rounded bg-gray-200"></div>
         <div className="h-8 w-3/4 rounded bg-gray-200"></div>
         <div className="h-16 rounded bg-gray-200"></div>
@@ -200,38 +211,29 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   }
 
   return (
-    <div className="space-y-4 rounded-[1.5rem] border border-black/10 bg-white/72 p-5 backdrop-blur-sm sm:p-6 lg:max-h-[70vh] lg:overflow-y-auto lg:p-7">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
-          {product.brand?.name || 'Cornerstore'}
-        </span>
-        <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
-          {product.category.replace('-', ' ')}
-        </span>
-        {product.origin ? (
-          <span className="rounded-full border border-black/10 px-3 py-1.5 text-[0.64rem] uppercase tracking-[0.2em] text-neutral">
-            {product.origin}
-          </span>
-        ) : null}
-      </div>
+    <div className="space-y-6 py-1">
+      <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral">
+        {[product.brand?.name, product.category.replace('-', ' '), product.origin].filter(Boolean).join(' · ')}
+      </p>
 
       <div>
         <div className="flex flex-wrap items-center gap-2">
           {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
           {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
         </div>
-        <div className="mt-4 flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-serif sm:text-3xl">{product.name}</h2>
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-neutral">{product.description}</p>
+            <h1 className="text-2xl font-serif sm:text-3xl">{product.name}</h1>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral">
+              {product.shortDescription || product.description}
+            </p>
           </div>
           <WishlistButton productId={product._id} productName={product.name} size="lg" showLabel={false} />
         </div>
       </div>
 
-      <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
-        <p className="text-[0.64rem] uppercase tracking-[0.3em] text-neutral">Price</p>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+      <div className="border-y border-sand py-5">
+        <div className="flex flex-wrap items-center gap-3">
           {isOnSale ? (
             <>
               <p className="text-2xl font-medium text-red-600 sm:text-3xl">{formatPrice(discountedPrice)}</p>
@@ -244,7 +246,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       {productColors.filter((color) => color.slug !== '').length > 0 && (
-        <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
+        <div className="border-b border-sand pb-6">
           <ColorSelector
             colors={productColors.filter((color) => color.slug !== '')}
             selectedColor={selectedColor}
@@ -255,7 +257,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )}
 
       {(selectedColor || availableColorSlugs.filter((item) => item !== '').length === 0) && availableSizes.filter((item) => item !== '').length > 0 && (
-        <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
+        <div className="border-b border-sand pb-6">
           <SizeSelector
             sizes={availableSizes.filter((item) => item !== '')}
             selectedSize={selectedSize}
@@ -265,13 +267,12 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       )}
 
-      {currentVariant && <StockIndicator available={currentVariant.enabled && currentVariant.stockQuantity > 0} stockQuantity={currentVariant.stockQuantity} lowStockThreshold={5} />}
-
-      <div className="rounded-[1.25rem] border border-black/10 bg-[#fbf8f4] p-4 sm:p-5">
+      <div className="border-b border-sand pb-6">
         <label className="mb-3 block text-sm font-medium uppercase tracking-wide">Quantity</label>
         <div className="flex w-fit items-center overflow-hidden rounded-full border border-neutral/20 bg-white">
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            aria-label="Decrease quantity"
             className="px-4 py-3 transition-colors hover:bg-sand/30"
             disabled={isOutOfStock || !effectiveVariant}
           >
@@ -282,6 +283,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           <span className="min-w-[4rem] border-x border-neutral/20 px-5 py-3 text-center">{quantity}</span>
           <button
             onClick={() => setQuantity(Math.min(effectiveVariant?.stockQuantity || 1, quantity + 1))}
+            aria-label="Increase quantity"
             className="px-4 py-3 transition-colors hover:bg-sand/30"
             disabled={isOutOfStock || !effectiveVariant}
           >
@@ -292,73 +294,61 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         </div>
       </div>
 
-      <div className="space-y-3 pt-1">
-        <button
-          onClick={handleAddToCart}
-          disabled={isAddToCartDisabled}
-          className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
-        >
+      <div className={`border-l-2 px-4 py-1 text-sm ${
+        isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
+          ? 'border-red-500 text-red-800'
+          : 'border-brand text-neutral'
+      }`}>
+        <p className="font-medium">
           {isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
-            ? 'Out of Stock'
-            : adding
-              ? 'Adding...'
-              : 'Add to Bag'}
-        </button>
-
-        {!user && (
-          <p className="text-center text-xs text-neutral">
-            <button onClick={() => router.push('/login')} className="underline hover:text-contrast">
-              Sign in
-            </button>{' '}
-            to save items to your account
-          </p>
-        )}
+            ? 'Selected option is currently unavailable.'
+            : 'Availability is confirmed before fulfilment.'}
+        </p>
       </div>
 
-      <div className="space-y-3 border-t border-black/10 pt-5">
-        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
-          <summary className="flex cursor-pointer list-none items-center justify-between">
-            <span className="text-sm font-medium uppercase tracking-wide">Product Details</span>
-            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="mt-4 space-y-2 text-sm text-neutral">
-            <p>Premium materials sourced from ethical suppliers.</p>
-            <p>Designed for longevity and timeless style.</p>
-            <p>Made with attention to detail and craftsmanship.</p>
-          </div>
-        </details>
+      <div className="space-y-3 pt-1">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={isAddToCartDisabled}
+            className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
+              ? 'Unavailable'
+              : adding
+                ? 'Adding...'
+                : 'Add to cart'}
+          </button>
 
-        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
-          <summary className="flex cursor-pointer list-none items-center justify-between">
-            <span className="text-sm font-medium uppercase tracking-wide">Shipping & Returns</span>
-            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="mt-4 space-y-2 text-sm text-neutral">
-            <p>Free shipping on all orders within Ghana.</p>
-            <p>14-day return policy on unworn items.</p>
-            <p>International shipping available.</p>
-          </div>
-        </details>
+          {whatsappHref ? (
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-whatsapp w-full"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" />
+              </svg>
+              Order on WhatsApp
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={() => router.push('/contact')}
+              className="btn-secondary w-full"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01" />
+              </svg>
+              Ask about this product
+            </button>
+          )}
+        </div>
 
-        <details className="group rounded-[1.1rem] border border-black/10 bg-[#fbf8f4] px-4 py-3.5">
-          <summary className="flex cursor-pointer list-none items-center justify-between">
-            <span className="text-sm font-medium uppercase tracking-wide">Care Instructions</span>
-            <svg className="h-5 w-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </summary>
-          <div className="mt-4 space-y-2 text-sm text-neutral">
-            <p>Dry clean recommended.</p>
-            <p>Store in a cool, dry place.</p>
-            <p>Avoid direct sunlight.</p>
-          </div>
-        </details>
       </div>
     </div>
   );
 }
-

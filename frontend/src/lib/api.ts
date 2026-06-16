@@ -223,6 +223,11 @@ export const api = {
           headers: { Authorization: `Basic ${credentials}` },
         }),
 
+      getById: (credentials: string, id: string): Promise<ApiResponse> =>
+        fetchWithAuth(`/api/admin/categories/${id}`, null, {
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+
       create: (credentials: string, data: any): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/categories', null, {
           method: 'POST',
@@ -352,6 +357,11 @@ export const api = {
         });
       },
 
+      getOutOfStock: (credentials: string): Promise<ApiResponse> =>
+        fetchWithAuth('/api/admin/inventory/alerts/out-of-stock', null, {
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+
       bulkUpdate: (credentials: string, updates: any[]): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/inventory/bulk-update', null, {
           method: 'POST',
@@ -363,6 +373,11 @@ export const api = {
     collections: {
       getAll: (credentials: string): Promise<ApiResponse> =>
         fetchWithAuth('/api/admin/collections', null, {
+          headers: { Authorization: `Basic ${credentials}` },
+        }),
+
+      getById: (credentials: string, id: string): Promise<ApiResponse> =>
+        fetchWithAuth(`/api/admin/collections/${id}`, null, {
           headers: { Authorization: `Basic ${credentials}` },
         }),
 

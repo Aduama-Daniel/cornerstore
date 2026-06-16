@@ -1,19 +1,20 @@
 import type { Metadata } from 'next';
-import { Crimson_Pro, Manrope } from 'next/font/google';
+import { Plus_Jakarta_Sans, Manrope } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 import { RecentlyViewedProvider } from '@/contexts/RecentlyViewedContext';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import Chatbot from '@/components/Chatbot';
+import { ModeProvider } from '@/contexts/ModeContext';
+import { getServerMode } from '@/lib/serverMode';
+import { MODE_CONFIG } from '@/lib/modes';
+import AppChrome from '@/components/AppChrome';
 
-const crimsonPro = Crimson_Pro({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-serif',
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 const manrope = Manrope({
@@ -23,8 +24,9 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: 'Cornerstore - Premium Fashion',
-  description: 'Curated for the modern intellectual. Premium fashion and design objects.',
+  title: 'Cornerstore - Everyday essentials, delivered in Ghana',
+  description:
+    'Cornerstore is your online convenience store for useful everyday items in Ghana. Browse, order, and get it delivered. Pay with Paystack or order on WhatsApp.',
 };
 
 export default function RootLayout({
@@ -32,23 +34,32 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const mode = getServerMode();
+  const cfg = MODE_CONFIG[mode];
+  const accentVars = {
+    '--accent': cfg.accentRgb,
+    '--accent-dark': cfg.accentDark,
+    '--accent-light': cfg.accentLight,
+    '--accent-soft': cfg.accentSoft,
+  } as React.CSSProperties;
   return (
-    <html lang="en" className={`${crimsonPro.variable} ${manrope.variable}`}>
-      <body>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <RecentlyViewedProvider>
-                <ToastProvider>
-                  <Header />
-                  <main className="min-h-screen">{children}</main>
-                  <Chatbot />
-                  <Footer />
-                </ToastProvider>
-              </RecentlyViewedProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+    <html lang="en" className={`${jakarta.variable} ${manrope.variable}`}>
+      <body style={accentVars}>
+        <ModeProvider initialMode={mode}>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <RecentlyViewedProvider>
+                  <ToastProvider>
+                    <AppChrome>
+                      <main className="min-h-screen">{children}</main>
+                    </AppChrome>
+                  </ToastProvider>
+                </RecentlyViewedProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </ModeProvider>
       </body>
     </html>
   );

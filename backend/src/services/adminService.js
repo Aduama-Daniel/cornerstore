@@ -70,12 +70,31 @@ export const getAdminStats = async (db) => {
     const productsCollection = db.collection('products');
     const categoriesCollection = db.collection('categories');
     const ordersCollection = db.collection('orders');
+    const inventoryCollection = db.collection('inventory');
 
-    const [totalProducts, totalCategories, totalOrders, activeProducts] = await Promise.all([
+    const [
+        totalProducts,
+        totalCategories,
+        totalOrders,
+        activeProducts,
+        pendingOrders,
+        failedPayments,
+        lowStockVariants,
+        revenueResult,
+        recentOrders
+    ] = await Promise.all([
         productsCollection.countDocuments(),
         categoriesCollection.countDocuments(),
         ordersCollection.countDocuments(),
-        productsCollection.countDocuments({ status: 'active' })
+        productsCollection.countDocuments({ status: 'active' }),
+        ordersCollection.countDocuments({ status: { $in: ['pending', 'payment_confirmed', 'processing'] } }),
+        ordersCollection.countDocuments({ paymentStatus: 'failed' }),
+        inventoryCollection.countDocuments({ enabled: true, stockQuantity: { $lte: 5 } }),
+        ordersCollection.aggregate([
+            { $match: { paymentStatus: { $in: ['paid', 'item_paid'] } } },
+            { $group: { _id: null, total: { $sum: '$total' } } }
+        ]).toArray(),
+        ordersCollection.find({}).sort({ createdAt: -1 }).limit(5).toArray()
     ]);
 
     const recentProducts = await productsCollection
@@ -89,7 +108,12 @@ export const getAdminStats = async (db) => {
         totalCategories,
         totalOrders,
         activeProducts,
-        recentProducts
+        pendingOrders,
+        failedPayments,
+        lowStockVariants,
+        totalRevenue: revenueResult[0]?.total || 0,
+        recentProducts,
+        recentOrders
     };
 };
 

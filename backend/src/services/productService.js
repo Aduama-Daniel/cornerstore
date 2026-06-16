@@ -67,6 +67,9 @@ export const createProduct = async (db, productData) => {
     tags: productData.tags || [],
     origin: productData.origin || 'Ghana',
     discountPrice: productData.discountPrice ? parseFloat(productData.discountPrice) : null,
+    modelNumber: productData.modelNumber || '',
+    specifications: Array.isArray(productData.specifications) ? productData.specifications : [],
+    researchSources: Array.isArray(productData.researchSources) ? productData.researchSources : [],
     variations: productData.variations || [],
     createdAt: new Date(),
     updatedAt: new Date()
@@ -95,7 +98,7 @@ export const createProduct = async (db, productData) => {
       result.insertedId,
       '',
       '',
-      100,
+      Number.isFinite(Number(product.stockQuantity)) ? Number(product.stockQuantity) : 100,
       null
     );
   }
@@ -123,6 +126,7 @@ export const updateProduct = async (db, productId, productData) => {
 
     const existingInventory = await getInventoryByProduct(db, productId);
     const existingKeys = new Set(existingInventory.map(inv => `${inv.size}-${inv.colorSlug}`));
+    const activeKeys = new Set(productData.variations.map(variation => `${variation.size}-${variation.colorSlug}`));
 
     for (const variation of productData.variations) {
       const key = `${variation.size}-${variation.colorSlug}`;
@@ -135,8 +139,39 @@ export const updateProduct = async (db, productId, productData) => {
           variation.stockQuantity || 0,
           variation.priceOverride || null
         );
+      } else {
+        await db.collection('inventory').updateOne(
+          {
+            productId: new ObjectId(productId),
+            size: variation.size,
+            colorSlug: variation.colorSlug
+          },
+          {
+            $set: {
+              stockQuantity: Math.max(0, Number(variation.stockQuantity) || 0),
+              priceOverride: variation.priceOverride ?? null,
+              enabled: variation.enabled !== false,
+              updatedAt: new Date()
+            }
+          }
+        );
       }
     }
+
+    await db.collection('inventory').updateMany(
+      {
+        productId: new ObjectId(productId),
+        $expr: {
+          $not: {
+            $in: [
+              { $concat: ['$size', '-', '$colorSlug'] },
+              [...activeKeys]
+            ]
+          }
+        }
+      },
+      { $set: { enabled: false, updatedAt: new Date() } }
+    );
   } else if (!productData.sizes || productData.sizes.length === 0) {
     const { getInventoryByProduct, createInventoryForVariant } = await import('./inventoryService.js');
     const existingInventory = await getInventoryByProduct(db, productId);

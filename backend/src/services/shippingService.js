@@ -21,7 +21,7 @@ export async function updateTrackingNumber(db, orderId, trackingNumber, courier,
         { returnDocument: 'after' }
     );
 
-    return result.value;
+    return result;
 }
 
 // Update delivery status
@@ -49,7 +49,7 @@ export async function updateDeliveryStatus(db, orderId, deliveredAt) {
         { returnDocument: 'after' }
     );
 
-    return result.value;
+    return result;
 }
 
 // Get shipping label data
@@ -80,7 +80,7 @@ export async function getOrdersReadyToShip(db, limit = 50) {
 
     const orders = await collection
         .find({
-            paymentStatus: 'paid',
+            paymentStatus: { $in: ['paid', 'item_paid'] },
             status: 'processing',
             trackingNumber: { $exists: false }
         })

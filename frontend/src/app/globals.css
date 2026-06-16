@@ -1,12 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Default accent = Fashion (gold). Overridden per mode on <body> in layout.tsx.
+       --accent is RGB channels so Tailwind can do `brand/<opacity>`. */
+    --accent: 197 154 83;
+    --accent-dark: #A87B38;
+    --accent-light: #F4ECDB;
+    --accent-soft: rgba(197, 154, 83, 0.16);
+  }
+
   * {
-    @apply border-neutral/20;
+    @apply border-sand;
   }
 
   html {
@@ -15,68 +22,82 @@
 
   body {
     @apply bg-cream text-contrast font-sans antialiased overflow-x-hidden;
-    background-image:
-      radial-gradient(circle at top, rgba(232, 221, 207, 0.4), transparent 32%),
-      linear-gradient(180deg, rgba(250, 247, 242, 0.98), rgba(250, 247, 242, 1));
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    @apply font-serif font-semibold tracking-tight;
   }
 }
 
 @layer components {
+  /* Primary action: solid brand green pill. Friendly, high-contrast, conversion-focused. */
   .btn-primary {
-    @apply px-5 py-3 sm:px-8 sm:py-4 bg-contrast text-cream font-medium tracking-wide uppercase text-xs sm:text-sm
-           hover:bg-contrast/90 transition-all duration-300 disabled:opacity-50
-           disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3.5
+           text-sm font-semibold text-white transition-all duration-200
+           hover:bg-brand-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Dark action: ink pill for secondary primary actions on light surfaces. */
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-contrast px-6 py-3.5
+           text-sm font-semibold text-white transition-all duration-200
+           hover:bg-contrast/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply px-5 py-3 sm:px-8 sm:py-4 border-2 border-contrast text-contrast font-medium tracking-wide
-           uppercase text-xs sm:text-sm hover:bg-contrast hover:text-cream transition-all duration-300;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-contrast/15
+           bg-white px-6 py-3.5 text-sm font-semibold text-contrast transition-all duration-200
+           hover:border-contrast/30 hover:bg-sand/40 active:scale-[0.98]
+           disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply px-4 py-3 sm:px-6 text-contrast font-medium tracking-wide uppercase text-xs sm:text-sm
-           hover:text-neutral transition-colors duration-300;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm
+           font-medium text-neutral transition-colors duration-200 hover:bg-sand/50 hover:text-contrast;
+  }
+
+  /* WhatsApp ordering action. */
+  .btn-whatsapp {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5
+           text-sm font-semibold text-white transition-all duration-200
+           hover:bg-[#1ebe5a] active:scale-[0.98];
   }
 
   .input-field {
-    @apply w-full px-4 py-3 border border-neutral/30 bg-cream text-contrast
-           placeholder:text-neutral/50 focus:outline-none focus:border-contrast
-           transition-colors duration-200;
+    @apply w-full rounded-xl border border-sand bg-white px-4 py-3 text-contrast
+           placeholder:text-neutral/60 transition-shadow duration-200
+           focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25;
+  }
+
+  .card {
+    @apply rounded-2xl border border-sand bg-white shadow-card transition-all duration-200;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-sand bg-white px-3 py-1.5
+           text-xs font-medium text-neutral;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold;
   }
 
   .section-padding {
-    @apply py-12 md:py-20 lg:py-28;
+    @apply py-12 md:py-16 lg:py-20;
   }
 
   .container-custom {
-    @apply mx-auto max-w-8xl px-4 sm:px-6 md:px-8 lg:px-12;
+    @apply mx-auto max-w-8xl px-4 sm:px-6 md:px-8 lg:px-10;
   }
 
   .link-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-px
+    @apply relative font-medium after:absolute after:bottom-0 after:left-0 after:h-px
            after:w-0 after:bg-current after:transition-all after:duration-300
            hover:after:w-full;
   }
 
   .image-overlay {
     @apply relative overflow-hidden;
-  }
-
-  .image-overlay::before {
-    @apply absolute inset-0 bg-contrast/10 opacity-0 transition-opacity duration-300 z-10;
-    content: '';
-  }
-
-  .image-overlay:hover::before {
-    @apply opacity-100;
-  }
-
-  .editorial-spacing {
-    @apply space-y-5 sm:space-y-6 leading-relaxed;
   }
 }
 
@@ -85,14 +106,22 @@
     text-wrap: balance;
   }
 
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .animate-fade-in {
-    animation: fadeIn 0.8s ease-in-out;
+    animation: fadeIn 0.6s ease-in-out;
   }
 
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(16px);
     }
     to {
       opacity: 1;
@@ -101,17 +130,42 @@
   }
 
   .animate-slide-up {
-    animation: slideUp 0.6s ease-out;
+    animation: slideUp 0.5s ease-out;
   }
 
   @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(40px);
+      transform: translateY(28px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  /* Mode-switch loader */
+  .animate-loadbar {
+    animation: loadbar 0.9s ease-in-out infinite;
+  }
+
+  @keyframes loadbar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(320%); }
+  }
+
+  .animate-mode-pop {
+    animation: modePop 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes modePop {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   }
 }
@@ -121,21 +175,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF7F2;
+  background: #F7F8FA;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #8B857D;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2E2E2C;
+  background: #94A3B8;
 }
 
 ::selection {
-  background: #E8DDCF;
-  color: #2E2E2C;
+  background: #E7F3EC;
+  color: #0F172A;
 }
-
-

@@ -1,0 +1,1525 @@
+{
+  "version": 1,
+  "defaults": {
+    "status": "inactive",
+    "stockQuantity": 1,
+    "origin": "China",
+    "discountPrice": null
+  },
+  "categories": [
+    {
+      "name": "Kettles",
+      "slug": "kettles",
+      "department": "electricals"
+    },
+    {
+      "name": "Blenders & Mixers",
+      "slug": "blenders-mixers",
+      "department": "electricals"
+    },
+    {
+      "name": "Kitchen Appliances",
+      "slug": "kitchen-appliances",
+      "department": "electricals"
+    },
+    {
+      "name": "Personal Care",
+      "slug": "personal-care",
+      "department": "electricals"
+    },
+    {
+      "name": "Lighting",
+      "slug": "lighting",
+      "department": "lighting"
+    },
+    {
+      "name": "Automotive Accessories",
+      "slug": "automotive-accessories",
+      "department": "home-living"
+    },
+    {
+      "name": "Home Accessories",
+      "slug": "home-accessories",
+      "department": "home-living"
+    },
+    {
+      "name": "Sports & Fitness",
+      "slug": "sports-fitness",
+      "department": "home-living"
+    }
+  ],
+  "products": [
+    {
+      "itemNumber": "001",
+      "catalogKey": "IMG_2052",
+      "sourceImages": [
+        "IMG_2052.jpg"
+      ],
+      "name": "Winning Star 1.8L Glass Electric Kettle",
+      "slug": "winning-star-st-6017-glass-electric-kettle",
+      "brand": "Winning Star",
+      "modelNumber": "ST-6017",
+      "price": 160,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A 1.8-litre glass electric kettle with a cool-touch handle, illuminated base and boil-dry protection for everyday hot drinks.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.8 L"
+        },
+        {
+          "label": "Body",
+          "value": "Glass with stainless-steel base"
+        },
+        {
+          "label": "Safety",
+          "value": "Boil-dry protection"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "transparent glass electric kettle with black lid and handle, brushed stainless-steel base and blue illuminated ring"
+    },
+    {
+      "itemNumber": "002",
+      "catalogKey": "IMG_2053",
+      "sourceImages": [
+        "IMG_2053.jpg"
+      ],
+      "name": "Sonifer 1.7L Double-Wall Electric Kettle",
+      "slug": "sonifer-sf-2096-electric-kettle",
+      "brand": "Sonifer",
+      "modelNumber": "SF-2096",
+      "price": 180,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A 1.7-litre double-wall electric kettle with a stainless-steel interior, 360-degree cordless base and automatic shut-off.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.7 L"
+        },
+        {
+          "label": "Power",
+          "value": "1500 W"
+        },
+        {
+          "label": "Interior",
+          "value": "304 stainless steel"
+        },
+        {
+          "label": "Safety",
+          "value": "Automatic shut-off and boil-dry protection"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "cream and rose-gold double-wall electric kettle with curved handle and compact cordless base"
+    },
+    {
+      "itemNumber": "003",
+      "catalogKey": "IMG_2054",
+      "sourceImages": [
+        "IMG_2054.jpg"
+      ],
+      "name": "Sonifer 1.2L Stainless-Steel Electric Kettle",
+      "slug": "sonifer-sf-2028-electric-kettle",
+      "brand": "Sonifer",
+      "modelNumber": "SF-2028",
+      "price": 250,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A compact 1.2-litre electric kettle with a stainless-steel body, operating light and cordless 360-degree base.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.2 L"
+        },
+        {
+          "label": "Power",
+          "value": "1500 W"
+        },
+        {
+          "label": "Base",
+          "value": "360-degree cordless"
+        },
+        {
+          "label": "Safety",
+          "value": "Automatic shut-off"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact blue stainless-steel electric kettle with black handle and cordless base"
+    },
+    {
+      "itemNumber": "004",
+      "catalogKey": "IMG_2055",
+      "sourceImages": [
+        "IMG_2055.jpg"
+      ],
+      "name": "Sonifer 1.2L Black Electric Kettle",
+      "slug": "sonifer-sf-2049-electric-kettle",
+      "brand": "Sonifer",
+      "modelNumber": "SF-2049",
+      "price": 260,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A compact 1.2-litre electric kettle with a concealed heating element, operating indicator and automatic shut-off.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.2 L"
+        },
+        {
+          "label": "Power",
+          "value": "1500 W"
+        },
+        {
+          "label": "Heating",
+          "value": "Concealed stainless-steel element"
+        },
+        {
+          "label": "Safety",
+          "value": "Automatic shut-off and empty-operation protection"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact glossy black electric kettle with short spout, black handle and cordless base"
+    },
+    {
+      "itemNumber": "005",
+      "catalogKey": "IMG_2056",
+      "sourceImages": [
+        "IMG_2056.jpg",
+        "IMG_2057.jpg"
+      ],
+      "name": "Winning Star 1.7L Electric Kettle",
+      "slug": "winning-star-st-6023-electric-kettle",
+      "brand": "Winning Star",
+      "modelNumber": "ST-6023",
+      "price": 145,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A 1.7-litre electric kettle with a black body, water-level window and bimetallic thermostat control.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.7 L"
+        },
+        {
+          "label": "Control",
+          "value": "Bimetallic thermostat"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "matte black 1.7-litre electric kettle with broad handle, short spout and water-level window"
+    },
+    {
+      "itemNumber": "006",
+      "catalogKey": "IMG_2058",
+      "sourceImages": [
+        "IMG_2058.jpg"
+      ],
+      "name": "Winning Star 1.8L Electric Kettle",
+      "slug": "winning-star-st-6011-d-electric-kettle",
+      "brand": "Winning Star",
+      "modelNumber": "ST-6011-D",
+      "price": 90,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A practical 1.8-litre electric kettle with a stainless-steel body and boil-dry protection.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.8 L"
+        },
+        {
+          "label": "Safety",
+          "value": "Boil-dry protection"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "simple stainless-steel electric kettle with black handle, black lid and compact round base"
+    },
+    {
+      "itemNumber": "007",
+      "catalogKey": "IMG_2059",
+      "sourceImages": [
+        "IMG_2059.jpg"
+      ],
+      "name": "Sonifer Stainless-Steel Electric Kettle",
+      "slug": "sonifer-sf-2114-electric-kettle",
+      "brand": "Sonifer",
+      "modelNumber": "SF-2114",
+      "price": 180,
+      "category": "kettles",
+      "department": "electricals",
+      "description": "A stainless-steel electric kettle designed for fast boiling and everyday preparation of tea, coffee, oatmeal and soup.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "1500 W"
+        },
+        {
+          "label": "Body",
+          "value": "Stainless steel"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "brushed stainless-steel electric kettle with black lid and black curved handle"
+    },
+    {
+      "itemNumber": "008",
+      "catalogKey": "IMG_2060",
+      "sourceImages": [
+        "IMG_2060.jpg"
+      ],
+      "name": "Winning Star 2-in-1 Blender",
+      "slug": "winning-star-st-5503-2-in-1-blender",
+      "brand": "Winning Star",
+      "modelNumber": "ST-5503",
+      "price": 220,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A countertop 2-in-1 blender set for juices and everyday food preparation, supplied with a blending jug and grinder attachment.",
+      "specifications": [
+        {
+          "label": "Functions",
+          "value": "Blending and grinding"
+        },
+        {
+          "label": "Jug",
+          "value": "Non-breakable jug"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "white countertop blender with clear jug, white lid and matching small grinder cup"
+    },
+    {
+      "itemNumber": "009",
+      "catalogKey": "IMG_2061",
+      "sourceImages": [
+        "IMG_2061.jpg"
+      ],
+      "name": "Winning Star Portable Blender",
+      "slug": "winning-star-st-5321-portable-blender",
+      "brand": "Winning Star",
+      "modelNumber": "ST-5321",
+      "price": 225,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A compact portable blender with a pure-copper motor for fresh juice and smoothies.",
+      "specifications": [
+        {
+          "label": "Motor",
+          "value": "Pure copper"
+        },
+        {
+          "label": "Power",
+          "value": "250 W"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact white portable countertop blender with clear blending cup and simple controls"
+    },
+    {
+      "itemNumber": "010",
+      "catalogKey": "IMG_2062",
+      "sourceImages": [
+        "IMG_2062.jpg"
+      ],
+      "name": "Sonifer USB-C Portable Blender Cup",
+      "slug": "sonifer-sf-8131-portable-blender-cup",
+      "brand": "Sonifer",
+      "modelNumber": "SF-8131",
+      "price": 200,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A rechargeable portable blender cup with USB-C charging, double-click start and a direct-drinking lid.",
+      "specifications": [
+        {
+          "label": "Charging",
+          "value": "USB Type-C"
+        },
+        {
+          "label": "Control",
+          "value": "Double-click start"
+        },
+        {
+          "label": "Lid",
+          "value": "Direct-drinking cap"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "peach rechargeable portable blender cup with clear lower cup, silver trim, drinking lid and USB-C charging"
+    },
+    {
+      "itemNumber": "011",
+      "catalogKey": "IMG_2063",
+      "sourceImages": [
+        "IMG_2063.jpg"
+      ],
+      "name": "Rechargeable Mini Juice Blender",
+      "slug": "rechargeable-mini-juice-blender-a-821",
+      "brand": "Generic",
+      "modelNumber": "A-821",
+      "price": 52,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A 380 ml rechargeable personal juice blender with a stainless-steel blade and portable drinking cup.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "380 ml"
+        },
+        {
+          "label": "Battery",
+          "value": "2000 mAh"
+        },
+        {
+          "label": "Blade",
+          "value": "SUS304 stainless steel"
+        },
+        {
+          "label": "Charging time",
+          "value": "About 3 hours"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "small pastel-green rechargeable personal blender bottle with clear cup and compact blade base"
+    },
+    {
+      "itemNumber": "012",
+      "catalogKey": "IMG_2064",
+      "sourceImages": [
+        "IMG_2064.jpg",
+        "IMG_2065.jpg"
+      ],
+      "name": "Sonifer Electric Milk Frother",
+      "slug": "sonifer-sf-8200-electric-milk-frother",
+      "brand": "Sonifer",
+      "modelNumber": "SF-8200",
+      "price": 115,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A compact electric milk frother with a stainless-steel mixing head and measuring tube for coffee drinks.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "25 W"
+        },
+        {
+          "label": "Motor speed",
+          "value": "20,000 RPM"
+        },
+        {
+          "label": "Measuring tube",
+          "value": "80 ml"
+        },
+        {
+          "label": "Noise level",
+          "value": "Below 60 dB"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "slim handheld stainless-steel electric milk frother with black grip and clear measuring tube"
+    },
+    {
+      "itemNumber": "013",
+      "catalogKey": "IMG_2066",
+      "sourceImages": [
+        "IMG_2066.jpg"
+      ],
+      "name": "Winning Star 2-in-1 Hand Blender",
+      "slug": "winning-star-st-6551-hand-blender",
+      "brand": "Winning Star",
+      "modelNumber": "ST-6551",
+      "price": 215,
+      "category": "blenders-mixers",
+      "department": "electricals",
+      "description": "A 2-in-1 immersion blender set with a pure-copper motor for blending and whisking.",
+      "specifications": [
+        {
+          "label": "Functions",
+          "value": "Blending and whisking"
+        },
+        {
+          "label": "Motor",
+          "value": "Pure copper"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "white and stainless-steel immersion hand blender with detachable blending shaft and whisk attachment"
+    },
+    {
+      "itemNumber": "014",
+      "catalogKey": "IMG_2067",
+      "sourceImages": [
+        "IMG_2067.jpg"
+      ],
+      "name": "Sonifer 50g Electric Coffee Grinder",
+      "slug": "sonifer-sf-3526-coffee-grinder",
+      "brand": "Sonifer",
+      "modelNumber": "SF-3526",
+      "price": 140,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A compact electric grinder for coffee beans, spices, seeds and nuts, with a stainless-steel bowl and safety interlock.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "50 g"
+        },
+        {
+          "label": "Power",
+          "value": "200 W"
+        },
+        {
+          "label": "Voltage",
+          "value": "220-240 V"
+        },
+        {
+          "label": "Control",
+          "value": "Pulse mode"
+        }
+      ],
+      "researchSources": [
+        {
+          "title": "Sonifer official product page",
+          "url": "https://sonifer.com/product/sonifer-sf-3526-hot-sale-quality-household-220v-powerful-motor-multifunctional-small-electric-coffee-grinder/"
+        }
+      ],
+      "imagePromptSubject": "compact white electric coffee grinder with transparent lid and stainless-steel grinding bowl"
+    },
+    {
+      "itemNumber": "015",
+      "catalogKey": "IMG_2068",
+      "sourceImages": [
+        "IMG_2068.jpg"
+      ],
+      "name": "Sonifer 80g Electric Coffee Grinder",
+      "slug": "sonifer-sf-3537-coffee-grinder",
+      "brand": "Sonifer",
+      "modelNumber": "SF-3537",
+      "price": 205,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "An 80 g pulse-control grinder for coffee beans and other dry ingredients, fitted with a stainless-steel blade.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "80 g"
+        },
+        {
+          "label": "Power",
+          "value": "160 W"
+        },
+        {
+          "label": "Voltage",
+          "value": "220-240 V"
+        },
+        {
+          "label": "Control",
+          "value": "Pulse mode"
+        }
+      ],
+      "researchSources": [
+        {
+          "title": "Sonifer official product page",
+          "url": "https://sonifer.com/product/sonifer-sf-3537-home-appliances-220v-motor-multi-function-dry-bean-mini-coffee-grinder-machine-electric/"
+        }
+      ],
+      "imagePromptSubject": "compact black and silver electric coffee grinder with clear lid and cylindrical body"
+    },
+    {
+      "itemNumber": "016",
+      "catalogKey": "IMG_2069",
+      "sourceImages": [
+        "IMG_2069.jpg"
+      ],
+      "name": "Sonifer 8-Tray Digital Food Dehydrator",
+      "slug": "sonifer-sf-4016-food-dehydrator",
+      "brand": "Sonifer",
+      "modelNumber": "SF-4016",
+      "price": 787,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A digital food dehydrator with eight trays, adjustable time and temperature controls and overheat protection.",
+      "specifications": [
+        {
+          "label": "Trays",
+          "value": "8"
+        },
+        {
+          "label": "Power",
+          "value": "400 W"
+        },
+        {
+          "label": "Voltage",
+          "value": "220-240 V"
+        },
+        {
+          "label": "Timer",
+          "value": "1-24 hours"
+        }
+      ],
+      "researchSources": [
+        {
+          "title": "Sonifer official product page",
+          "url": "https://sonifer.com/product/sonifer-sf-4016-manufacturer-2022-adjustable-thermostat-8-trays-digital-electric-drying-machine-fruit-food-dehydrator/"
+        }
+      ],
+      "imagePromptSubject": "rectangular black digital food dehydrator with front viewing window and eight stacked drying trays"
+    },
+    {
+      "itemNumber": "017",
+      "catalogKey": "IMG_2070",
+      "sourceImages": [
+        "IMG_2070.jpg"
+      ],
+      "name": "Sonifer 1.2L Multifunction Electric Cooker",
+      "slug": "sonifer-sf-1506-electric-cooker",
+      "brand": "Sonifer",
+      "modelNumber": "SF-1506",
+      "price": 225,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A compact 1.2-litre multifunction cooker with a glass lid, stainless-steel interior and low/high heat control.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "1.2 L"
+        },
+        {
+          "label": "Power",
+          "value": "600 W"
+        },
+        {
+          "label": "Interior",
+          "value": "304 stainless steel"
+        },
+        {
+          "label": "Heat settings",
+          "value": "Low and high"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact cream electric cooking pot with glass lid, pale wood-look handle and matching control knob"
+    },
+    {
+      "itemNumber": "018",
+      "catalogKey": "IMG_2071",
+      "sourceImages": [
+        "IMG_2071.jpg"
+      ],
+      "name": "Sonifer Sandwich Maker",
+      "slug": "sonifer-sf-6182-sandwich-maker",
+      "brand": "Sonifer",
+      "modelNumber": "SF-6182",
+      "price": 260,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A 1400 W sandwich maker with cool-touch handle, non-stick cooking plates and power and ready indicators.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "1400 W"
+        },
+        {
+          "label": "Plates",
+          "value": "Non-stick sandwich plates"
+        },
+        {
+          "label": "Indicators",
+          "value": "Power and ready lights"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "black compact clamshell sandwich maker with cool-touch handle and indicator lights"
+    },
+    {
+      "itemNumber": "019",
+      "catalogKey": "IMG_2072",
+      "sourceImages": [
+        "IMG_2072.jpg"
+      ],
+      "name": "Winning Star Waffle Maker",
+      "slug": "winning-star-st-9458-waffle-maker",
+      "brand": "Winning Star",
+      "modelNumber": "ST-9458",
+      "price": 240,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A 1200 W waffle maker with non-stick plates and a durable power cord for quick home baking.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "1200 W"
+        },
+        {
+          "label": "Plates",
+          "value": "Non-stick waffle plates"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact white rectangular waffle maker with black trim and hinged lid"
+    },
+    {
+      "itemNumber": "020",
+      "catalogKey": "IMG_2073",
+      "sourceImages": [
+        "IMG_2073.jpg"
+      ],
+      "name": "40W Football UFO LED Lamp",
+      "slug": "football-ufo-led-lamp-t9196",
+      "brand": "Star",
+      "modelNumber": "T9196",
+      "price": 196,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A 40 W fold-out football-style UFO LED lamp designed for broad ceiling illumination.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "40 W"
+        },
+        {
+          "label": "Style",
+          "value": "Fold-out UFO lamp"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "white fold-out LED ceiling lamp shaped like a football with multiple hinged light panels"
+    },
+    {
+      "itemNumber": "021",
+      "catalogKey": "IMG_2074",
+      "sourceImages": [
+        "IMG_2074.jpg"
+      ],
+      "name": "Sonifer 2-in-1 Hair Straightener",
+      "slug": "sonifer-sf-9563-hair-straightener",
+      "brand": "Sonifer",
+      "modelNumber": "SF-9563",
+      "price": 185,
+      "category": "personal-care",
+      "department": "electricals",
+      "description": "A 2-in-1 ceramic hair styler for straightening and curling, with adjustable temperature and automatic shut-off.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "55 W"
+        },
+        {
+          "label": "Temperature",
+          "value": "130-235 °C"
+        },
+        {
+          "label": "Cord",
+          "value": "360-degree swivel"
+        },
+        {
+          "label": "Safety",
+          "value": "1-hour automatic shut-off"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "slim black and champagne-gold ceramic hair straightener with digital temperature control"
+    },
+    {
+      "itemNumber": "022",
+      "catalogKey": "IMG_2075",
+      "sourceImages": [
+        "IMG_2075.jpg"
+      ],
+      "name": "Sokany 2600W Hair Dryer",
+      "slug": "sokany-sk-14038-hair-dryer",
+      "brand": "Sokany",
+      "modelNumber": "SK-14038",
+      "price": 150,
+      "category": "personal-care",
+      "department": "electricals",
+      "description": "A 2600 W high-speed hair dryer with multiple heat and airflow settings for everyday styling.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "2600 W"
+        },
+        {
+          "label": "Motor",
+          "value": "High-speed motor"
+        },
+        {
+          "label": "Settings",
+          "value": "Multiple heat and airflow levels"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "sleek mint-green and charcoal professional hair dryer with concentrator nozzle"
+    },
+    {
+      "itemNumber": "023",
+      "catalogKey": "IMG_2076",
+      "sourceImages": [
+        "IMG_2076.jpg"
+      ],
+      "name": "Sonifer Professional Hair Dryer",
+      "slug": "sonifer-sf-9546-hair-dryer",
+      "brand": "Sonifer",
+      "modelNumber": "SF-9546",
+      "price": 205,
+      "category": "personal-care",
+      "department": "electricals",
+      "description": "A professional salon-style hair dryer with a strong AC motor, removable intake screen and cold-air button.",
+      "specifications": [
+        {
+          "label": "Motor",
+          "value": "AC motor"
+        },
+        {
+          "label": "Control",
+          "value": "Cold-air button"
+        },
+        {
+          "label": "Maintenance",
+          "value": "Removable dust screen"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "professional white and burgundy salon hair dryer with concentrator nozzle and chrome accents"
+    },
+    {
+      "itemNumber": "024",
+      "catalogKey": "IMG_2077",
+      "sourceImages": [
+        "IMG_2077.jpg"
+      ],
+      "name": "Kemei Negative-Ion Hair Dryer",
+      "slug": "kemei-km-8221-hair-dryer",
+      "brand": "Kemei",
+      "modelNumber": "KM-8221",
+      "price": 155,
+      "category": "personal-care",
+      "department": "electricals",
+      "description": "A compact hair dryer with negative-ion care, multiple controls and a hanging loop.",
+      "specifications": [
+        {
+          "label": "Care",
+          "value": "Negative-ion technology"
+        },
+        {
+          "label": "Storage",
+          "value": "Integrated hanging hook"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact rose-gold and black hair dryer with short nozzle and folding-style handle"
+    },
+    {
+      "itemNumber": "025",
+      "catalogKey": "IMG_2078",
+      "sourceImages": [
+        "IMG_2078.jpg"
+      ],
+      "name": "3+3W White and Warm LED Panel Light",
+      "slug": "star-white-warm-led-panel-light-3-plus-3w",
+      "brand": "Star",
+      "modelNumber": "L991201",
+      "price": 15,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A compact recessed LED panel light combining white and warm illumination.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "3 W + 3 W"
+        },
+        {
+          "label": "Light colours",
+          "value": "White and warm"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "small round recessed white LED panel downlight with flat diffuser"
+    },
+    {
+      "itemNumber": "026",
+      "catalogKey": "IMG_2080",
+      "sourceImages": [
+        "IMG_2080.jpg"
+      ],
+      "name": "Star 5W LED Downlight",
+      "slug": "star-5w-led-downlight-swd76",
+      "brand": "Star",
+      "modelNumber": "SWD76",
+      "price": 20.5,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A compact 5 W recessed LED downlight with a clean round trim for indoor ceiling lighting.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "5 W"
+        },
+        {
+          "label": "Mounting",
+          "value": "Recessed ceiling"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "round white recessed 5-watt LED downlight with frosted diffuser and clean trim"
+    },
+    {
+      "itemNumber": "027",
+      "catalogKey": "IMG_2081",
+      "sourceImages": [
+        "IMG_2081.jpg"
+      ],
+      "name": "Star 5W LED Spot Downlight",
+      "slug": "star-5w-led-spot-downlight-swd93",
+      "brand": "Star",
+      "modelNumber": "SWD93",
+      "price": 14.5,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "An energy-saving 5 W LED spot downlight for focused indoor ceiling illumination.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "5 W"
+        },
+        {
+          "label": "Type",
+          "value": "LED spot downlight"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "small round white LED spotlight downlight with recessed lens and spring clips"
+    },
+    {
+      "itemNumber": "028",
+      "catalogKey": "IMG_2082",
+      "sourceImages": [
+        "IMG_2082.jpg"
+      ],
+      "name": "AIZN 12W LED Downlight",
+      "slug": "aizn-12w-led-downlight",
+      "brand": "AIZN",
+      "modelNumber": "L991295",
+      "price": 23,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A 12 W round LED downlight for efficient general-purpose indoor ceiling lighting.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "12 W"
+        },
+        {
+          "label": "Mounting",
+          "value": "Recessed ceiling"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "round white 12-watt recessed LED downlight with broad frosted diffuser"
+    },
+    {
+      "itemNumber": "029",
+      "catalogKey": "IMG_2085",
+      "sourceImages": [
+        "IMG_2085.jpg"
+      ],
+      "name": "Star 18W Rimless LED Panel",
+      "slug": "star-18w-rimless-led-panel-swd0067",
+      "brand": "Star",
+      "modelNumber": "SWD0067",
+      "price": 26.5,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "An 18 W rimless round LED panel designed for bright, even and energy-efficient ceiling lighting.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "18 W"
+        },
+        {
+          "label": "Style",
+          "value": "Rimless panel"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "thin round rimless white 18-watt LED ceiling panel with uniform frosted face"
+    },
+    {
+      "itemNumber": "030",
+      "catalogKey": "IMG_2086-A",
+      "sourceImages": [
+        "IMG_2086.jpg"
+      ],
+      "name": "King On 18W LED Panel Light",
+      "slug": "king-on-18w-led-panel-light-k63002",
+      "brand": "King On",
+      "modelNumber": "K63002-WM-F18",
+      "price": 50,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "An 18 W round LED panel light for broad indoor ceiling illumination.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "18 W"
+        },
+        {
+          "label": "Type",
+          "value": "LED panel light"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "thin round white 18-watt LED panel light with external white driver"
+    },
+    {
+      "itemNumber": "031",
+      "catalogKey": "IMG_2086-B",
+      "sourceImages": [
+        "IMG_2086.jpg"
+      ],
+      "name": "Cohen 12W LED Panel Light",
+      "slug": "cohen-12w-led-panel-light-coh-p12",
+      "brand": "Cohen",
+      "modelNumber": "COH-P12",
+      "price": 35,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A compact 12 W round LED panel light for indoor recessed ceiling installations.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "12 W"
+        },
+        {
+          "label": "Type",
+          "value": "LED panel light"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact round white 12-watt recessed LED panel with slim trim and external driver"
+    },
+    {
+      "itemNumber": "032",
+      "catalogKey": "IMG_2087",
+      "sourceImages": [
+        "IMG_2087.jpg"
+      ],
+      "name": "Ring Fill Light with Stand",
+      "slug": "ring-fill-light-sd-011",
+      "brand": "Generic",
+      "modelNumber": "SD-011",
+      "price": 133,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "An adjustable ring fill light with a phone holder and stand for selfies, live video and beauty lighting.",
+      "specifications": [
+        {
+          "label": "Lighting",
+          "value": "Multiple colour temperatures"
+        },
+        {
+          "label": "Mount",
+          "value": "Phone holder and adjustable stand"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "white ring light on black adjustable tripod with centered smartphone holder"
+    },
+    {
+      "itemNumber": "033",
+      "catalogKey": "IMG_2088",
+      "sourceImages": [
+        "IMG_2088.jpg"
+      ],
+      "name": "26cm Ring Fill Light",
+      "slug": "qx-260s-26cm-ring-fill-light",
+      "brand": "Generic",
+      "modelNumber": "QX-260S",
+      "price": 78,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A 26 cm ring light with adjustable brightness, three colour temperatures and a flexible phone mount.",
+      "specifications": [
+        {
+          "label": "Diameter",
+          "value": "26 cm"
+        },
+        {
+          "label": "Lighting",
+          "value": "Three colour temperatures"
+        },
+        {
+          "label": "Use",
+          "value": "Selfie and live video"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "26-centimetre white ring light on compact black tripod with phone holder"
+    },
+    {
+      "itemNumber": "034",
+      "catalogKey": "IMG_2090",
+      "sourceImages": [
+        "IMG_2090.jpg"
+      ],
+      "name": "30W Rechargeable Portable Searchlight",
+      "slug": "haoerliang-hel-t93-portable-searchlight",
+      "brand": "Haoerliang",
+      "modelNumber": "HEL-T93",
+      "price": 118,
+      "category": "lighting",
+      "department": "lighting",
+      "description": "A rechargeable 30 W portable searchlight with a carry handle, long-range beam and side flood light.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "30 W"
+        },
+        {
+          "label": "Battery",
+          "value": "20,000 mAh"
+        },
+        {
+          "label": "Runtime",
+          "value": "Up to 16 hours"
+        },
+        {
+          "label": "Charging cycles",
+          "value": "More than 500"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "red and black handheld rechargeable searchlight with large front lens, carry handle and side LED panel"
+    },
+    {
+      "itemNumber": "035",
+      "catalogKey": "IMG_2091",
+      "sourceImages": [
+        "IMG_2091.jpg",
+        "IMG_2092.jpg"
+      ],
+      "name": "Aerbes RGB LED Car Streamer Lights",
+      "slug": "aerbes-ab-qc36-rgb-car-streamer-lights",
+      "brand": "Aerbes",
+      "modelNumber": "AB-QC36",
+      "price": 70,
+      "category": "automotive-accessories",
+      "department": "home-living",
+      "description": "A 12-24 V RGB LED streamer-light kit for decorative automotive lighting.",
+      "specifications": [
+        {
+          "label": "Voltage",
+          "value": "12-24 V"
+        },
+        {
+          "label": "LED",
+          "value": "5050 RGB"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "pair of slim flexible RGB automotive LED streamer light strips with control module and wiring"
+    },
+    {
+      "itemNumber": "036",
+      "catalogKey": "IMG_2093",
+      "sourceImages": [
+        "IMG_2093.jpg"
+      ],
+      "name": "Aerbes RGB Daytime Running Lights",
+      "slug": "aerbes-ab-qc31-rgb-daytime-running-lights",
+      "brand": "Aerbes",
+      "modelNumber": "AB-QC31",
+      "price": 150,
+      "category": "automotive-accessories",
+      "department": "home-living",
+      "description": "A weatherproof RGB daytime-running-light kit for 12-24 V vehicles.",
+      "specifications": [
+        {
+          "label": "Voltage",
+          "value": "12-24 V"
+        },
+        {
+          "label": "Protection",
+          "value": "IP68 weatherproof"
+        },
+        {
+          "label": "Lighting",
+          "value": "RGB LED"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "pair of slim black RGB daytime running light bars with wiring and compact controller"
+    },
+    {
+      "itemNumber": "037",
+      "catalogKey": "IMG_2094",
+      "sourceImages": [
+        "IMG_2094.jpg"
+      ],
+      "name": "Compact Automatic Umbrella",
+      "slug": "compact-automatic-umbrella",
+      "brand": "Generic",
+      "modelNumber": "768102",
+      "price": 40,
+      "category": "home-accessories",
+      "department": "home-living",
+      "description": "A compact folding umbrella designed for portable everyday rain protection.",
+      "specifications": [
+        {
+          "label": "Style",
+          "value": "Compact folding umbrella"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact folded red automatic umbrella with matching sleeve and black handle"
+    },
+    {
+      "itemNumber": "038",
+      "catalogKey": "IMG_2095",
+      "sourceImages": [
+        "IMG_2095.jpg",
+        "IMG_2096.jpg"
+      ],
+      "name": "Winning Star 1600W Steam Iron",
+      "slug": "winning-star-st-6121-steam-iron",
+      "brand": "Winning Star",
+      "modelNumber": "ST-6121",
+      "price": 120,
+      "category": "home-accessories",
+      "department": "home-living",
+      "description": "A 1600 W steam iron with dry, spray and steam functions for everyday garment care.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "1600 W"
+        },
+        {
+          "label": "Functions",
+          "value": "Dry, spray and steam"
+        },
+        {
+          "label": "Steam output",
+          "value": "15 g/min"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "purple and white steam iron with translucent water tank and stainless soleplate"
+    },
+    {
+      "itemNumber": "039",
+      "catalogKey": "IMG_2098",
+      "sourceImages": [
+        "IMG_2098.jpg"
+      ],
+      "name": "Sokany PerfectCare Steam Iron",
+      "slug": "sokany-sk-11064-steam-iron",
+      "brand": "Sokany",
+      "modelNumber": "SK-11064",
+      "price": 70,
+      "category": "home-accessories",
+      "department": "home-living",
+      "description": "A compact steam iron with overheat protection and a 100 ml water tank.",
+      "specifications": [
+        {
+          "label": "Water tank",
+          "value": "100 ml"
+        },
+        {
+          "label": "Safety",
+          "value": "Overheat protection"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact black and silver steam iron with translucent 100-millilitre water tank"
+    },
+    {
+      "itemNumber": "040",
+      "catalogKey": "IMG_2099",
+      "sourceImages": [
+        "IMG_2099.jpg"
+      ],
+      "name": "Sonifer Portable Travel Steam Iron",
+      "slug": "sonifer-sf-9122-travel-steam-iron",
+      "brand": "Sonifer",
+      "modelNumber": "SF-9122",
+      "price": 220,
+      "category": "home-accessories",
+      "department": "home-living",
+      "description": "A 1300 W portable travel iron with a rotating handle and strong steam output for compact garment care.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "1300 W"
+        },
+        {
+          "label": "Steam rate",
+          "value": "Up to 25 g/min"
+        },
+        {
+          "label": "Handle",
+          "value": "180-degree rotatable"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact cream portable travel steam iron with burgundy accents and rotating handle"
+    },
+    {
+      "itemNumber": "041",
+      "catalogKey": "IMG_2100",
+      "sourceImages": [
+        "IMG_2100.jpg"
+      ],
+      "name": "Family 5kg Digital Kitchen Scale",
+      "slug": "family-101917-digital-kitchen-scale",
+      "brand": "Family",
+      "modelNumber": "101917",
+      "price": 65,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A compact flat digital kitchen scale with a stainless-steel platform, unit conversion and 5 kg capacity.",
+      "specifications": [
+        {
+          "label": "Maximum capacity",
+          "value": "5 kg"
+        },
+        {
+          "label": "Platform",
+          "value": "Stainless steel"
+        },
+        {
+          "label": "Controls",
+          "value": "On/off and unit conversion"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "square silver digital kitchen scale with rounded corners, purple LCD display and two buttons"
+    },
+    {
+      "itemNumber": "042",
+      "catalogKey": "IMG_2101",
+      "sourceImages": [
+        "IMG_2101.jpg"
+      ],
+      "name": "Constant Stainless-Steel Kitchen Scale",
+      "slug": "constant-14192-2038b-kitchen-scale",
+      "brand": "Constant",
+      "modelNumber": "14192-2038B",
+      "price": 125,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "An electronic kitchen scale with a stainless-steel plate and LCD display for weighing food and liquids.",
+      "specifications": [
+        {
+          "label": "Display",
+          "value": "45 x 21 mm LCD"
+        },
+        {
+          "label": "Platform",
+          "value": "Stainless steel"
+        },
+        {
+          "label": "Modes",
+          "value": "Weight, water volume and milk volume"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "rectangular stainless-steel digital kitchen scale with black LCD display and touch buttons"
+    },
+    {
+      "itemNumber": "043",
+      "catalogKey": "IMG_2102",
+      "sourceImages": [
+        "IMG_2102.jpg"
+      ],
+      "name": "Constant Kitchen Scale with Stainless Bowl",
+      "slug": "constant-14192-2064b-kitchen-scale",
+      "brand": "Constant",
+      "modelNumber": "14192-2064B",
+      "price": 105,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "An electronic kitchen scale supplied with a removable stainless-steel weighing bowl.",
+      "specifications": [
+        {
+          "label": "Bowl",
+          "value": "Removable stainless steel"
+        },
+        {
+          "label": "Display",
+          "value": "Digital LCD"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "compact black digital kitchen scale topped with a polished stainless-steel mixing bowl"
+    },
+    {
+      "itemNumber": "044",
+      "catalogKey": "IMG_2103",
+      "sourceImages": [
+        "IMG_2103.jpg"
+      ],
+      "name": "Huijun Double-Jointed Training Stick",
+      "slug": "huijun-hj-g030-double-jointed-stick",
+      "brand": "Huijun",
+      "modelNumber": "HJ-G030",
+      "price": 56,
+      "category": "sports-fitness",
+      "department": "home-living",
+      "description": "A double-jointed martial-arts training stick with linked handles and a compact presentation pack.",
+      "specifications": [
+        {
+          "label": "Type",
+          "value": "Double-jointed training stick"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "black double-jointed martial arts training sticks connected by a short metal chain"
+    },
+    {
+      "itemNumber": "045",
+      "catalogKey": "IMG_2104",
+      "sourceImages": [
+        "IMG_2104.jpg"
+      ],
+      "name": "Huijun Double-Jointed Training Stick",
+      "slug": "huijun-hj-g213-double-jointed-stick",
+      "brand": "Huijun",
+      "modelNumber": "HJ-G213",
+      "price": 38,
+      "category": "sports-fitness",
+      "department": "home-living",
+      "description": "A lightweight double-jointed martial-arts training stick for controlled practice.",
+      "specifications": [
+        {
+          "label": "Type",
+          "value": "Double-jointed training stick"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "red foam double-jointed martial arts training sticks connected by a short metal chain"
+    },
+    {
+      "itemNumber": "046",
+      "catalogKey": "IMG_2105",
+      "sourceImages": [
+        "IMG_2105.jpg"
+      ],
+      "name": "Huijun Sports Boxing Gloves",
+      "slug": "huijun-hi-6120-boxing-gloves",
+      "brand": "Huijun",
+      "modelNumber": "HI-6120",
+      "price": 99,
+      "category": "sports-fitness",
+      "department": "home-living",
+      "description": "A pair of padded boxing gloves for training and fitness sessions.",
+      "specifications": [
+        {
+          "label": "Type",
+          "value": "Training boxing gloves"
+        },
+        {
+          "label": "Set",
+          "value": "Pair"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "pair of red padded boxing gloves with black wrist straps"
+    },
+    {
+      "itemNumber": "047",
+      "catalogKey": "IMG_2106",
+      "sourceImages": [
+        "IMG_2106.jpg"
+      ],
+      "name": "Winning Star Electric Stirring Popcorn Maker",
+      "slug": "winning-star-st-9716-popcorn-maker",
+      "brand": "Winning Star",
+      "modelNumber": "ST-9716",
+      "price": 345,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A 700 W electric stirring popcorn maker with one-touch operation and a large serving bowl.",
+      "specifications": [
+        {
+          "label": "Power",
+          "value": "700 W"
+        },
+        {
+          "label": "Capacity",
+          "value": "7.7 L"
+        },
+        {
+          "label": "Control",
+          "value": "One-touch start"
+        }
+      ],
+      "researchSources": [],
+      "imagePromptSubject": "red electric popcorn maker with large transparent dome bowl and black stirring base"
+    },
+    {
+      "itemNumber": "048",
+      "catalogKey": "IMG_2107",
+      "sourceImages": [
+        "IMG_2107.jpg"
+      ],
+      "name": "Winning Star 7.7L Visible Air Fryer",
+      "slug": "winning-star-st-9649-visible-air-fryer",
+      "brand": "Winning Star",
+      "modelNumber": "ST-9649",
+      "price": 750,
+      "category": "kitchen-appliances",
+      "department": "electricals",
+      "description": "A 7.7-litre air fryer with a visible cooking window, adjustable controls and overheat protection.",
+      "specifications": [
+        {
+          "label": "Capacity",
+          "value": "7.7 L"
+        },
+        {
+          "label": "Power",
+          "value": "1800 W"
+        },
+        {
+          "label": "Voltage",
+          "value": "220-240 V"
+        },
+        {
+          "label": "Safety",
+          "value": "Overheat protection"
+        }
+      ],
+      "researchSources": [
+        {
+          "title": "Winning Star official product page",
+          "url": "https://www.winningstar.com/AirFryer/1800W-7-7L-Visible-Air-Circulation-Fryer-ST-9649"
+        }
+      ],
+      "imagePromptSubject": "black 7.7-litre air fryer with front viewing window, digital top controls and pull-out basket"
+    }
+  ],
+  "exceptions": [
+    {
+      "sourceImages": [
+        "IMG_2079.jpg"
+      ],
+      "reason": "Photo shows an AIZN COB downlight, but the visible shelf label is incomplete and may belong to a neighbouring product."
+    },
+    {
+      "sourceImages": [
+        "IMG_2089.jpg"
+      ],
+      "reason": "Ring light model MJ16-6 is readable, but no trustworthy shelf price is visible."
+    },
+    {
+      "sourceImages": [
+        "IMG_2097.jpg"
+      ],
+      "reason": "Packaging identifies Winning Star ST-5012, while the shelf label identifies ST-218 at GH₵180; product-price pairing is ambiguous."
+    }
+  ]
+}

@@ -26,24 +26,11 @@ import chatRoutes from './src/routes/chat.js';
 
 dotenv.config();
 
-const isProduction = process.env.NODE_ENV === 'production';
-
-const fastify = Fastify(
-  isProduction
-    ? { logger: true }
-    : {
-        logger: {
-          transport: {
-            target: 'pino-pretty',
-            options: {
-              colorize: true,
-              translateTime: 'HH:MM:ss Z',
-              ignore: 'pid,hostname'
-            }
-          }
-        }
-      }
-);
+const fastify = Fastify({
+  logger: {
+    level: process.env.LOG_LEVEL || 'info'
+  }
+});
 
 fastify.decorate('db', null);
 fastify.decorate('startupError', null);

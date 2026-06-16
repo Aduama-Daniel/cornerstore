@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { adminRequest } from '@/lib/admin';
 
 interface ShippingModalProps {
     orderId: string;
@@ -27,27 +28,18 @@ export default function ShippingModal({ orderId, isOpen, onClose, onSuccess }: S
 
         try {
             setSubmitting(true);
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/admin/orders/${orderId}/shipping`,
-                {
+            await adminRequest(`/api/admin/orders/${orderId}/shipping`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         trackingNumber,
                         courier,
                         estimatedDelivery: estimatedDelivery || null
                     })
-                }
-            );
-
-            if (res.ok) {
-                onSuccess();
-                handleClose();
-            } else {
-                setError('Failed to update shipping information');
-            }
+                });
+            onSuccess();
+            handleClose();
         } catch (err) {
-            setError('An error occurred');
+            setError(err instanceof Error ? err.message : 'Failed to update shipping information');
         } finally {
             setSubmitting(false);
         }
@@ -67,16 +59,21 @@ export default function ShippingModal({ orderId, isOpen, onClose, onSuccess }: S
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             onClick={handleClose}
+            role="presentation"
         >
             <div
                 className="bg-white rounded-lg max-w-md w-full p-6"
                 onClick={(e) => e.stopPropagation()}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="shipping-modal-title"
             >
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Update Shipping Information</h2>
+                    <h2 id="shipping-modal-title" className="text-xl font-semibold">Update Shipping Information</h2>
                     <button
                         onClick={handleClose}
                         className="text-gray-400 hover:text-gray-600"
+                        aria-label="Close shipping dialog"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -141,7 +138,7 @@ export default function ShippingModal({ orderId, isOpen, onClose, onSuccess }: S
 
                     <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
                         <p className="text-sm text-blue-800">
-                            💡 The order status will automatically be updated to "Shipped" when you save.
+                            The order is marked shipped automatically only when its current status is processing.
                         </p>
                     </div>
 

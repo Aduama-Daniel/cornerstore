@@ -4,16 +4,19 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/currency';
+import { adminFetcher, adminRequest } from '@/lib/admin';
+import { useToast } from '@/contexts/ToastContext';
 
 const statusConfig = {
-    requested: { label: 'Requested', color: 'bg-yellow-100 text-yellow-800', icon: '⏳' },
-    approved: { label: 'Approved', color: 'bg-blue-100 text-blue-800', icon: '✓' },
-    rejected: { label: 'Rejected', color: 'bg-red-100 text-red-800', icon: '✗' },
-    received: { label: 'Received', color: 'bg-purple-100 text-purple-800', icon: '📦' },
-    refunded: { label: 'Refunded', color: 'bg-green-100 text-green-800', icon: '💰' }
+    requested: { label: 'Requested', color: 'bg-yellow-100 text-yellow-800' },
+    approved: { label: 'Approved', color: 'bg-blue-100 text-blue-800' },
+    rejected: { label: 'Rejected', color: 'bg-red-100 text-red-800' },
+    received: { label: 'Received', color: 'bg-purple-100 text-purple-800' },
+    refunded: { label: 'Refunded', color: 'bg-green-100 text-green-800' }
 };
 
 export default function ReturnsManagementPage() {
+    const { addToast } = useToast();
     const [statusFilter, setStatusFilter] = useState('');
     const [page, setPage] = useState(1);
 
@@ -25,12 +28,9 @@ export default function ReturnsManagementPage() {
         return params.toString();
     };
 
-    const { data, error, isLoading, mutate } = useSWR(
+    const { data, error, isLoading, mutate } = useSWR<any>(
         `/api/admin/returns?${buildQuery()}`,
-        async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/returns?${buildQuery()}`);
-            return res.json();
-        }
+        adminFetcher
     );
 
     const returns = data?.returns || [];
@@ -38,20 +38,29 @@ export default function ReturnsManagementPage() {
 
     const handleStatusUpdate = async (returnId: string, newStatus: string) => {
         try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/admin/returns/${returnId}/status`,
-                {
+            await adminRequest(`/api/admin/returns/${returnId}/status`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: newStatus })
-                }
-            );
-
-            if (res.ok) {
-                mutate();
-            }
+                });
+            addToast('Return status updated', 'success');
+            await mutate();
         } catch (error) {
             console.error('Failed to update return status:', error);
+            addToast(error instanceof Error ? error.message : 'Failed to update return', 'error');
+        }
+    };
+
+    const handleRefund = async (returnId: string, amount: number) => {
+        if (!window.confirm(`Process a ${formatPrice(amount)} refund for this return?`)) return;
+        try {
+            await adminRequest(`/api/admin/returns/${returnId}/refund`, {
+                method: 'POST',
+                body: JSON.stringify({ amount }),
+            });
+            addToast('Refund processed', 'success');
+            await mutate();
+        } catch (error) {
+            addToast(error instanceof Error ? error.message : 'Refund failed', 'error');
         }
     };
 
@@ -121,7 +130,8 @@ export default function ReturnsManagementPage() {
                         </div>
                     ) : (
                         <>
-                            <table className="min-w-full divide-y divide-gray-200">
+                            <div className="overflow-x-auto">
+                            <table className="min-w-[64rem] w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -149,7 +159,7 @@ export default function ReturnsManagementPage() {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {returns.map((returnRequest: any) => {
-                                        const config = statusConfig[returnRequest.status as keyof typeof statusConfig];
+                                        const config = statusConfig[returnRequest.status as keyof typeof statusConfig] || statusConfig.requested;
                                         return (
                                             <tr key={returnRequest._id} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -173,8 +183,7 @@ export default function ReturnsManagementPage() {
                                                     {formatDate(returnRequest.requestedAt)}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
-                                                        <span>{config.icon}</span>
+                                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
                                                         <span>{config.label}</span>
                                                     </span>
                                                 </td>
@@ -205,7 +214,7 @@ export default function ReturnsManagementPage() {
                                                     )}
                                                     {returnRequest.status === 'received' && (
                                                         <button
-                                                            onClick={() => handleStatusUpdate(returnRequest._id, 'refunded')}
+                                                            onClick={() => handleRefund(returnRequest._id, Number(returnRequest.totalAmount) || 0)}
                                                             className="text-purple-600 hover:text-purple-900 font-medium"
                                                         >
                                                             Process Refund
@@ -217,6 +226,7 @@ export default function ReturnsManagementPage() {
                                     })}
                                 </tbody>
                             </table>
+                            </div>
 
                             {/* Pagination */}
                             {totalPages > 1 && (

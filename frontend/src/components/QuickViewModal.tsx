@@ -1,265 +1,421 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/currency';
-import { normalizeMedia } from '@/lib/media';
+import { normalizeMedia, type MediaLike } from '@/lib/media';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/contexts/ToastContext';
-import { api } from '@/lib/api';
 import WishlistButton from './WishlistButton';
 
-interface QuickViewModalProps {
-    product: any;
-    isOpen: boolean;
-    onClose: () => void;
+interface Color {
+  name: string;
+  slug: string;
+  hexCode?: string;
 }
 
+interface Variation {
+  colorSlug?: string;
+  size?: string;
+  enabled?: boolean;
+  stockQuantity?: number;
+}
+
+interface InventoryItem {
+  colorSlug?: string;
+  size?: string;
+  enabled?: boolean;
+  stockQuantity?: number;
+}
+
+interface QuickViewProduct {
+  _id?: string;
+  name: string;
+  slug: string;
+  price: number;
+  discountPrice?: number | null;
+  description?: string;
+  category?: string;
+  origin?: string;
+  status?: string;
+  brand?: { name?: string } | null;
+  images?: string[];
+  mainMedia?: MediaLike[];
+  variations?: Variation[];
+}
+
+interface QuickViewModalProps {
+  product: QuickViewProduct;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const formatCategory = (value?: string) =>
+  value
+    ? value.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    : 'Cornerstore';
+
 export default function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
-    const router = useRouter();
-    const { addItem } = useCart();
-    const { addToast } = useToast();
+  const router = useRouter();
+  const { addItem } = useCart();
+  const { addToast } = useToast();
+  const [mounted, setMounted] = useState(false);
+  const [details, setDetails] = useState<QuickViewProduct>(product);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [adding, setAdding] = useState(false);
+  const [loadingOptions, setLoadingOptions] = useState(false);
+  const [colors, setColors] = useState<Color[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-    const [selectedColor, setSelectedColor] = useState<string>('');
-    const [selectedSize, setSelectedSize] = useState<string>('');
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [adding, setAdding] = useState(false);
-    const [colors, setColors] = useState<any[]>([]);
-    const [availableSizes, setAvailableSizes] = useState<string[]>([]);
+  useEffect(() => setMounted(true), []);
 
-    const mediaItems = normalizeMedia(product?.mainMedia?.length ? product.mainMedia : product?.images || []);
-    const currentMedia = mediaItems[currentImageIndex];
+  useEffect(() => {
+    setDetails(product);
+  }, [product]);
 
-    useEffect(() => {
-        if (isOpen && product?._id) {
-            loadProductOptions();
-            setCurrentImageIndex(0);
-        }
-    }, [isOpen, product]);
+  useEffect(() => {
+    if (!isOpen) return;
 
-    const loadProductOptions = async () => {
-        try {
-            const colorsResponse = await api.colors.getAll();
-            if (colorsResponse.success) {
-                setColors(colorsResponse.data);
-            }
+    setSelectedColor('');
+    setSelectedSize('');
+    setCurrentMediaIndex(0);
+    setInventory([]);
+    setColors([]);
 
-            const inventoryResponse = await api.inventory.getByProduct(product._id);
-            if (inventoryResponse.success && inventoryResponse.data) {
-                const sizes = [...new Set(inventoryResponse.data.map((item: any) => item.size))] as string[];
-                setAvailableSizes(sizes);
-            }
-        } catch (error) {
-            console.error('Failed to load product options:', error);
-        }
+    let cancelled = false;
+
+    const loadProduct = async () => {
+      setLoadingOptions(true);
+      try {
+        const [productResponse, colorsResponse, inventoryResponse] = await Promise.all([
+          api.products.getBySlug(product.slug),
+          api.colors.getAll(),
+          product._id
+            ? api.inventory.getByProduct(product._id)
+            : Promise.resolve({ success: false, data: [] as unknown[] }),
+        ]);
+
+        if (cancelled) return;
+
+        const fullProduct = productResponse.success && productResponse.data
+          ? productResponse.data as QuickViewProduct
+          : product;
+        setDetails(fullProduct);
+
+        const inventoryItems = inventoryResponse.success && Array.isArray(inventoryResponse.data)
+          ? inventoryResponse.data as InventoryItem[]
+          : [];
+        setInventory(inventoryItems);
+
+        const allColors = colorsResponse.success && Array.isArray(colorsResponse.data)
+          ? colorsResponse.data as Color[]
+          : [];
+        const sellableInventory = inventoryItems.filter(
+          (item) => item.enabled !== false && Number(item.stockQuantity) > 0,
+        );
+        const colorSlugs = new Set(
+          (sellableInventory.length > 0 ? sellableInventory : fullProduct.variations || [])
+            .map((variation) => variation.colorSlug)
+            .filter(Boolean),
+        );
+        setColors(allColors.filter((color) => colorSlugs.has(color.slug)));
+      } catch (error) {
+        console.error('Failed to load quick view details:', error);
+      } finally {
+        if (!cancelled) setLoadingOptions(false);
+      }
     };
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [isOpen]);
-
-    useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
-        };
-        if (isOpen) {
-            window.addEventListener('keydown', handleEscape);
-            return () => window.removeEventListener('keydown', handleEscape);
-        }
-    }, [isOpen, onClose]);
-
-    if (!isOpen || !product) return null;
-
-    const handleAddToCart = async () => {
-        const hasValidColors = productColors.filter((c: any) => c.slug !== '').length > 0;
-        const hasValidSizes = availableSizes.filter((s: string) => s !== '').length > 0;
-
-        if (hasValidColors && !selectedColor) {
-            addToast('Please select a color', 'error');
-            return;
-        }
-        if (hasValidSizes && !selectedSize) {
-            addToast('Please select a size', 'error');
-            return;
-        }
-
-        try {
-            setAdding(true);
-            await addItem(product._id, selectedSize || '', 1, selectedColor || '');
-            addToast(`${product.name} added to cart!`, 'success');
-            onClose();
-        } catch (error) {
-            addToast('Failed to add to cart', 'error');
-        } finally {
-            setAdding(false);
-        }
+    void loadProduct();
+    return () => {
+      cancelled = true;
     };
+  }, [isOpen, product]);
 
-    const handleViewDetails = () => {
-        onClose();
-        router.push(`/product/${product.slug}`);
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
     };
+    window.addEventListener('keydown', handleEscape);
 
-    const productColors = product.variations
-        ? colors.filter(c => product.variations.some((v: any) => v.colorSlug === c.slug))
-        : [];
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, onClose]);
 
-    return (
-        <div
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-3 backdrop-blur-sm sm:items-center sm:p-4"
-            onClick={onClose}
+  const mediaItems = useMemo(
+    () => normalizeMedia(details.mainMedia?.length ? details.mainMedia : details.images || []),
+    [details.images, details.mainMedia],
+  );
+  const currentMedia = mediaItems[currentMediaIndex] || mediaItems[0];
+  const isOnSale = details.discountPrice != null && details.discountPrice < details.price;
+  const sellableInventory = useMemo(
+    () => inventory.filter((item) => item.enabled !== false && Number(item.stockQuantity) > 0),
+    [inventory],
+  );
+  const availableSizes = useMemo(() => {
+    const source = sellableInventory.length > 0 ? sellableInventory : details.variations || [];
+    return Array.from(new Set(
+      source
+        .filter((item) => !selectedColor || item.colorSlug === selectedColor)
+        .map((item) => item.size?.trim())
+        .filter(Boolean),
+    )) as string[];
+  }, [details.variations, selectedColor, sellableInventory]);
+  const isOutOfStock = details.status === 'out-of-stock' || (inventory.length > 0 && sellableInventory.length === 0);
+  const requiresColor = colors.length > 0;
+  const requiresSize = availableSizes.length > 0;
+  const selectedCombinationExists = sellableInventory.length === 0 || sellableInventory.some((item) =>
+    (!selectedColor || item.colorSlug === selectedColor) &&
+    (!selectedSize || item.size === selectedSize)
+  );
+  const canAdd = Boolean(
+    details._id &&
+    !isOutOfStock &&
+    !adding &&
+    (!requiresColor || selectedColor) &&
+    (!requiresSize || selectedSize) &&
+    selectedCombinationExists,
+  );
+
+  useEffect(() => {
+    if (selectedSize && !availableSizes.includes(selectedSize)) setSelectedSize('');
+  }, [availableSizes, selectedSize]);
+
+  const handleAddToCart = async () => {
+    if (!details._id || !canAdd) return;
+
+    try {
+      setAdding(true);
+      await addItem(details._id, selectedSize, 1, selectedColor);
+      addToast(`${details.name} added to cart`, 'success');
+      onClose();
+    } catch {
+      addToast('Failed to add to cart', 'error');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleViewDetails = () => {
+    onClose();
+    router.push(`/product/${details.slug}`);
+  };
+
+  if (!mounted || !isOpen) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[120] flex items-end justify-center bg-contrast/65 p-0 backdrop-blur-sm sm:items-center sm:p-5"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+      role="presentation"
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`quick-view-${details.slug}`}
+        className="relative grid max-h-[94dvh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:max-w-5xl sm:rounded-3xl lg:grid-cols-[1.05fr_0.95fr] lg:overflow-hidden"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/95 text-contrast shadow-sm backdrop-blur transition-colors hover:bg-sand sm:right-5 sm:top-5"
+          aria-label="Close quick view"
         >
-            <div
-                className="relative max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-t-3xl bg-white sm:rounded-lg"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button
-                    onClick={onClose}
-                    className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-colors hover:bg-gray-100 sm:right-4 sm:top-4"
-                    aria-label="Close"
-                >
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-                <div className="grid gap-6 p-4 sm:gap-8 sm:p-6 md:grid-cols-2 md:p-8">
-                    <div>
-                        <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg bg-sand/20">
-                            {currentMedia ? (
-                                currentMedia.type === 'video' ? (
-                                    <video
-                                        src={currentMedia.url}
-                                        className="h-full w-full object-cover"
-                                        controls
-                                        muted
-                                        playsInline
-                                    />
-                                ) : (
-                                    <Image
-                                        src={currentMedia.url}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover"
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                    />
-                                )
-                            ) : (
-                                <div className="flex h-full w-full items-center justify-center">
-                                    <svg className="h-16 w-16 text-neutral/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                            )}
-                        </div>
+        <div className="min-h-0 bg-cream lg:overflow-hidden">
+          <div className="relative aspect-square min-h-[18rem] w-full lg:h-full lg:min-h-[38rem] lg:aspect-auto">
+            {currentMedia ? (
+              currentMedia.type === 'video' ? (
+                <video
+                  key={currentMedia.url}
+                  src={currentMedia.url}
+                  className="h-full w-full object-cover"
+                  controls
+                  muted
+                  playsInline
+                />
+              ) : (
+                <Image
+                  src={currentMedia.url}
+                  alt={details.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 52vw"
+                />
+              )
+            ) : (
+              <div className="flex h-full items-center justify-center text-neutral/35">
+                <svg className="h-20 w-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.5-4.5a2 2 0 012.8 0L16 16m-2-2 1.6-1.6a2 2 0 012.8 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2Z" />
+                </svg>
+              </div>
+            )}
 
-                        {mediaItems.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto pb-1">
-                                {mediaItems.map((media, index) => (
-                                    <button
-                                        key={`${media.url}-${index}`}
-                                        onClick={() => setCurrentImageIndex(index)}
-                                        className={`relative h-20 w-20 flex-shrink-0 overflow-hidden rounded border-2 transition-colors ${currentImageIndex === index ? 'border-contrast' : 'border-gray-200'}`}
-                                    >
-                                        {media.type === 'video' ? (
-                                            <div className="relative h-full w-full bg-black">
-                                                <video src={media.url} className="h-full w-full object-cover" muted playsInline />
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/25 text-white">
-                                                    <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <Image src={media.url} alt={`${product.name} ${index + 1}`} fill className="rounded object-cover" sizes="80px" />
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex flex-col">
-                        <div className="flex-1">
-                            <h2 className="mb-1 text-2xl font-serif sm:text-3xl">{product.name}</h2>
-                            {product.origin && (
-                                <p className="mb-2 text-xs uppercase tracking-wider text-neutral/60">
-                                    Origin: {product.origin}
-                                </p>
-                            )}
-                            <p className="mb-4 text-xl font-medium sm:text-2xl">{formatPrice(product.price)}</p>
-
-                            {product.description && (
-                                <p className="mb-6 text-sm leading-relaxed text-neutral sm:text-base line-clamp-4">{product.description}</p>
-                            )}
-
-                            {productColors.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="mb-2 text-sm font-medium">Color</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {productColors.map((color) => (
-                                            <button
-                                                key={color.slug}
-                                                onClick={() => setSelectedColor(color.slug)}
-                                                className={`rounded-lg border-2 px-3 py-2 text-sm ${selectedColor === color.slug ? 'border-contrast bg-contrast/5' : 'border-gray-200 hover:border-gray-400'}`}
-                                            >
-                                                {color.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {availableSizes.length > 0 && (
-                                <div className="mb-6">
-                                    <h3 className="mb-2 text-sm font-medium">Size</h3>
-                                    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                                        {availableSizes.map((size) => (
-                                            <button
-                                                key={size}
-                                                onClick={() => setSelectedSize(size)}
-                                                className={`rounded-lg border-2 px-4 py-3 text-sm font-medium ${selectedSize === size ? 'border-contrast bg-contrast text-white' : 'border-gray-200 hover:border-gray-400'}`}
-                                            >
-                                                {size}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="space-y-3 border-t pt-4 sm:pt-6">
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={handleAddToCart}
-                                    disabled={
-                                        adding ||
-                                        (productColors.filter((c: any) => c.slug !== '').length > 0 && !selectedColor) ||
-                                        (availableSizes.filter((s: string) => s !== '').length > 0 && !selectedSize)
-                                    }
-                                    className="btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                >
-                                    {adding ? 'Adding...' : 'Add to Cart'}
-                                </button>
-
-                                <WishlistButton productId={product._id} productName={product.name} size="lg" />
-                            </div>
-
-                            <button onClick={handleViewDetails} className="btn-ghost w-full">
-                                View Full Details ?
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {mediaItems.length > 1 && (
+              <div className="absolute inset-x-0 bottom-0 flex gap-2 overflow-x-auto bg-gradient-to-t from-black/55 to-transparent p-4 pt-12 no-scrollbar">
+                {mediaItems.map((media, index) => (
+                  <button
+                    type="button"
+                    key={`${media.url}-${index}`}
+                    onClick={() => setCurrentMediaIndex(index)}
+                    className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white shadow-sm transition ${
+                      currentMediaIndex === index ? 'border-white ring-2 ring-brand' : 'border-white/55 opacity-80 hover:opacity-100'
+                    }`}
+                    aria-label={`View media ${index + 1}`}
+                  >
+                    {media.type === 'video' ? (
+                      <>
+                        <video src={media.url} className="h-full w-full object-cover" muted playsInline />
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/25 text-white">
+                          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.3 2.84A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.27l9.34-5.89a1.5 1.5 0 000-2.54L6.3 2.84Z" />
+                          </svg>
+                        </span>
+                      </>
+                    ) : (
+                      <Image src={media.url} alt="" fill className="object-cover" sizes="64px" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-    );
+
+        <div className="min-h-0 p-6 sm:p-8 lg:overflow-y-auto lg:p-10">
+          <div className="flex h-full flex-col">
+            <div className="flex-1">
+              <p className="pr-12 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+                {details.brand?.name || formatCategory(details.category)}
+              </p>
+              <h2 id={`quick-view-${details.slug}`} className="mt-3 pr-10 text-2xl font-bold leading-tight sm:text-3xl">
+                {details.name}
+              </h2>
+
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                {isOnSale ? (
+                  <>
+                    <p className="text-2xl font-bold">{formatPrice(details.discountPrice as number)}</p>
+                    <p className="text-sm text-neutral line-through">{formatPrice(details.price)}</p>
+                    <span className="badge bg-red-50 text-red-600">Sale</span>
+                  </>
+                ) : (
+                  <p className="text-2xl font-bold">{formatPrice(details.price)}</p>
+                )}
+              </div>
+
+              <p className={`mt-3 flex items-center gap-2 text-xs font-semibold ${isOutOfStock ? 'text-red-600' : 'text-brand'}`}>
+                <span className={`h-2 w-2 rounded-full ${isOutOfStock ? 'bg-red-600' : 'bg-brand'}`} />
+                {isOutOfStock ? 'Currently unavailable' : 'Available to order, subject to confirmation'}
+              </p>
+
+              {details.description && (
+                <p className="mt-6 text-sm leading-7 text-neutral sm:text-[0.95rem]">
+                  {details.description}
+                </p>
+              )}
+
+              {loadingOptions && (
+                <div className="mt-7 flex items-center gap-2 text-sm text-neutral">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-sand border-t-brand" />
+                  Loading available options
+                </div>
+              )}
+
+              {!loadingOptions && colors.length > 0 && (
+                <fieldset className="mt-7">
+                  <legend className="text-sm font-bold">Choose color</legend>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {colors.map((color) => (
+                      <button
+                        type="button"
+                        key={color.slug}
+                        onClick={() => setSelectedColor(color.slug)}
+                        className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition ${
+                          selectedColor === color.slug
+                            ? 'border-contrast bg-contrast text-white'
+                            : 'border-sand bg-white hover:border-contrast/35'
+                        }`}
+                      >
+                        {color.hexCode && (
+                          <span className="h-4 w-4 rounded-full border border-black/10" style={{ backgroundColor: color.hexCode }} />
+                        )}
+                        {color.name}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              {!loadingOptions && availableSizes.length > 0 && (
+                <fieldset className="mt-7">
+                  <legend className="text-sm font-bold">Choose size</legend>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        type="button"
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-12 rounded-xl border px-4 py-3 text-sm font-semibold transition ${
+                          selectedSize === size
+                            ? 'border-contrast bg-contrast text-white'
+                            : 'border-sand bg-white hover:border-contrast/35'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+            </div>
+
+            <div className="mt-8 border-t border-sand pt-6">
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  disabled={!canAdd}
+                  className="btn-primary flex-1"
+                >
+                  {isOutOfStock ? 'Unavailable' : adding ? 'Adding...' : requiresColor && !selectedColor ? 'Choose a color' : requiresSize && !selectedSize ? 'Choose a size' : 'Add to cart'}
+                </button>
+                {details._id && (
+                  <WishlistButton productId={details._id} productName={details.name} size="lg" />
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={handleViewDetails}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-contrast transition-colors hover:bg-sand/50"
+              >
+                View full product details
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m9 5 7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>,
+    document.body,
+  );
 }
