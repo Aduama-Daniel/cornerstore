@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react';
 
 const navigation = [
   { label: 'Overview', href: '/admin' },
+  { label: 'Intelligence', href: '/admin/intelligence' },
   { label: 'Orders', href: '/admin/orders' },
   { label: 'Analytics', href: '/admin/analytics' },
   { label: 'Products', href: '/admin/products' },
+  { label: 'AI Repurposing', href: '/admin/repurposing' },
   { label: 'Inventory', href: '/admin/inventory' },
   { label: 'Collections', href: '/admin/collections' },
   { label: 'Categories', href: '/admin/categories' },

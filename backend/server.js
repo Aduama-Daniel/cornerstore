@@ -23,6 +23,9 @@ import returnsRoutes from './src/routes/returns.js';
 import analyticsAdminRoutes from './src/routes/analyticsAdmin.js';
 import userRoutes from './src/routes/user.js';
 import chatRoutes from './src/routes/chat.js';
+import paystackRoutes from './src/routes/paystack.js';
+import repurposingRoutes from './src/routes/repurposing.js';
+import intelRoutes from './src/routes/intel.js';
 
 dotenv.config();
 
@@ -39,8 +42,22 @@ await fastify.register(helmet, {
   contentSecurityPolicy: false
 });
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()).filter(Boolean) || ['http://localhost:3000'];
+
 await fastify.register(cors, {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
+  origin: (origin, cb) => {
+    // Allow same-origin/no-origin requests and configured origins.
+    // In development, also allow any localhost port for local tooling.
+    if (
+      !origin ||
+      allowedOrigins.includes(origin) ||
+      (process.env.NODE_ENV !== 'production' && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin))
+    ) {
+      cb(null, true);
+      return;
+    }
+    cb(new Error('Not allowed by CORS'), false);
+  },
   credentials: true
 });
 
@@ -55,6 +72,22 @@ await fastify.register(multipart, {
   }
 });
 
+fastify.removeContentTypeParser('application/json');
+fastify.addContentTypeParser('application/json', { parseAs: 'buffer' }, (request, body, done) => {
+  request.rawBody = body;
+
+  if (!body.length) {
+    done(null, {});
+    return;
+  }
+
+  try {
+    done(null, JSON.parse(body.toString('utf8')));
+  } catch (error) {
+    done(error);
+  }
+});
+
 fastify.addHook('onRequest', async (request, reply) => {
   if (!fastify.startupError) {
     return;
@@ -66,15 +99,17 @@ fastify.addHook('onRequest', async (request, reply) => {
 
   return reply.status(503).send({
     error: true,
-    message: 'Backend startup failed',
-    detail: fastify.startupError
+    message: 'Service temporarily unavailable',
+    ...(process.env.NODE_ENV !== 'production' ? { detail: fastify.startupError } : {})
   });
 });
 
 fastify.get('/health', async () => {
   return {
     status: fastify.startupError ? 'degraded' : 'ok',
-    startupError: fastify.startupError,
+    ...(process.env.NODE_ENV !== 'production' && fastify.startupError
+      ? { startupError: fastify.startupError }
+      : {}),
     timestamp: new Date().toISOString()
   };
 });
@@ -100,6 +135,9 @@ fastify.register(returnsRoutes, { prefix: '/api/admin/returns' });
 fastify.register(analyticsAdminRoutes, { prefix: '/api/admin/analytics' });
 fastify.register(userRoutes, { prefix: '/api/user' });
 fastify.register(chatRoutes, { prefix: '/api/chat' });
+fastify.register(paystackRoutes, { prefix: '/api/paystack' });
+fastify.register(repurposingRoutes, { prefix: '/api/admin/repurposing' });
+fastify.register(intelRoutes, { prefix: '/api/admin/intel' });
 
 fastify.setErrorHandler((error, request, reply) => {
   fastify.log.error(error);

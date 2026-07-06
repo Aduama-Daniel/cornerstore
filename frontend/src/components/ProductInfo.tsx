@@ -1,11 +1,12 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/contexts/ToastContext';
 import { formatPrice } from '@/lib/currency';
 import { api } from '@/lib/api';
+import { getProductFulfillment } from '@/lib/productFulfillment';
 import ColorSelector from './ColorSelector';
 import SizeSelector from './SizeSelector';
 import WishlistButton from './WishlistButton';
@@ -48,7 +49,13 @@ interface Product {
   status: string;
   tags?: string[];
   origin?: 'Ghana' | 'China';
+  originType?: 'local' | 'international';
+  paymentMode?: 'pay_on_delivery' | 'upfront' | 'both';
+  estimatedDeliveryLabel?: string;
+  returnEligible?: boolean;
   modelNumber?: string;
+  images?: string[];
+  mainMedia?: Array<{ url: string; type?: 'image' | 'video' }>;
 }
 
 interface ProductInfoProps {
@@ -164,7 +171,20 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     try {
       setAdding(true);
       await addItem(product._id, sizeToPass, quantity, colorToPass);
-      addToast(`${product.name} added to cart!`, 'success');
+      import('@/lib/analytics').then(({ trackEvent }) => trackEvent('add_to_cart', {
+        product_id: product._id,
+        item_name: product.name,
+        quantity,
+        value: price * quantity,
+        currency: 'GHS',
+      }));
+      const { getPreferredMedia, optimizedImageUrl } = await import('@/lib/media');
+      const thumb = getPreferredMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
+      addToast('Added to your cart', 'success', 4500, {
+        title: product.name,
+        image: thumb?.type === 'image' ? optimizedImageUrl(thumb.url, 120) : undefined,
+        action: { label: 'View cart', href: '/cart' },
+      });
     } catch (error) {
       console.error('Error adding to cart:', error);
       addToast('Failed to add to cart. Please try again.', 'error');
@@ -177,6 +197,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const price = currentVariant?.priceOverride || product.price;
   const discountedPrice = product.discountPrice;
   const isOnSale = discountedPrice && discountedPrice < price;
+  const fulfillment = getProductFulfillment(product);
   const effectiveVariant = currentVariant || (inventory.length === 1 && inventory[0].size === '' && inventory[0].colorSlug === '' ? inventory[0] : null);
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, '');
   const selectedOptions = [
@@ -199,6 +220,34 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     (inventory.length > 0 ? (effectiveVariant ? effectiveVariant.stockQuantity === 0 : true) : false)
   );
 
+  // Sticky mobile buy bar: appears once the main CTA scrolls out of view.
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const target = ctaRef.current;
+    if (!target || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyBar(!entry.isIntersecting),
+      { rootMargin: '0px 0px -10% 0px' }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [loading]);
+
+  // Let the chat launcher move out of the way of the buy bar (see globals.css).
+  useEffect(() => {
+    const active = showStickyBar && !isOutOfStock;
+    if (active) {
+      document.body.dataset.buybar = '1';
+    } else {
+      delete document.body.dataset.buybar;
+    }
+    return () => {
+      delete document.body.dataset.buybar;
+    };
+  }, [showStickyBar, isOutOfStock]);
+
   if (loading) {
     return (
       <div className="animate-pulse space-y-4 py-5 sm:py-6">
@@ -220,6 +269,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <div className="flex flex-wrap items-center gap-2">
           {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
           {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
+          <span className="rounded-full bg-brand-light px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-brand-dark">
+            {fulfillment.originType === 'international' ? 'International order' : 'Local delivery'}
+          </span>
         </div>
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -302,11 +354,28 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <p className="font-medium">
           {isOutOfStock || (effectiveVariant && effectiveVariant.stockQuantity === 0)
             ? 'Selected option is currently unavailable.'
-            : 'Availability is confirmed before fulfilment.'}
+            : fulfillment.originType === 'international'
+              ? 'This international item requires upfront payment and usually arrives in 3-5 weeks.'
+              : 'This item is eligible for local delivery. Pay on Delivery may be available depending on your location and order details.'}
         </p>
       </div>
 
-      <div className="space-y-3 pt-1">
+      <div className="grid gap-3 rounded-2xl border border-sand bg-cream p-4 text-sm sm:grid-cols-3">
+        <div>
+          <p className="text-[0.65rem] font-bold uppercase tracking-wider text-neutral">Item type</p>
+          <p className="mt-1 font-semibold text-contrast">{fulfillment.originType === 'international' ? 'International item' : 'Local item'}</p>
+        </div>
+        <div>
+          <p className="text-[0.65rem] font-bold uppercase tracking-wider text-neutral">Payment</p>
+          <p className="mt-1 font-semibold text-contrast">{fulfillment.paymentLabel}</p>
+        </div>
+        <div>
+          <p className="text-[0.65rem] font-bold uppercase tracking-wider text-neutral">Delivery</p>
+          <p className="mt-1 font-semibold text-contrast">{fulfillment.deliveryLabel}</p>
+        </div>
+      </div>
+
+      <div ref={ctaRef} className="space-y-3 pt-1">
         <div className="grid gap-3 sm:grid-cols-2">
           <button
             onClick={handleAddToCart}
@@ -326,6 +395,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               target="_blank"
               rel="noopener noreferrer"
               className="btn-whatsapp w-full"
+              onClick={() => import('@/lib/analytics').then(({ trackEvent }) => trackEvent('whatsapp_checkout_clicked', { product_id: product._id, item_name: product.name }))}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z" />
@@ -348,7 +418,50 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           )}
         </div>
 
+        {/* Trust strip */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 text-xs text-neutral">
+          <span className="inline-flex items-center gap-1.5">
+            <svg className="h-4 w-4 text-brand" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.96 11.96 0 0 1 3.6 6c-.14.66-.35 1.9-.35 3 0 5.55 3.84 10.74 8.75 12 4.91-1.26 8.75-6.45 8.75-12 0-1.1-.21-2.34-.35-3a11.96 11.96 0 0 1-8.4-3.286Z" />
+            </svg>
+            Secure Paystack payment
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <svg className="h-4 w-4 text-brand" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.9 17.9 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+            </svg>
+            Delivery across Ghana
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <svg className="h-4 w-4 text-brand" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+            </svg>
+            Fair returns policy
+          </span>
+        </div>
       </div>
+
+      {/* Sticky mobile buy bar */}
+      {showStickyBar && !isOutOfStock && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-sand bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-8px_30px_rgba(15,23,42,0.10)] backdrop-blur-md lg:hidden animate-bar-up">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-contrast">{product.name}</p>
+              <p className="text-base font-bold text-contrast">
+                {formatPrice(isOnSale ? (discountedPrice as number) : price)}
+                {isOnSale && <span className="ml-2 text-xs font-normal text-neutral line-through">{formatPrice(price)}</span>}
+              </p>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              disabled={isAddToCartDisabled}
+              className="btn-primary shrink-0 px-7 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {adding ? 'Adding…' : 'Add to cart'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

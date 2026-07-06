@@ -1,4 +1,5 @@
-﻿import { api } from '@/lib/api';
+﻿import type { Metadata } from 'next';
+import { api } from '@/lib/api';
 import ProductImages from '@/components/ProductImages';
 import ProductInfo from '@/components/ProductInfo';
 import ProductGrid from '@/components/ProductGrid';
@@ -9,12 +10,45 @@ import ProductViewTracker from '@/components/ProductViewTracker';
 import ProductSpecifications from '@/components/ProductSpecifications';
 import ProductPurchaseDetails from '@/components/ProductPurchaseDetails';
 import Link from 'next/link';
+import { absoluteUrl, pageMetadata, siteUrl } from '@/lib/seo';
+import { getPreferredMedia } from '@/lib/media';
+import { getProductFulfillment } from '@/lib/productFulfillment';
 
 const formatLabel = (value: string) => value.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
+async function getProduct(slug: string) {
+  try {
+    const response = await api.products.getBySlug(slug);
+    return response.data;
+  } catch {
+    // Missing/removed product (or API hiccup) → render the not-found state
+    // below instead of crashing to the error boundary.
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const product = await getProduct(params.slug);
+  if (!product) {
+    return pageMetadata({
+      title: 'Product not found',
+      description: 'Browse Cornerstore for curated fashion, lifestyle, home, and everyday products in Ghana.',
+      path: `/product/${params.slug}`,
+    });
+  }
+
+  const media = getPreferredMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
+  return pageMetadata({
+    title: product.seoTitle || product.name,
+    description: product.seoDescription || product.shortDescription || product.description || `Shop ${product.name} online in Ghana at Cornerstore.`,
+    path: `/product/${product.slug}`,
+    image: media?.type === 'image' ? media.url : '/logo.png',
+    keywords: product.metaKeywords || product.tags || [],
+  });
+}
+
 export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const response = await api.products.getBySlug(params.slug);
-  const product = response.data;
+  const product = await getProduct(params.slug);
 
   if (!product) {
     return (
@@ -29,15 +63,59 @@ export default async function ProductPage({ params }: { params: { slug: string }
     );
   }
 
-  const relatedResponse = await api.products.getByCategory(product.category, { limit: 4 });
-  const relatedProducts = relatedResponse.data?.filter((item: any) => item.slug !== product.slug) || [];
+  const relatedProducts = await api.products
+    .getByCategory(product.category, { limit: 4 })
+    .then((res) => res.data?.filter((item: any) => item.slug !== product.slug) || [])
+    .catch(() => []);
 
   const categoryLabel = formatLabel(product.category);
   const mainMedia = product.mainMedia || (product.images ? product.images.map((url: string) => ({ url, type: 'image' })) : []);
   const additionalMedia = product.additionalMedia || [];
+  const fulfillment = getProductFulfillment(product);
+  const productImage = getPreferredMedia(mainMedia);
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.seoDescription || product.shortDescription || product.description,
+    image: productImage?.type === 'image' ? [absoluteUrl(productImage.url)] : [],
+    sku: product.modelNumber || product._id,
+    brand: product.brand?.name ? { '@type': 'Brand', name: product.brand.name } : undefined,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'GHS',
+      price: product.discountPrice || product.price,
+      availability: product.status === 'out-of-stock' ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      url: `${siteUrl}/product/${product.slug}`,
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'GH' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          businessDays: {
+            '@type': 'QuantitativeValue',
+            minValue: fulfillment.originType === 'international' ? 21 : 1,
+            maxValue: fulfillment.originType === 'international' ? 35 : 7,
+          },
+        },
+      },
+    },
+  };
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl },
+      { '@type': 'ListItem', position: 2, name: 'Shop', item: `${siteUrl}/shop` },
+      { '@type': 'ListItem', position: 3, name: categoryLabel, item: `${siteUrl}/collections/${product.category}` },
+      { '@type': 'ListItem', position: 4, name: product.name, item: `${siteUrl}/product/${product.slug}` },
+    ],
+  };
 
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <ProductViewTracker productId={product._id} />
 
       <div className="container-custom py-6 sm:py-8">
@@ -66,6 +144,10 @@ export default async function ProductPage({ params }: { params: { slug: string }
         includedItems={product.includedItems}
         deliveryNote={product.deliveryNote}
         availabilityNote={product.availabilityNote}
+        originType={fulfillment.originType}
+        paymentMode={fulfillment.paymentMode}
+        estimatedDeliveryLabel={product.estimatedDeliveryLabel}
+        returnEligible={product.returnEligible}
         faq={product.faq}
       />
       <ProductSpecifications

@@ -6,7 +6,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/currency';
-import { normalizeMedia, type MediaLike } from '@/lib/media';
+import { normalizeMedia, optimizedImageUrl, type MediaLike } from '@/lib/media';
+import { getProductFulfillment } from '@/lib/productFulfillment';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/contexts/ToastContext';
 import WishlistButton from './WishlistButton';
@@ -40,6 +41,10 @@ interface QuickViewProduct {
   description?: string;
   category?: string;
   origin?: string;
+  originType?: 'local' | 'international';
+  paymentMode?: 'pay_on_delivery' | 'upfront' | 'both';
+  estimatedDeliveryLabel?: string;
+  returnEligible?: boolean;
   status?: string;
   brand?: { name?: string } | null;
   images?: string[];
@@ -159,6 +164,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   );
   const currentMedia = mediaItems[currentMediaIndex] || mediaItems[0];
   const isOnSale = details.discountPrice != null && details.discountPrice < details.price;
+  const fulfillment = getProductFulfillment(details);
   const sellableInventory = useMemo(
     () => inventory.filter((item) => item.enabled !== false && Number(item.stockQuantity) > 0),
     [inventory],
@@ -198,7 +204,20 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
     try {
       setAdding(true);
       await addItem(details._id, selectedSize, 1, selectedColor);
-      addToast(`${details.name} added to cart`, 'success');
+      import('@/lib/analytics').then(({ trackEvent }) => trackEvent('add_to_cart', {
+        product_id: details._id,
+        item_name: details.name,
+        quantity: 1,
+        value: details.discountPrice || details.price,
+        currency: 'GHS',
+      }));
+      const { getPreferredMedia, optimizedImageUrl } = await import('@/lib/media');
+      const thumb = getPreferredMedia(details.mainMedia?.length ? details.mainMedia : details.images || []);
+      addToast('Added to your cart', 'success', 4500, {
+        title: details.name,
+        image: thumb?.type === 'image' ? optimizedImageUrl(thumb.url, 120) : undefined,
+        action: { label: 'View cart', href: '/cart' },
+      });
       onClose();
     } catch {
       addToast('Failed to add to cart', 'error');
@@ -253,7 +272,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                 />
               ) : (
                 <Image
-                  src={currentMedia.url}
+                  src={optimizedImageUrl(currentMedia.url, 1000)}
                   alt={details.name}
                   fill
                   className="object-cover"
@@ -290,7 +309,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                         </span>
                       </>
                     ) : (
-                      <Image src={media.url} alt="" fill className="object-cover" sizes="64px" />
+                      <Image src={optimizedImageUrl(media.url, 128)} alt="" fill className="object-cover" sizes="64px" />
                     )}
                   </button>
                 ))}
@@ -323,8 +342,15 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
               <p className={`mt-3 flex items-center gap-2 text-xs font-semibold ${isOutOfStock ? 'text-red-600' : 'text-brand'}`}>
                 <span className={`h-2 w-2 rounded-full ${isOutOfStock ? 'bg-red-600' : 'bg-brand'}`} />
-                {isOutOfStock ? 'Currently unavailable' : 'Available to order, subject to confirmation'}
+                {isOutOfStock ? 'Currently unavailable' : fulfillment.originType === 'international' ? 'International item · upfront payment required' : 'Local item · Pay on Delivery may be available'}
               </p>
+
+              {!isOutOfStock && (
+                <div className="mt-4 grid gap-2 rounded-2xl border border-sand bg-cream p-4 text-xs text-neutral sm:grid-cols-2">
+                  <p><span className="font-semibold text-contrast">Delivery:</span> {fulfillment.deliveryLabel}</p>
+                  <p><span className="font-semibold text-contrast">Payment:</span> {fulfillment.paymentLabel}</p>
+                </div>
+              )}
 
               {details.description && (
                 <p className="mt-6 text-sm leading-7 text-neutral sm:text-[0.95rem]">

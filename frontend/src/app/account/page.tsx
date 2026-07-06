@@ -87,7 +87,7 @@ export default function AccountPage() {
 
               {recentOrders.length === 0 ? (
                 <div className="bg-warm-beige p-8 text-center">
-                  <p className="text-neutral mb-4">You haven't placed any orders yet.</p>
+                  <p className="text-neutral mb-4">You haven&apos;t placed any orders yet.</p>
                   <Link href="/shop" className="btn-primary inline-block">
                     Start Shopping
                   </Link>

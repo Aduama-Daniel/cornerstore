@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 // ... imports
 import { GHANA_REGIONS } from '@/lib/constants';
@@ -14,6 +15,7 @@ interface ShippingAddress {
   region: string;
   town?: string;
   saveAddress: boolean;
+  acceptedTerms: boolean;
 }
 
 interface CheckoutFormProps {
@@ -22,7 +24,14 @@ interface CheckoutFormProps {
   initialValues?: Partial<ShippingAddress>;
 }
 
+const GHANA_PHONE_REGEX = /^(?:\+?233|0)(?:2[034567]|5[045679])\d{7}$/;
+
+export function isValidGhanaPhone(value: string) {
+  return GHANA_PHONE_REGEX.test(value.replace(/[\s-]/g, ''));
+}
+
 export default function CheckoutForm({ onSubmit, loading, initialValues }: CheckoutFormProps) {
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [formData, setFormData] = useState<ShippingAddress>({
     fullName: initialValues?.fullName || '',
     email: initialValues?.email || '',
@@ -32,6 +41,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
     region: initialValues?.region || 'Greater Accra',
     town: initialValues?.town || '',
     saveAddress: false,
+    acceptedTerms: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -47,6 +57,12 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidGhanaPhone(formData.phone)) {
+      setPhoneError('Enter a valid Ghana mobile number, e.g. 024 000 0000 or +233 24 000 0000.');
+      document.getElementById('phone')?.focus();
+      return;
+    }
+    setPhoneError(null);
     onSubmit(formData);
   };
 
@@ -67,6 +83,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
               value={formData.email}
               onChange={handleChange}
               required
+              autoComplete="email"
               className="input-field"
               placeholder="your@email.com"
             />
@@ -81,11 +98,26 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
               id="phone"
               name="phone"
               value={formData.phone}
-              onChange={handleChange}
+              onChange={(e) => {
+                setPhoneError(null);
+                handleChange(e);
+              }}
               required
+              autoComplete="tel"
+              inputMode="tel"
+              aria-invalid={phoneError ? true : undefined}
+              aria-describedby={phoneError ? 'phone-error' : undefined}
               className="input-field"
               placeholder="024 000 0000"
             />
+            {phoneError && (
+              <p id="phone-error" role="alert" className="mt-2 text-sm text-red-600">
+                {phoneError}
+              </p>
+            )}
+            <p className="mt-1.5 text-xs text-neutral">
+              We use this number to coordinate delivery. WhatsApp-reachable numbers help.
+            </p>
           </div>
         </div>
       </div>
@@ -105,6 +137,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
               value={formData.fullName}
               onChange={handleChange}
               required
+              autoComplete="name"
               className="input-field"
               placeholder="John Doe"
             />
@@ -121,6 +154,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
               value={formData.address}
               onChange={handleChange}
               required
+              autoComplete="street-address"
               className="input-field"
               placeholder="House No, Street Name or GPS Address (e.g. GA-123-4567)"
             />
@@ -194,10 +228,29 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
       </div>
 
       {/* Payment Note */}
-      <div className="bg-warm-beige p-4 rounded">
+      <div className="rounded-2xl bg-warm-beige p-4">
         <p className="text-sm text-neutral">
-          <strong>Note:</strong> You will be redirected to Paystack to complete your payment securely.
+          <strong>Payment note:</strong> International items require upfront payment. Eligible local items may support Pay on Delivery depending on location and order details. Secure online payments are processed through Paystack.
         </p>
+      </div>
+
+      <div className="rounded-2xl border border-sand bg-white p-4">
+        <label className="flex items-start gap-3 text-sm leading-relaxed text-neutral">
+          <input
+            type="checkbox"
+            name="acceptedTerms"
+            checked={formData.acceptedTerms}
+            onChange={handleChange}
+            required
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-contrast focus:ring-contrast"
+          />
+          <span>
+            I agree to the{' '}
+            <Link href="/terms" className="font-semibold text-contrast underline">Terms & Conditions</Link>,{' '}
+            <Link href="/shipping" className="font-semibold text-contrast underline">Delivery Policy</Link>, and{' '}
+            <Link href="/returns" className="font-semibold text-contrast underline">Returns Policy</Link>.
+          </span>
+        </label>
       </div>
 
       {/* Submit Button */}
@@ -210,7 +263,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
       </button>
 
       <p className="text-xs text-center text-neutral">
-        By placing your order, you agree to our Terms of Service and Privacy Policy.
+        Delivery fees and timelines can vary by location, item size, and delivery method.
       </p>
     </form>
   );

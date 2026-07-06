@@ -29,9 +29,12 @@ export default async function productRoutes(fastify, options) {
         if (maxPrice) filters.price.$lte = parseFloat(maxPrice);
       }
       if (request.query.ids) {
-        const ids = request.query.ids.split(',');
         const { ObjectId } = await import('mongodb');
-        filters._id = { $in: ids.map(id => new ObjectId(id)) };
+        const ids = request.query.ids
+          .split(',')
+          .filter(id => ObjectId.isValid(id))
+          .map(id => new ObjectId(id));
+        filters._id = { $in: ids };
       }
 
       const products = await getAllProducts(fastify.db, filters, parseInt(limit), parseInt(skip));

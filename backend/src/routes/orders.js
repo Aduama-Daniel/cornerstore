@@ -3,7 +3,6 @@ import {
   createOrder,
   getUserOrders,
   getOrderById,
-  updateOrderStatus,
   verifyOrderPayment
 } from '../services/orderService.js';
 
@@ -115,64 +114,21 @@ export default async function orderRoutes(fastify, options) {
     }
   });
 
-  // PATCH update order status (admin only - placeholder)
-  fastify.patch('/:orderId/status', { preHandler: authMiddleware }, async (request, reply) => {
-    try {
-      const { orderId } = request.params;
-      const { status } = request.body;
-
-      const validStatuses = ['pending', 'payment_confirmed', 'processing', 'shipped', 'out_for_delivery', 'delivered', 'cancelled'];
-
-      if (!status || !validStatuses.includes(status)) {
-        return reply.status(400).send({
-          error: true,
-          message: 'Valid status is required'
-        });
-      }
-
-      const order = await updateOrderStatus(fastify.db, orderId, status);
-
-      if (!order) {
-        return reply.status(404).send({
-          error: true,
-          message: 'Order not found'
-        });
-      }
-
-      return {
-        success: true,
-        data: order,
-        message: 'Order status updated'
-      };
-    } catch (error) {
-      fastify.log.error(error);
-      return reply.status(500).send({
-        error: true,
-        message: 'Failed to update order'
-      });
-    }
-  });
-
-  // PUT update order (payment verification)
+  // PUT update order (payment verification only — status changes go through
+  // the authenticated admin routes)
   fastify.put('/:orderId', { preHandler: optionalAuth }, async (request, reply) => {
     try {
       const { orderId } = request.params;
-      const { paymentReference, paymentStatus, status } = request.body;
+      const { paymentReference } = request.body;
 
-      let order;
-
-      if (paymentReference) {
-        // Verify payment
-        order = await verifyOrderPayment(fastify.db, orderId, paymentReference);
-      } else if (status) {
-        // Just update status (if needed, but PATCH is preferred)
-        order = await updateOrderStatus(fastify.db, orderId, status);
-      } else {
+      if (!paymentReference) {
         return reply.status(400).send({
           error: true,
-          message: 'No update data provided'
+          message: 'Payment reference is required'
         });
       }
+
+      const order = await verifyOrderPayment(fastify.db, orderId, paymentReference);
 
       if (!order) {
         return reply.status(404).send({

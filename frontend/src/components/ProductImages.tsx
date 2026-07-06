@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { optimizedImageUrl } from '@/lib/media';
 
 interface MediaItem {
   url: string;
@@ -66,7 +67,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
           ) : (
             <Zoom>
               <Image
-                src={currentMedia.url}
+                src={optimizedImageUrl(currentMedia.url, 1200)}
                 alt={`${productName} - Image ${selectedImage + 1}`}
                 fill
                 className="cursor-zoom-in object-cover"
@@ -131,7 +132,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
                   </div>
                 ) : (
                   <Image
-                    src={media.url}
+                    src={optimizedImageUrl(media.url, 200)}
                     alt={`${productName} thumbnail ${index + 1}`}
                     fill
                     className="object-cover"

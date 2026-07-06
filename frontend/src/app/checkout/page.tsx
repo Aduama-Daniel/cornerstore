@@ -5,9 +5,12 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
 import { api } from '@/lib/api';
 import CheckoutForm from '@/components/CheckoutForm';
 import { formatPrice } from '@/lib/currency';
+import { getProductFulfillment } from '@/lib/productFulfillment';
+import { trackEvent } from '@/lib/analytics';
 
 const PaystackPayment = dynamic(() => import('@/components/PaystackPayment'), {
   ssr: false,
@@ -16,18 +19,20 @@ const PaystackPayment = dynamic(() => import('@/components/PaystackPayment'), {
 export default function CheckoutPage() {
   const router = useRouter();
   const { user, getIdToken } = useAuth();
-  const { items, total, clearCart } = useCart();
+  const { items, total, clearCart, initialized } = useCart();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [shippingInfo, setShippingInfo] = useState<any>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [orderTotal, setOrderTotal] = useState<number | null>(null);
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (initialized && items.length === 0 && !orderId) {
       router.replace('/cart');
     }
-  }, [items.length, router]);
+  }, [initialized, items.length, orderId, router]);
 
-  if (items.length === 0) {
+  if (items.length === 0 && !orderId) {
     return null;
   }
 
@@ -39,10 +44,11 @@ export default function CheckoutPage() {
   const handleShippingSubmit = async (shippingAddress: any) => {
     try {
       setLoading(true);
+      trackEvent('begin_checkout', { value: finalTotal, currency: 'GHS', items: items.length });
       const token = await getIdToken();
 
       if (!token && user) {
-        alert('Authentication error. Please log in again.');
+        addToast('Your session expired. Please sign in again to continue.', 'error');
         return;
       }
 
@@ -75,11 +81,13 @@ export default function CheckoutPage() {
 
       if (response.success) {
         setOrderId(response.data._id);
+        setOrderTotal(Number(response.data.total) || finalTotal);
         setShippingInfo(shippingAddress);
+        trackEvent('order_submitted', { order_id: response.data._id, value: finalTotal, currency: 'GHS' });
       }
     } catch (error: any) {
-      console.error('Order creation error full:', error);
-      alert(`Failed to create order: ${error.message || 'Unknown error'}`);
+      console.error('Order creation error:', error);
+      addToast('We could not create your order. Please check your details and try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -105,14 +113,18 @@ export default function CheckoutPage() {
         if (user) {
           router.push(`/account/orders/${orderId}?payment=success`);
         } else {
-          router.push('/shop?payment=success');
+          router.push(`/checkout/success?ref=${encodeURIComponent(reference)}`);
         }
       } else {
         throw new Error(response.message || 'Verification failed on server');
       }
     } catch (error: any) {
       console.error('Payment verification error:', error);
-      alert(`Payment successful but update failed: ${error.message}. Ref: ${reference}`);
+      addToast(
+        `Your payment went through, but we could not confirm the order automatically. Keep your payment reference (${reference}) and contact support — we will sort it out.`,
+        'error',
+        12000
+      );
     } finally {
       setLoading(false);
     }
@@ -120,6 +132,7 @@ export default function CheckoutPage() {
 
   const handlePaymentClose = () => {
     setOrderId(null);
+    setOrderTotal(null);
     setShippingInfo(null);
   };
 
@@ -147,7 +160,7 @@ export default function CheckoutPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.55fr)_22rem] xl:grid-cols-[minmax(0,1.7fr)_24rem]">
-          <div className="lg:col-span-2">
+          <div>
             {!orderId ? (
               <CheckoutForm onSubmit={handleShippingSubmit} loading={loading} />
             ) : (
@@ -166,6 +179,7 @@ export default function CheckoutPage() {
                   <button
                     onClick={() => {
                       setOrderId(null);
+                      setOrderTotal(null);
                       setShippingInfo(null);
                     }}
                     className="text-sm text-contrast hover:underline mt-2"
@@ -188,8 +202,8 @@ export default function CheckoutPage() {
                 </div>
 
                 <PaystackPayment
-                  email={user?.email || ''}
-                  amount={finalTotal}
+                  email={user?.email || shippingInfo?.email || ''}
+                  amount={orderTotal || finalTotal}
                   onSuccess={handlePaymentSuccess}
                   onClose={handlePaymentClose}
                   disabled={loading}
@@ -206,7 +220,7 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          <div className="lg:col-span-1">
+          <div>
             <div className="sticky top-24 rounded-[2rem] border border-black/10 bg-[#fbf8f4] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
               <div className="mb-6 border-b border-neutral/20 pb-6">
                 <p className="text-[0.72rem] uppercase tracking-[0.28em] text-neutral">Order Summary</p>
@@ -218,7 +232,14 @@ export default function CheckoutPage() {
                   <div key={item.id} className="flex justify-between text-sm">
                     <div className="flex-1">
                       <p className="font-medium">{item.product?.name}</p>
-                      <p className="text-neutral text-xs">Size: {item.size} • Qty: {item.quantity}</p>
+                      <p className="text-neutral text-xs">Size: {item.size || 'Standard'} • Qty: {item.quantity}</p>
+                      {item.product && (
+                        <div className="mt-2 space-y-1 text-xs text-neutral">
+                          <p>{getProductFulfillment(item.product).originType === 'international' ? 'International item' : 'Local item'}</p>
+                          <p>{getProductFulfillment(item.product).paymentLabel}</p>
+                          <p>{getProductFulfillment(item.product).deliveryLabel}</p>
+                        </div>
+                      )}
                     </div>
                     <p>{formatPrice(item.price * item.quantity)}</p>
                   </div>

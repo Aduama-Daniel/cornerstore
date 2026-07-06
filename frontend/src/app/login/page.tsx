@@ -129,7 +129,7 @@ function LoginPageContent() {
         </button>
 
         <p className="mt-8 text-center text-sm">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/signup" className="font-medium hover:text-neutral transition-colors">
             Create one
           </Link>

@@ -34,7 +34,16 @@ export default function NewProduct() {
         additionalMedia: [] as Array<{ url: string; type: 'image' | 'video' }>,
         status: 'active',
         tags: [] as string[],
-        origin: 'Ghana'
+        origin: 'Ghana',
+        originType: 'local' as 'local' | 'international',
+        paymentMode: 'both' as 'pay_on_delivery' | 'upfront' | 'both',
+        estimatedDeliveryLabel: 'Local delivery',
+        returnEligible: true,
+        seoTitle: '',
+        seoDescription: '',
+        metaKeywords: [] as string[],
+        productHighlights: [] as string[],
+        productNotes: ''
     });
     const [tagInput, setTagInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -193,10 +202,78 @@ export default function NewProduct() {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Origin</label>
-                                <select value={formData.origin} onChange={(e) => setFormData({ ...formData, origin: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">
+                                <select value={formData.origin} onChange={(e) => {
+                                    const origin = e.target.value;
+                                    const originType = origin === 'China' ? 'international' : 'local';
+                                    setFormData({
+                                        ...formData,
+                                        origin,
+                                        originType,
+                                        paymentMode: originType === 'international' ? 'upfront' : 'both',
+                                        estimatedDeliveryLabel: originType === 'international' ? '3-5 weeks delivery' : 'Local delivery'
+                                    });
+                                }} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">
                                     <option value="Ghana">Ghana</option>
                                     <option value="China">China</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div className="rounded-lg border border-gray-200 p-4">
+                            <h2 className="text-sm font-semibold text-gray-900">Customer-facing fulfillment</h2>
+                            <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Product Origin Type</label>
+                                    <select value={formData.originType} onChange={(e) => setFormData({ ...formData, originType: e.target.value as 'local' | 'international' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">
+                                        <option value="local">Local</option>
+                                        <option value="international">International</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Payment Mode</label>
+                                    <select value={formData.paymentMode} onChange={(e) => setFormData({ ...formData, paymentMode: e.target.value as 'pay_on_delivery' | 'upfront' | 'both' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">
+                                        <option value="both">Both / depends on order</option>
+                                        <option value="pay_on_delivery">Pay on Delivery</option>
+                                        <option value="upfront">Upfront payment</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Return Eligible</label>
+                                    <select value={formData.returnEligible ? 'yes' : 'no'} onChange={(e) => setFormData({ ...formData, returnEligible: e.target.value === 'yes' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No / limited</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700">Estimated Delivery Label</label>
+                                <input type="text" value={formData.estimatedDeliveryLabel} onChange={(e) => setFormData({ ...formData, estimatedDeliveryLabel: e.target.value })} placeholder="Local delivery or 3-5 weeks delivery" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                            </div>
+                        </div>
+
+                        <div className="rounded-lg border border-gray-200 p-4">
+                            <h2 className="text-sm font-semibold text-gray-900">SEO and product notes</h2>
+                            <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">SEO Title</label>
+                                    <input type="text" value={formData.seoTitle} onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Meta Keywords</label>
+                                    <input type="text" value={formData.metaKeywords.join(', ')} onChange={(e) => setFormData({ ...formData, metaKeywords: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) })} placeholder="fashion Ghana, accessories" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700">SEO Description</label>
+                                <textarea rows={2} value={formData.seoDescription} onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                            </div>
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700">Product Highlights</label>
+                                <input type="text" value={formData.productHighlights.join(', ')} onChange={(e) => setFormData({ ...formData, productHighlights: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) })} placeholder="Comma-separated highlights" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
+                            </div>
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700">Product Notes / Care Instructions</label>
+                                <textarea rows={2} value={formData.productNotes} onChange={(e) => setFormData({ ...formData, productNotes: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" />
                             </div>
                         </div>
 

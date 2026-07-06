@@ -10,6 +10,8 @@ import { ModeProvider } from '@/contexts/ModeContext';
 import { getServerMode } from '@/lib/serverMode';
 import { MODE_CONFIG } from '@/lib/modes';
 import AppChrome from '@/components/AppChrome';
+import AnalyticsScripts from '@/components/AnalyticsScripts';
+import { defaultDescription, organizationJsonLd, pageMetadata, siteUrl, websiteJsonLd } from '@/lib/seo';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -23,10 +25,46 @@ const manrope = Manrope({
   weight: ['300', '400', '500', '600', '700'],
 });
 
+const defaultSeo = pageMetadata({ description: defaultDescription });
+
 export const metadata: Metadata = {
-  title: 'Cornerstore - Everyday essentials, delivered in Ghana',
-  description:
-    'Cornerstore is your online convenience store for useful everyday items in Ghana. Browse, order, and get it delivered. Pay with Paystack or order on WhatsApp.',
+  ...defaultSeo,
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'Cornerstore',
+    template: '%s | Cornerstore',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+  applicationName: 'Cornerstore',
+  category: 'shopping',
+  other: {
+    'theme-color': '#C59A53',
+  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#C59A53',
 };
 
 export default function RootLayout({
@@ -45,6 +83,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${manrope.variable}`}>
       <body style={accentVars}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+        />
+        <AnalyticsScripts />
         <ModeProvider initialMode={mode}>
           <AuthProvider>
             <CartProvider>

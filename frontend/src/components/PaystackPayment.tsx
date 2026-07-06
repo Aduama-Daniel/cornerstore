@@ -21,12 +21,13 @@ export default function PaystackPayment({
     metadata = {}
 }: PaystackPaymentProps) {
     const config = {
-        reference: `CRN-${Date.now()}`,
+        reference: `CRN-${metadata.orderId || Date.now()}-${Date.now()}`,
         email,
         amount: Math.round(amount * 100), // Paystack expects amount in pesewas (kobo)
         publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
         currency: 'GHS', // Ghana Cedis
         metadata: {
+            order_id: metadata.orderId || 'N/A',
             custom_fields: [
                 {
                     display_name: 'Order ID',

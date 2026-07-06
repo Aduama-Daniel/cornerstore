@@ -9,13 +9,19 @@ const supportCompanyLinks = {
   Support: [
     { href: '/contact', label: 'Contact Us' },
     { href: '/faq', label: 'FAQ' },
-    { href: '/shipping', label: 'Delivery & Returns' },
+    { href: '/support', label: 'Help Center' },
+    { href: '/shipping', label: 'Delivery Policy' },
+    { href: '/returns', label: 'Returns & Refunds' },
+    { href: '/payment-policy', label: 'Payment Policy' },
+    { href: '/size-guide', label: 'Size Guide' },
     { href: '/account/orders', label: 'Track Order' },
   ],
   Company: [
     { href: '/about', label: 'About Cornerstore' },
+    { href: '/terms', label: 'Terms & Conditions' },
     { href: '/privacy', label: 'Privacy Policy' },
-    { href: '/terms', label: 'Terms of Service' },
+    { href: '/cookies', label: 'Cookie Policy' },
+    { href: '/cancellations', label: 'Cancellations' },
     { href: '/accessibility', label: 'Accessibility' },
   ],
 };
@@ -44,6 +50,9 @@ export default function Footer() {
               <Link href="/shop" className="btn-primary">Start shopping</Link>
               <Link href="/contact" className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/20">Get help</Link>
             </div>
+            <p className="mt-5 text-sm leading-relaxed text-white/60">
+              Curated local and selected international products with clear payment and delivery details before you order.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">

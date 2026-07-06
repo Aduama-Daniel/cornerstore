@@ -46,3 +46,10 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+.vercel
+
+# Local tooling & stray artifacts (not for production)
+.claude/
+images/
+ChatGPT Image*.png
+test_chat.js

@@ -8,7 +8,10 @@ import ProductGrid from '@/components/ProductGrid';
 import { useMode } from '@/contexts/ModeContext';
 import { filterByMode, MODE_CONFIG } from '@/lib/modes';
 
-const popularTerms = ['Kettle', 'Blender', 'Lamp', 'Skincare', 'Fan', 'Cookware'];
+const POPULAR_TERMS: Record<string, string[]> = {
+  fashion: ['Bags', 'Balaclava', 'Watches', 'Boots', 'Jewelry', 'Sunglasses'],
+  electronics: ['Kettle', 'Blender', 'Lamp', 'Skincare', 'Fan', 'Cookware'],
+};
 
 function SearchPageContent() {
   const searchParams = useSearchParams();
@@ -80,7 +83,7 @@ function SearchPageContent() {
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium text-neutral">Popular:</span>
-            {popularTerms.map((term) => (
+            {(POPULAR_TERMS[mode] || POPULAR_TERMS.fashion).map((term) => (
               <button
                 key={term}
                 onClick={() => { setQuery(term); performSearch(term); }}

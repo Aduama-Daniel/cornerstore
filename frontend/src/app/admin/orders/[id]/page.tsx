@@ -8,6 +8,7 @@ import { formatPrice } from '@/lib/currency';
 import OrderStatusBadge from '@/components/admin/OrderStatusBadge';
 import PaymentStatusBadge from '@/components/admin/PaymentStatusBadge';
 import ShippingModal from '@/components/admin/ShippingModal';
+import ImportedSourcePanel from '@/components/admin/ImportedSourcePanel';
 import { useToast } from '@/contexts/ToastContext';
 import { adminFetcher, adminRequest } from '@/lib/admin';
 
@@ -173,6 +174,9 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
                                 </div>
                             </div>
                         </div>
+
+                        {/* Imported item sourcing (only shows for repurposed products) */}
+                        <ImportedSourcePanel orderId={params.id} />
 
                         {/* Order Timeline */}
                         <div className="bg-white rounded-lg shadow-sm p-6">

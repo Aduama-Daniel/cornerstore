@@ -5,7 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/lib/currency';
-import { normalizeMedia } from '@/lib/media';
+import { normalizeMedia, optimizedImageUrl } from '@/lib/media';
+import { getProductFulfillment } from '@/lib/productFulfillment';
 import WishlistButton from './WishlistButton';
 import QuickViewModal from './QuickViewModal';
 
@@ -26,6 +27,11 @@ interface Product {
   brand?: { name?: string } | null;
   department?: string;
   status?: string;
+  origin?: string;
+  originType?: 'local' | 'international';
+  paymentMode?: 'pay_on_delivery' | 'upfront' | 'both';
+  estimatedDeliveryLabel?: string;
+  returnEligible?: boolean;
 }
 
 interface ProductCardProps {
@@ -48,6 +54,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const mediaItems = normalizeMedia(product.mainMedia?.length ? product.mainMedia : product.images || []);
   const isOutOfStock = product.status === 'out-of-stock';
   const isOnSale = product.discountPrice != null && product.discountPrice < product.price;
+  const fulfillment = getProductFulfillment(product);
 
   useEffect(() => {
     if (!isHovering || mediaItems.length <= 1) {
@@ -82,7 +89,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   return (
     <div className="group relative flex cursor-pointer flex-col overflow-hidden bg-transparent" onClick={handleCardClick}>
       <div
-        className="relative aspect-[4/5] overflow-hidden rounded-xl bg-sand/25"
+        className="relative aspect-[4/5] overflow-hidden rounded-xl bg-sand/25 ring-1 ring-transparent transition-shadow duration-300 group-hover:shadow-card-hover group-hover:ring-black/5"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
@@ -104,10 +111,10 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               />
             ) : (
               <Image
-                src={currentMedia.url}
+                src={optimizedImageUrl(currentMedia.url, 640)}
                 alt={product.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 priority={priority}
               />
@@ -125,6 +132,12 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1.5">
           {isOnSale && <span className="badge bg-white/90 text-red-600">Sale</span>}
           {isOutOfStock && <span className="badge bg-white/90 text-contrast">Sold out</span>}
+          {!isOutOfStock && fulfillment.originType === 'international' && (
+            <span className="badge bg-white/90 text-contrast">Imported item</span>
+          )}
+          {!isOutOfStock && fulfillment.originType === 'local' && fulfillment.paymentMode !== 'upfront' && (
+            <span className="badge bg-white/90 text-contrast">Pay on Delivery</span>
+          )}
         </div>
 
         {/* Wishlist */}
@@ -173,6 +186,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               <span className="h-1.5 w-1.5 rounded-full bg-neutral/50" />
               Currently unavailable
             </p>
+          )}
+          {!isOutOfStock && (
+            <p className="mt-1.5 text-[0.7rem] font-medium text-neutral">{fulfillment.deliveryLabel}</p>
           )}
         </div>
       </div>

@@ -9,13 +9,21 @@ export const hashPassword = (password) => {
     return crypto.createHash('sha256').update(password).digest('hex');
 };
 
+// Constant-time comparison to avoid leaking hash prefixes via response timing.
+const hashesMatch = (a, b) => {
+    if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) {
+        return false;
+    }
+    return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+};
+
 const verifyAdminFromEnv = (username, password) => {
     if (!ADMIN_USERNAME || !ADMIN_PASSWORD_HASH) {
         return false;
     }
 
     const passwordHash = hashPassword(password);
-    return username === ADMIN_USERNAME && passwordHash === ADMIN_PASSWORD_HASH;
+    return username === ADMIN_USERNAME && hashesMatch(passwordHash, ADMIN_PASSWORD_HASH);
 };
 
 export const verifyAdmin = async (db, username, password) => {
@@ -28,7 +36,7 @@ export const verifyAdmin = async (db, username, password) => {
         });
 
         if (admin) {
-            return admin.passwordHash === passwordHash;
+            return hashesMatch(admin.passwordHash, passwordHash);
         }
     }
 

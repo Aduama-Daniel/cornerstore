@@ -3,9 +3,15 @@ import { api } from '@/lib/api';
 import ShopClient from './ShopClient';
 import { getServerMode } from '@/lib/serverMode';
 import { filterByMode } from '@/lib/modes';
+import { pageMetadata } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+export const metadata = pageMetadata({
+  title: 'Shop Online in Ghana',
+  description: 'Shop curated fashion, lifestyle, home, beauty, accessories, and everyday products online in Ghana with clear payment and delivery options.',
+  path: '/shop',
+});
 
 async function getProducts() {
   try {

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/currency';
+import { optimizedImageUrl } from '@/lib/media';
 
 export interface SpotlightProduct {
   slug: string;
@@ -57,7 +58,7 @@ export default function FeaturedSpotlight({ products }: { products: SpotlightPro
         className="group relative block min-h-[16rem] animate-fade-in bg-sand/30 lg:min-h-full"
       >
         <Image
-          src={product.image}
+          src={optimizedImageUrl(product.image, 1000)}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"

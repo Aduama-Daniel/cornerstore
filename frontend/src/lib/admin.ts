@@ -29,3 +29,24 @@ export async function adminRequest<T = any>(endpoint: string, options: RequestIn
 }
 
 export const adminFetcher = <T = any>(endpoint: string) => adminRequest<T>(endpoint);
+
+/** Multipart upload with admin auth (no JSON content-type header). */
+export async function adminUpload<T = any>(endpoint: string, formData: FormData): Promise<T> {
+  const credentials = getAdminCredentials();
+  if (!credentials) throw new Error('Admin session required');
+
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    headers: { Authorization: `Basic ${credentials}` },
+    body: formData,
+  });
+
+  const data = await response.json().catch(() => ({ message: 'Request failed' }));
+  if (!response.ok) {
+    if (response.status === 401 && typeof window !== 'undefined') {
+      localStorage.removeItem('adminCredentials');
+    }
+    throw new Error(data.message || 'Request failed');
+  }
+  return data;
+}

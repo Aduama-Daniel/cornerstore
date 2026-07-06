@@ -23,7 +23,16 @@ export default async function searchRoutes(fastify, options) {
       }
       
       const results = await searchProducts(fastify.db, q.trim(), filters, parseInt(limit));
-      
+
+      // Log the search server-side (fire-and-forget) so search demand and
+      // no-result gaps can be analysed even without client-side tracking.
+      fastify.db.collection('search_queries').insertOne({
+        query: q.trim().toLowerCase().slice(0, 120),
+        resultCount: results.length,
+        hasResults: results.length > 0,
+        createdAt: new Date()
+      }).catch(() => {});
+
       return {
         success: true,
         data: results,

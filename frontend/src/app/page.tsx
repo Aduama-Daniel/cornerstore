@@ -27,17 +27,17 @@ type Product = {
 };
 
 const steps = [
-  { title: 'Browse or search', desc: 'Find what you need from our catalogue of everyday essentials.', icon: 'M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z' },
-  { title: 'Place your order', desc: 'Checkout securely with Paystack, or send your order on WhatsApp.', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
-  { title: 'We confirm it', desc: 'We confirm local availability before anything is dispatched.', icon: 'm5 12 4 4L19 6' },
-  { title: 'Get it delivered', desc: 'Your items are delivered to your address across Ghana.', icon: 'M3 7h13v8H3zM16 10h3l2 2v3h-5z' },
+  { title: 'Browse or search', desc: 'Discover fashion, lifestyle, beauty, home, and everyday picks in one place.', icon: 'M21 21l-4.5-4.5m1.5-5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z' },
+  { title: 'Review the details', desc: 'See product, payment, and delivery information before you continue.', icon: 'M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z' },
+  { title: 'Pay where required', desc: 'Eligible local items may allow Pay on Delivery. International items require upfront payment.', icon: 'M3 7.5h18m-16.5-3h15A1.5 1.5 0 0 1 21 6v12a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V6a1.5 1.5 0 0 1 1.5-1.5Z' },
+  { title: 'Get it delivered', desc: 'Local delivery is faster by location; international items usually take 3-5 weeks.', icon: 'M3 7h13v8H3zM16 10h3l2 2v3h-5z' },
 ];
 
 const reassurance = [
-  { title: 'Clear Ghanaian pricing', desc: 'Every price is shown in GH₵ with no surprises at checkout.', icon: 'M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6' },
-  { title: 'Availability confirmed', desc: 'We verify the item is obtainable before promising fulfilment.', icon: 'm5 12 4 4L19 6' },
-  { title: 'Secure payment', desc: 'Card and mobile money payments are handled by Paystack.', icon: 'M5 11V7a7 7 0 0114 0v4M4 11h16v9H4z' },
-  { title: 'Real support', desc: 'Ask our assistant or reach us on WhatsApp before you buy.', icon: 'M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z' },
+  { title: 'Curated for everyday use', desc: 'Products chosen for style, value, and practical daily needs.', icon: 'M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6' },
+  { title: 'Local and international options', desc: 'Shop Ghana-available items and selected imported products in one store.', icon: 'm5 12 4 4L19 6' },
+  { title: 'Secure payment options', desc: 'Upfront payments are handled through Paystack where required.', icon: 'M5 11V7a7 7 0 0114 0v4M4 11h16v9H4z' },
+  { title: 'Clear order support', desc: 'Delivery, payment, and return guidance stays easy to find.', icon: 'M8.5 19.5 4 21l1.5-4.5A8 8 0 1 1 8.5 19.5Z' },
 ];
 
 async function getProducts(params?: Record<string, string>) {

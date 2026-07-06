@@ -23,7 +23,16 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     const [formData, setFormData] = useState({
         name: '', slug: '', description: '', price: '', discountPrice: '', category: '', department: 'fashion', brandId: '',
         variations: [] as ProductVariation[], mainMedia: [{ url: '', type: 'image' as 'image' | 'video' }], additionalMedia: [] as Array<{ url: string; type: 'image' | 'video' }>,
-        status: 'active', tags: [] as string[], origin: 'Ghana'
+        status: 'active', tags: [] as string[], origin: 'Ghana',
+        originType: 'local' as 'local' | 'international',
+        paymentMode: 'both' as 'pay_on_delivery' | 'upfront' | 'both',
+        estimatedDeliveryLabel: 'Local delivery',
+        returnEligible: true,
+        seoTitle: '',
+        seoDescription: '',
+        metaKeywords: [] as string[],
+        productHighlights: [] as string[],
+        productNotes: ''
     });
     const [tagInput, setTagInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -80,7 +89,16 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     additionalMedia,
                     status: product.status || 'active',
                     tags: product.tags || [],
-                    origin: product.origin || 'Ghana'
+                    origin: product.origin || 'Ghana',
+                    originType: product.originType || (product.origin === 'China' ? 'international' : 'local'),
+                    paymentMode: product.paymentMode || (product.origin === 'China' ? 'upfront' : 'both'),
+                    estimatedDeliveryLabel: product.estimatedDeliveryLabel || (product.origin === 'China' ? '3-5 weeks delivery' : 'Local delivery'),
+                    returnEligible: product.returnEligible !== false,
+                    seoTitle: product.seoTitle || '',
+                    seoDescription: product.seoDescription || '',
+                    metaKeywords: product.metaKeywords || [],
+                    productHighlights: product.productHighlights || [],
+                    productNotes: product.productNotes || ''
                 });
             } else {
                 setError('Product not found');
@@ -166,7 +184,26 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                         <div><label className="block text-sm font-medium text-gray-700">Category *</label><select required value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="">Select category</option>{categories.map((cat) => <option key={cat._id} value={cat.slug}>{cat.name}</option>)}</select></div>
                         <div><label className="block text-sm font-medium text-gray-700">Department</label><select value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black">{departmentOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></div>
                         <div><label className="block text-sm font-medium text-gray-700">Brand</label><select value={formData.brandId} onChange={(e) => setFormData({ ...formData, brandId: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="">Select brand</option>{brands.map((brand) => <option key={brand._id} value={brand._id}>{brand.name}</option>)}</select></div>
-                        <div><label className="block text-sm font-medium text-gray-700">Origin</label><select value={formData.origin} onChange={(e) => setFormData({ ...formData, origin: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="Ghana">Ghana</option><option value="China">China</option></select></div>
+                        <div><label className="block text-sm font-medium text-gray-700">Origin</label><select value={formData.origin} onChange={(e) => { const origin = e.target.value; const originType = origin === 'China' ? 'international' : 'local'; setFormData({ ...formData, origin, originType, paymentMode: originType === 'international' ? 'upfront' : 'both', estimatedDeliveryLabel: originType === 'international' ? '3-5 weeks delivery' : 'Local delivery' }); }} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="Ghana">Ghana</option><option value="China">China</option></select></div>
+                    </div>
+                    <div className="rounded-lg border border-gray-200 p-4">
+                        <h2 className="text-sm font-semibold text-gray-900">Customer-facing fulfillment</h2>
+                        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
+                            <div><label className="block text-sm font-medium text-gray-700">Product Origin Type</label><select value={formData.originType} onChange={(e) => setFormData({ ...formData, originType: e.target.value as 'local' | 'international' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="local">Local</option><option value="international">International</option></select></div>
+                            <div><label className="block text-sm font-medium text-gray-700">Payment Mode</label><select value={formData.paymentMode} onChange={(e) => setFormData({ ...formData, paymentMode: e.target.value as 'pay_on_delivery' | 'upfront' | 'both' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="both">Both / depends on order</option><option value="pay_on_delivery">Pay on Delivery</option><option value="upfront">Upfront payment</option></select></div>
+                            <div><label className="block text-sm font-medium text-gray-700">Return Eligible</label><select value={formData.returnEligible ? 'yes' : 'no'} onChange={(e) => setFormData({ ...formData, returnEligible: e.target.value === 'yes' })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black"><option value="yes">Yes</option><option value="no">No / limited</option></select></div>
+                        </div>
+                        <div className="mt-4"><label className="block text-sm font-medium text-gray-700">Estimated Delivery Label</label><input type="text" value={formData.estimatedDeliveryLabel} onChange={(e) => setFormData({ ...formData, estimatedDeliveryLabel: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
+                    </div>
+                    <div className="rounded-lg border border-gray-200 p-4">
+                        <h2 className="text-sm font-semibold text-gray-900">SEO and product notes</h2>
+                        <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <div><label className="block text-sm font-medium text-gray-700">SEO Title</label><input type="text" value={formData.seoTitle} onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
+                            <div><label className="block text-sm font-medium text-gray-700">Meta Keywords</label><input type="text" value={formData.metaKeywords.join(', ')} onChange={(e) => setFormData({ ...formData, metaKeywords: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
+                        </div>
+                        <div className="mt-4"><label className="block text-sm font-medium text-gray-700">SEO Description</label><textarea rows={2} value={formData.seoDescription} onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
+                        <div className="mt-4"><label className="block text-sm font-medium text-gray-700">Product Highlights</label><input type="text" value={formData.productHighlights.join(', ')} onChange={(e) => setFormData({ ...formData, productHighlights: e.target.value.split(',').map((v) => v.trim()).filter(Boolean) })} placeholder="Comma-separated highlights" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
+                        <div className="mt-4"><label className="block text-sm font-medium text-gray-700">Product Notes / Care Instructions</label><textarea rows={2} value={formData.productNotes} onChange={(e) => setFormData({ ...formData, productNotes: e.target.value })} className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /></div>
                     </div>
                     <VariationManager variations={formData.variations} availableColors={colors} onVariationsChange={(variations) => setFormData({ ...formData, variations })} />
                     <div><label className="mb-2 block text-sm font-medium text-gray-700">Tags</label><div className="mb-2 flex gap-2"><input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())} placeholder="Add tag" className="flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-black focus:outline-none focus:ring-black" /><button type="button" onClick={addTag} className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300">Add</button></div><div className="flex flex-wrap gap-2">{formData.tags.map((tag) => <span key={tag} className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">{tag}<button type="button" onClick={() => removeTag(tag)} className="ml-2 text-blue-600 hover:text-blue-800">x</button></span>)}</div></div>

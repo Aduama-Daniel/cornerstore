@@ -7,7 +7,9 @@ export async function syncPaymentStatus(db, orderId) {
 
     const order = await collection.findOne({ _id: new ObjectId(orderId) });
 
-    if (!order || !order.paystackReference) {
+    const reference = order?.paymentReference || order?.paystackReference;
+
+    if (!order || !reference) {
         throw new Error('Order or payment reference not found');
     }
 
@@ -18,7 +20,7 @@ export async function syncPaymentStatus(db, orderId) {
     return {
         orderId: order._id,
         paymentStatus: order.paymentStatus,
-        reference: order.paystackReference
+        reference
     };
 }
 
@@ -27,13 +29,14 @@ export async function getPaymentDetails(db, reference) {
     const collection = db.collection('orders');
 
     const order = await collection.findOne(
-        { paystackReference: reference },
+        { $or: [{ paystackReference: reference }, { paymentReference: reference }] },
         {
             projection: {
                 orderNumber: 1,
                 total: 1,
                 paymentStatus: 1,
                 paymentMethod: 1,
+                paymentReference: 1,
                 paystackReference: 1,
                 createdAt: 1,
                 updatedAt: 1

@@ -15,9 +15,15 @@ export const createOrder = async (db, orderData) => {
     throw new Error('Some products are no longer available');
   }
 
-  // Enrich order items with product details
+  // Enrich order items with product details. Prices always come from the
+  // database (honouring active discounts), never from the client.
   const enrichedItems = orderData.items.map(item => {
     const product = products.find(p => p._id.toString() === item.productId);
+    const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
+    const unitPrice =
+      product.discountPrice != null && product.discountPrice > 0 && product.discountPrice < product.price
+        ? product.discountPrice
+        : product.price;
 
     return {
       productId: item.productId,
@@ -25,11 +31,16 @@ export const createOrder = async (db, orderData) => {
       productSlug: product.slug,
       productImage: product.images && product.images.length > 0 ? product.images[0] : null,
       size: item.size,
-      quantity: item.quantity,
-      price: product.price,
-      subtotal: product.price * item.quantity
+      quantity,
+      price: unitPrice,
+      subtotal: unitPrice * quantity
     };
   });
+
+  // Totals are computed server-side; client-provided figures are ignored.
+  const subtotal = enrichedItems.reduce((sum, item) => sum + item.subtotal, 0);
+  const shippingCost = Math.max(0, Number(orderData.shippingCost) || 0);
+  const tax = Math.max(0, Number(orderData.tax) || 0);
 
   const order = {
     orderNumber: `CS-${Date.now()}-${nanoid(6).toUpperCase()}`,
@@ -38,10 +49,10 @@ export const createOrder = async (db, orderData) => {
     items: enrichedItems,
     shippingAddress: orderData.shippingAddress,
     paymentMethod: orderData.paymentMethod,
-    subtotal: orderData.subtotal,
-    shippingCost: orderData.shippingCost,
-    tax: orderData.tax,
-    total: orderData.total,
+    subtotal,
+    shippingCost,
+    tax,
+    total: subtotal + shippingCost + tax,
     status: 'pending',
     paymentStatus: 'pending',
     createdAt: new Date(),
@@ -123,6 +134,98 @@ export const updatePaymentStatus = async (db, orderId, paymentStatus) => {
   return result;
 };
 
+function extractOrderIdFromPaystackData(paymentData) {
+  const metadata = paymentData?.metadata;
+
+  if (!metadata || typeof metadata !== 'object') {
+    return null;
+  }
+
+  if (metadata.orderId) {
+    return metadata.orderId;
+  }
+
+  if (metadata.order_id) {
+    return metadata.order_id;
+  }
+
+  const orderIdField = metadata.custom_fields?.find(
+    field => field?.variable_name === 'order_id' || field?.variable_name === 'orderId'
+  );
+
+  return orderIdField?.value || null;
+}
+
+export const applySuccessfulPayment = async (db, paymentData, source = 'verification') => {
+  const collection = db.collection('orders');
+  const { ObjectId } = await import('mongodb');
+
+  const reference = paymentData?.reference;
+  if (!reference) {
+    throw new Error('Payment reference is missing');
+  }
+
+  const metadataOrderId = extractOrderIdFromPaystackData(paymentData);
+  const query = {
+    $or: [
+      { paymentReference: reference },
+      { paystackReference: reference }
+    ]
+  };
+
+  if (metadataOrderId && ObjectId.isValid(metadataOrderId)) {
+    query.$or.unshift({ _id: new ObjectId(metadataOrderId) });
+  }
+
+  const order = await collection.findOne(query);
+  if (!order) {
+    throw new Error('Order not found for payment reference');
+  }
+
+  const orderTotalKobo = Math.round(order.total * 100);
+  const paidAmount = Number(paymentData.amount);
+  const basePaymentFields = {
+    paymentReference: reference,
+    paystackReference: reference,
+    paymentDetails: paymentData,
+    paymentVerifiedBy: source,
+    updatedAt: new Date()
+  };
+
+  if (paidAmount !== orderTotalKobo) {
+    return collection.findOneAndUpdate(
+      { _id: order._id },
+      {
+        $set: {
+          ...basePaymentFields,
+          paymentStatus: 'review_required',
+          paymentAmountMismatch: {
+            expected: orderTotalKobo,
+            received: paidAmount
+          }
+        }
+      },
+      { returnDocument: 'after' }
+    );
+  }
+
+  return collection.findOneAndUpdate(
+    { _id: order._id },
+    {
+      $set: {
+        ...basePaymentFields,
+        paymentStatus: 'item_paid',
+        status: 'payment_confirmed',
+        paidAt: order.paidAt || new Date()
+      },
+      $unset: {
+        paymentAmountMismatch: ''
+      }
+    },
+    { returnDocument: 'after' }
+  );
+};
+
 export const verifyOrderPayment = async (db, orderId, reference) => {
   const collection = db.collection('orders');
   const { ObjectId } = await import('mongodb');
@@ -137,29 +240,17 @@ export const verifyOrderPayment = async (db, orderId, reference) => {
   const paymentData = await verifyTransaction(reference);
 
   if (paymentData.status === true && paymentData.data.status === 'success') {
-    // Check if amount matches (Paystack amount is in kobo)
-    const orderTotalKobo = Math.round(order.total * 100);
-    if (paymentData.data.amount !== orderTotalKobo) {
-      // Flag as mismatched but paid? Or fail?
-      // For now, let's log it and proceed but maybe add a flag
-      console.warn(`Payment amount mismatch. Order: ${orderTotalKobo}, Paid: ${paymentData.data.amount}`);
-    }
-
-    const result = await collection.findOneAndUpdate(
+    await collection.updateOne(
       { _id: new ObjectId(orderId) },
       {
         $set: {
-          paymentStatus: 'item_paid', // or 'paid'
-          status: 'payment_confirmed',
           paymentReference: reference,
-          paymentDetails: paymentData.data,
-          paidAt: new Date(),
+          paystackReference: reference,
           updatedAt: new Date()
         }
-      },
-      { returnDocument: 'after' }
+      }
     );
-    return result;
+    return applySuccessfulPayment(db, paymentData.data, 'verification');
   } else {
     throw new Error('Payment verification failed: ' + paymentData.message);
   }

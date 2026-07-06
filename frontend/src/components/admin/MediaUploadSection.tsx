@@ -103,7 +103,7 @@ export default function MediaUploadSection({
                 <div className="mb-4">
                     <h3 className="text-lg font-medium text-gray-900">Additional Detail Media</h3>
                     <p className="text-sm text-gray-500 mt-1">
-                        Upload extra images and videos that will appear in the expandable "More Details" section on the product page.
+                        Upload extra images and videos that will appear in the expandable &quot;More Details&quot; section on the product page.
                     </p>
                 </div>
 

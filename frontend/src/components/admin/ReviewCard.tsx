@@ -60,11 +60,15 @@ export default function ReviewCard({
         );
     };
 
-    const statusColors = {
+    const statusColors: Record<string, string> = {
         pending: 'bg-yellow-100 text-yellow-800',
         approved: 'bg-green-100 text-green-800',
         rejected: 'bg-red-100 text-red-800'
     };
+
+    // Older reviews may be missing these fields — never crash the whole list.
+    const userName = review.userName || 'Anonymous';
+    const status = review.status || 'pending';
 
     return (
         <div className="bg-white rounded-lg shadow p-6">
@@ -73,10 +77,10 @@ export default function ReviewCard({
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                            {review.userName.charAt(0).toUpperCase()}
+                            {userName.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <div className="font-semibold text-gray-900">{review.userName}</div>
+                            <div className="font-semibold text-gray-900">{userName}</div>
                             <div className="text-sm text-gray-500">
                                 {new Date(review.createdAt).toLocaleDateString()}
                             </div>
@@ -95,8 +99,8 @@ export default function ReviewCard({
                             📌
                         </span>
                     )}
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${statusColors[review.status]}`}>
-                        {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${statusColors[status] || statusColors.pending}`}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
                     </span>
                 </div>
             </div>

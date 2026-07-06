@@ -4,9 +4,13 @@ import useSWR from 'swr';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useMode } from '@/contexts/ModeContext';
+import { MODE_CONFIG } from '@/lib/modes';
 
 export default function CollectionsPage() {
     const { data, isLoading } = useSWR('/api/collections', () => api.collections.getAll());
+    const { mode } = useMode();
+    const cfg = MODE_CONFIG[mode];
 
     const collections = data?.data || [];
     const featuredCollections = collections.filter((collection: any) => collection.featured);
@@ -23,6 +27,28 @@ export default function CollectionsPage() {
             </section>
 
             <div className="container-custom py-12 sm:py-14 lg:py-16">
+                {/* Category grid — always available, so this page is never a dead end */}
+                <section className="mb-14">
+                    <div className="mb-6 flex items-end justify-between gap-4">
+                        <h2 className="text-xl font-bold sm:text-2xl">Shop {cfg.label.toLowerCase()} categories</h2>
+                        <Link href="/shop" className="text-sm font-semibold text-brand hover:opacity-80">View all products →</Link>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+                        {cfg.categories.map((cat) => (
+                            <Link
+                                key={cat.slug}
+                                href={`/shop?category=${cat.slug}`}
+                                className="group flex items-center justify-between gap-2 rounded-2xl border border-sand bg-white px-4 py-5 transition-all hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-card"
+                            >
+                                <span className="text-sm font-semibold text-contrast">{cat.label}</span>
+                                <svg className="h-4 w-4 text-neutral transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+
                 {isLoading ? (
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                         {[1, 2, 3, 4, 5, 6].map((item) => (
@@ -33,18 +59,7 @@ export default function CollectionsPage() {
                             </div>
                         ))}
                     </div>
-                ) : collections.length === 0 ? (
-                    <div className="rounded-[2rem] border border-black/10 bg-white/75 px-6 py-16 text-center backdrop-blur-sm">
-                        <svg className="mx-auto mb-4 h-16 w-16 text-neutral/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                        </svg>
-                        <h3 className="mb-4 text-2xl font-serif">No Collections Yet</h3>
-                        <p className="mb-8 text-neutral">Check back soon for curated product stories and seasonal edits.</p>
-                        <Link href="/shop" className="btn-primary inline-block">
-                            Browse All Products
-                        </Link>
-                    </div>
-                ) : (
+                ) : collections.length === 0 ? null : (
                     <>
                         {featuredCollections.length > 0 && (
                             <section className="mb-16">

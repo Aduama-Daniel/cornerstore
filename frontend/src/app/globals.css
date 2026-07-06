@@ -144,6 +144,54 @@
     }
   }
 
+  /* Toast notifications */
+  .animate-toast-in {
+    animation: toastIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes toastIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .animate-toast-progress {
+    width: 100%;
+    animation-name: toastProgress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes toastProgress {
+    from { width: 100%; }
+    to { width: 0%; }
+  }
+
+  /* Sticky mobile buy bar */
+  .animate-bar-up {
+    animation: barUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* When the buy bar is on screen, float the chat launcher and toasts above it (mobile only). */
+  @media (max-width: 1023px) {
+    body[data-buybar='1'] .cs-chat-launcher {
+      bottom: 6.25rem;
+    }
+    body[data-buybar='1'] .cs-toast-stack {
+      bottom: 6.25rem;
+    }
+  }
+
+  @keyframes barUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
   /* Mode-switch loader */
   .animate-loadbar {
     animation: loadbar 0.9s ease-in-out infinite;

@@ -13,6 +13,10 @@ interface ProductPurchaseDetailsProps {
   includedItems?: string[];
   deliveryNote?: string;
   availabilityNote?: string;
+  originType?: 'local' | 'international';
+  paymentMode?: 'pay_on_delivery' | 'upfront' | 'both';
+  estimatedDeliveryLabel?: string;
+  returnEligible?: boolean;
   faq?: FAQItem[];
 }
 
@@ -21,15 +25,24 @@ export default function ProductPurchaseDetails({
   includedItems = [],
   deliveryNote,
   availabilityNote,
+  originType = 'local',
+  paymentMode = originType === 'international' ? 'upfront' : 'both',
+  estimatedDeliveryLabel,
+  returnEligible = true,
   faq = [],
 }: ProductPurchaseDetailsProps) {
   const features = specifications.filter((item) => item.label && item.value).slice(0, 6);
   const availability =
     availabilityNote ||
-    'Local availability can change. Cornerstore confirms the item before fulfilment.';
+    (originType === 'international'
+      ? 'This selected international item is ordered with upfront payment and has a longer delivery timeline.'
+      : 'This item is eligible for local delivery. Pay on Delivery may be available depending on location and order details.');
   const delivery =
     deliveryNote ||
-    'Delivery timing and any applicable delivery cost are confirmed using the address supplied at checkout.';
+    estimatedDeliveryLabel ||
+    (originType === 'international'
+      ? 'Estimated delivery is usually 3-5 weeks. Timelines may vary due to international shipping, customs, courier handling, and other external factors.'
+      : 'Local delivery timing and any applicable delivery cost are shown at checkout or communicated after order confirmation.');
   const faqItems = faq;
 
   return (
@@ -93,15 +106,22 @@ export default function ProductPurchaseDetails({
           </svg>
           <h3 className="mb-2 font-medium">Payment</h3>
           <p className="text-sm leading-relaxed text-neutral">
-            Payment is handled by Paystack. Available channels are shown during payment.
+            {paymentMode === 'upfront'
+              ? 'Upfront payment is required. Secure payment channels are shown during checkout.'
+              : paymentMode === 'pay_on_delivery'
+                ? 'Pay on Delivery is available for this item where delivery coverage allows.'
+                : 'Pay on Delivery may be available for eligible local orders. Upfront payment options are also available.'}
           </p>
         </article>
         <article>
           <svg className="mb-3 h-6 w-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="m3.75 7.5 8.25 4.75 8.25-4.75M12 12.25V21M4.5 7.1 12 3l7.5 4.1v9.8L12 21l-7.5-4.1V7.1Z" />
           </svg>
-          <h3 className="mb-2 font-medium">Availability</h3>
+          <h3 className="mb-2 font-medium">Returns</h3>
           <p className="text-sm leading-relaxed text-neutral">{availability}</p>
+          <p className="mt-2 text-sm leading-relaxed text-neutral">
+            {returnEligible ? 'Returns are reviewed under the Returns & Refunds Policy.' : 'This item may have stricter return limits because of hygiene, custom, or import terms.'}
+          </p>
         </article>
       </div>
 

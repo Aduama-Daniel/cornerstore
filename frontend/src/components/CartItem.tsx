@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 import { CartItem as CartItemType } from '@/contexts/CartContext';
 import { formatPrice } from '@/lib/currency';
-import { getPreferredMedia } from '@/lib/media';
+import { getPreferredMedia, optimizedImageUrl } from '@/lib/media';
 import { api } from '@/lib/api';
 
 interface Color {
@@ -72,7 +72,7 @@ export default function CartItem({ item }: CartItemProps) {
             itemMedia.type === 'video' ? (
               <video src={itemMedia.url} className="h-full w-full object-cover" muted playsInline preload="metadata" />
             ) : (
-              <Image src={itemMedia.url} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="(max-width: 640px) 45vw, 112px" />
+              <Image src={optimizedImageUrl(itemMedia.url, 240)} alt={item.product?.name || 'Product'} fill className="object-cover" sizes="(max-width: 640px) 45vw, 112px" />
             )
           ) : (
             <div className="flex h-full w-full items-center justify-center">

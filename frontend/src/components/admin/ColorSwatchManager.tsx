@@ -220,7 +220,7 @@ export default function ColorSwatchManager({
 
             {colors.length === 0 && !isAdding && (
                 <div className="text-center py-8 text-gray-500">
-                    <p>No colors added yet. Click "Add Color" to create your first color swatch.</p>
+                    <p>No colors added yet. Click &quot;Add Color&quot; to create your first color swatch.</p>
                 </div>
             )}
         </div>

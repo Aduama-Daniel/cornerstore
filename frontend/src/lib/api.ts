@@ -7,6 +7,10 @@ interface ApiResponse<T = any> {
   error?: boolean;
 }
 
+// Public catalog data can be briefly cached server-side (Next.js fetch cache)
+// so SSR pages don't re-hit the API on every request. Ignored in the browser.
+const CATALOG_CACHE = { next: { revalidate: 60 } } as RequestInit;
+
 const fetchWithAuth = async (
   endpoint: string,
   token: string | null = null,
@@ -40,20 +44,20 @@ export const api = {
   products: {
     getAll: (params?: Record<string, any>): Promise<ApiResponse> => {
       const query = params ? `?${new URLSearchParams(params)}` : '';
-      return fetchWithAuth(`/api/products${query}`);
+      return fetchWithAuth(`/api/products${query}`, null, CATALOG_CACHE);
     },
 
     getBySlug: (slug: string): Promise<ApiResponse> =>
-      fetchWithAuth(`/api/products/${slug}`),
+      fetchWithAuth(`/api/products/${slug}`, null, CATALOG_CACHE),
 
     getByCategory: (slug: string, params?: Record<string, any>): Promise<ApiResponse> => {
       const query = params ? `?${new URLSearchParams(params)}` : '';
-      return fetchWithAuth(`/api/products/category/${slug}${query}`);
+      return fetchWithAuth(`/api/products/category/${slug}${query}`, null, CATALOG_CACHE);
     },
 
     getFeatured: (limit?: number): Promise<ApiResponse> => {
       const query = limit ? `?limit=${limit}` : '';
-      return fetchWithAuth(`/api/products/featured${query}`);
+      return fetchWithAuth(`/api/products/featured${query}`, null, CATALOG_CACHE);
     },
 
     getById: (id: string): Promise<ApiResponse> =>

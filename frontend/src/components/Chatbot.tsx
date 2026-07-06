@@ -107,7 +107,7 @@ export default function Chatbot() {
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group fixed bottom-4 right-4 z-[100] flex items-center gap-2 rounded-full shadow-soft transition-all hover:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-brand/30 sm:bottom-6 sm:right-6 ${isOpen ? 'bg-contrast p-3.5 text-white' : 'bg-brand p-3.5 pr-4 text-white sm:p-4 sm:pr-5'}`}
+                className={`group cs-chat-launcher fixed bottom-4 right-4 z-[100] flex items-center gap-2 rounded-full shadow-soft transition-all hover:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-brand/30 sm:bottom-6 sm:right-6 ${isOpen ? 'bg-contrast p-3.5 text-white' : 'bg-brand p-3.5 pr-4 text-white sm:p-4 sm:pr-5'}`}
                 aria-label={isOpen ? 'Close chat' : 'Open shopping assistant'}
             >
                 {isOpen ? (
