@@ -67,11 +67,17 @@ export default function ReviewsPage() {
             const credentials = localStorage.getItem('adminCredentials');
             if (!credentials) return;
 
-            const response = await api.admin.reviews.moderate(credentials, reviewId, status);
+            // Use the dedicated approve/reject endpoints — there is no /moderate route.
+            const response =
+                status === 'approved'
+                    ? await api.admin.reviews.approve(credentials, reviewId)
+                    : await api.admin.reviews.reject(credentials, reviewId);
             if (response.success) {
                 setReviews(reviews.map(r =>
                     r._id === reviewId ? { ...r, status } : r
                 ));
+            } else {
+                alert(response.message || 'Failed to moderate review');
             }
         } catch (error) {
             console.error('Failed to moderate review:', error);
