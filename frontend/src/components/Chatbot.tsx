@@ -26,7 +26,7 @@ function ProductPreview({ product, onClick }: { product: any; onClick: () => voi
     return (
         <Link
             href={`/product/${product.slug}`}
-            className="group w-28 flex-shrink-0 overflow-hidden rounded-xl border border-sand bg-white transition-shadow hover:shadow-card"
+            className="group w-28 flex-shrink-0 overflow-hidden rounded-none border border-sand bg-surface transition-colors hover:border-brand"
             onClick={onClick}
         >
             <div className="relative aspect-square bg-sand/40">
@@ -107,7 +107,7 @@ export default function Chatbot() {
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group cs-chat-launcher fixed bottom-4 right-4 z-[100] flex items-center gap-2 rounded-full shadow-soft transition-all hover:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-brand/30 sm:bottom-6 sm:right-6 ${isOpen ? 'bg-contrast p-3.5 text-white' : 'bg-brand p-3.5 pr-4 text-white sm:p-4 sm:pr-5'}`}
+                className={`group cs-chat-launcher fixed bottom-4 right-4 z-[100] flex items-center gap-2 rounded-none shadow-soft transition-all hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-brand/40 sm:bottom-6 sm:right-6 ${isOpen ? 'border border-sand bg-surface p-3.5 text-foreground' : 'bg-brand p-3.5 pr-4 text-black sm:p-4 sm:pr-5'}`}
                 aria-label={isOpen ? 'Close chat' : 'Open shopping assistant'}
             >
                 {isOpen ? (
@@ -119,32 +119,32 @@ export default function Chatbot() {
                         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>
-                        <span className="hidden text-sm font-semibold sm:inline">Ask Cornerstore</span>
+                        <span className="hidden font-mono text-xs uppercase tracking-[0.15em] sm:inline">Ask Cornerstore</span>
                     </>
                 )}
             </button>
 
             {isOpen && (
-                <div className="fixed inset-x-3 bottom-20 z-[100] flex h-[72vh] max-h-[640px] flex-col overflow-hidden rounded-3xl border border-sand bg-white shadow-soft sm:inset-x-auto sm:bottom-24 sm:right-6 sm:w-[24rem]">
+                <div className="fixed inset-x-3 bottom-20 z-[100] flex h-[72vh] max-h-[640px] flex-col overflow-hidden rounded-none border border-sand bg-surface shadow-soft sm:inset-x-auto sm:bottom-24 sm:right-6 sm:w-[24rem]">
                     {/* Header */}
-                    <div className="flex items-center gap-3 border-b border-sand bg-brand px-4 py-3.5 text-white">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
+                    <div className="flex items-center gap-3 border-b border-brand-dark bg-brand px-4 py-3.5 text-black">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-none bg-black/10">
                             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
                         </span>
                         <div className="flex-1">
                             <h3 className="text-sm font-bold leading-tight">Cornerstore Assistant</h3>
-                            <p className="flex items-center gap-1.5 text-[0.7rem] text-white/80">
-                                <span className="h-1.5 w-1.5 rounded-full bg-white/90" /> Online · usually replies fast
+                            <p className="flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-wide text-black/70">
+                                <span className="h-1.5 w-1.5 rounded-full bg-black/70" /> Online · usually replies fast
                             </p>
                         </div>
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 space-y-4 overflow-y-auto bg-cream p-4">
+                    <div className="flex-1 space-y-4 overflow-y-auto bg-background p-4">
                         {messages.map((msg, index) => (
                             <div key={index} className="flex flex-col space-y-2">
                                 <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${msg.role === 'user' ? 'rounded-br-md bg-brand text-white' : 'rounded-bl-md border border-sand bg-white text-contrast shadow-sm'}`}>
+                                    <div className={`max-w-[85%] rounded-none px-4 py-2.5 text-sm leading-relaxed ${msg.role === 'user' ? 'bg-brand text-black' : 'border border-sand bg-surface-2 text-foreground'}`}>
                                         {msg.content}
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@ export default function Chatbot() {
 
                                 {msg.payload?.order && (
                                     <div className="flex justify-start">
-                                        <div className="w-full max-w-[90%] rounded-2xl border border-sand bg-white p-3.5 text-sm shadow-sm">
+                                        <div className="w-full max-w-[90%] rounded-none border border-sand bg-surface-2 p-3.5 text-sm">
                                             <div className="mb-2.5 flex items-center gap-2 border-b border-sand pb-2 font-semibold">
                                                 <svg className="h-4 w-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M3 7h13v8H3zM16 10h3l2 2v3h-5z" /></svg>
                                                 Order Status
@@ -190,7 +190,7 @@ export default function Chatbot() {
                         {showSuggestions && (
                             <div className="flex flex-wrap gap-2 pt-1">
                                 {suggestions.map((s) => (
-                                    <button key={s} onClick={() => send(s)} className="rounded-full border border-sand bg-white px-3 py-1.5 text-xs font-medium text-contrast transition-colors hover:border-brand/40 hover:bg-brand-soft hover:text-brand-dark">
+                                    <button key={s} onClick={() => send(s)} className="rounded-none border border-sand bg-transparent px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-foreground/80 transition-colors hover:border-brand hover:text-brand">
                                         {s}
                                     </button>
                                 ))}
@@ -199,7 +199,7 @@ export default function Chatbot() {
 
                         {loading && (
                             <div className="flex justify-start">
-                                <div className="rounded-2xl rounded-bl-md border border-sand bg-white px-4 py-3 shadow-sm">
+                                <div className="rounded-none border border-sand bg-surface-2 px-4 py-3">
                                     <div className="flex space-x-1">
                                         <div className="h-2 w-2 animate-bounce rounded-full bg-neutral/50" style={{ animationDelay: '0ms' }}></div>
                                         <div className="h-2 w-2 animate-bounce rounded-full bg-neutral/50" style={{ animationDelay: '150ms' }}></div>
@@ -212,19 +212,19 @@ export default function Chatbot() {
                     </div>
 
                     {/* Input */}
-                    <form onSubmit={handleSubmit} className="border-t border-sand bg-white p-3">
+                    <form onSubmit={handleSubmit} className="border-t border-sand bg-surface p-3">
                         <div className="relative">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Ask for a product or help..."
-                                className="w-full rounded-full border border-sand bg-cream py-2.5 pl-4 pr-11 text-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                                className="w-full rounded-none border border-sand bg-background py-2.5 pl-4 pr-11 text-sm text-foreground placeholder:text-neutral/60 focus:border-brand focus:outline-none"
                             />
                             <button
                                 type="submit"
                                 disabled={!input.trim() || loading}
-                                className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-brand p-2 text-white transition-colors hover:bg-brand-dark disabled:opacity-40"
+                                className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-none bg-brand p-2 text-black transition-colors hover:bg-brand-dark disabled:opacity-40"
                                 aria-label="Send message"
                             >
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

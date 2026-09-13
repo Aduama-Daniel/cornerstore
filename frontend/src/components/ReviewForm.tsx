@@ -67,7 +67,7 @@ export default function ReviewForm({ productId, onSuccess, onCancel }: ReviewFor
                 className="focus:outline-none"
             >
                 <svg
-                    className={`w-8 h-8 transition-colors ${filled ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                    className={`w-8 h-8 transition-colors ${filled ? 'text-brand fill-current' : 'text-foreground/20 fill-current'
                         }`}
                     viewBox="0 0 20 20"
                 >
@@ -79,12 +79,9 @@ export default function ReviewForm({ productId, onSuccess, onCancel }: ReviewFor
 
     if (!user) {
         return (
-            <div className="bg-white border border-gray-200 p-6 rounded-lg text-center">
-                <p className="text-gray-600 mb-4">Please log in to write a review</p>
-                <button
-                    onClick={onCancel}
-                    className="btn-ghost"
-                >
+            <div className="border border-sand bg-surface p-6 text-center">
+                <p className="mb-4 font-mono text-[10px] uppercase tracking-widest text-foreground/50">Please log in to write a review</p>
+                <button onClick={onCancel} className="btn-ghost">
                     Close
                 </button>
             </div>
@@ -92,25 +89,25 @@ export default function ReviewForm({ productId, onSuccess, onCancel }: ReviewFor
     }
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-6 rounded-lg">
-            <h3 className="text-xl font-serif mb-6">Write a Review</h3>
+        <form onSubmit={handleSubmit} className="border border-sand bg-surface p-6">
+            <h3 className="mb-6 font-serif text-2xl uppercase tracking-widest">Write a review</h3>
 
             {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded text-sm">
+                <div className="mb-4 border border-red-500/40 bg-red-500/10 p-3 font-mono text-[10px] uppercase tracking-widest text-red-400">
                     {error}
                 </div>
             )}
 
             {/* Rating */}
             <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-foreground/40">
                     Rating *
                 </label>
                 <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => renderStarInput(star))}
                 </div>
                 {rating > 0 && (
-                    <p className="text-sm text-gray-600 mt-2">
+                    <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-brand">
                         {rating === 1 && 'Poor'}
                         {rating === 2 && 'Fair'}
                         {rating === 3 && 'Good'}
@@ -122,37 +119,33 @@ export default function ReviewForm({ productId, onSuccess, onCancel }: ReviewFor
 
             {/* Comment */}
             <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-foreground/40">
                     Your Review *
                 </label>
                 <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Tell us about your experience with this product..."
+                    placeholder="Tell us about your experience with this product…"
                     rows={5}
                     required
                     minLength={10}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    className="w-full border border-sand bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-foreground/25 focus:border-brand"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/30">
                     Minimum 10 characters ({comment.length}/10)
                 </p>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
                 <button
                     type="submit"
                     disabled={submitting || rating === 0 || comment.trim().length < 10}
-                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-primary text-base disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                    {submitting ? 'Submitting...' : 'Submit Review'}
+                    {submitting ? 'Submitting…' : 'Submit Review'}
                 </button>
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="btn-ghost"
-                >
+                <button type="button" onClick={onCancel} className="btn-secondary text-base">
                     Cancel
                 </button>
             </div>

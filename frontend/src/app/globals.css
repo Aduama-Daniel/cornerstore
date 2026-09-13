@@ -21,65 +21,69 @@
   }
 
   body {
-    @apply bg-cream text-contrast font-sans antialiased overflow-x-hidden;
+    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
   }
 
+  /* Editorial display headings: Bebas Neue, all-caps, wide tracking. */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-semibold tracking-tight;
+    @apply font-serif font-normal uppercase tracking-wide;
   }
 }
 
 @layer components {
-  /* Primary action: solid brand green pill. Friendly, high-contrast, conversion-focused. */
+  /* Primary action: solid gold block, dark text, sharp. Editorial display type. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3.5
-           text-sm font-semibold text-white transition-all duration-200
-           hover:bg-brand-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-none bg-brand px-7 py-3.5
+           font-serif text-lg uppercase tracking-[0.14em] text-black transition-all duration-200
+           hover:bg-brand-dark active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
   }
 
-  /* Dark action: ink pill for secondary primary actions on light surfaces. */
+  /* High-contrast light block on dark surfaces (inverse of primary). */
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-contrast px-6 py-3.5
-           text-sm font-semibold text-white transition-all duration-200
-           hover:bg-contrast/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-none bg-foreground px-7 py-3.5
+           font-serif text-lg uppercase tracking-[0.14em] text-background transition-all duration-200
+           hover:bg-foreground/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
   }
 
+  /* Secondary: hairline-bordered ghost that lights up gold on hover. */
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-contrast/15
-           bg-white px-6 py-3.5 text-sm font-semibold text-contrast transition-all duration-200
-           hover:border-contrast/30 hover:bg-sand/40 active:scale-[0.98]
-           disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-none border border-sand
+           bg-transparent px-7 py-3.5 font-serif text-lg uppercase tracking-[0.14em] text-foreground
+           transition-all duration-200 hover:border-brand hover:text-brand active:scale-[0.98]
+           disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm
-           font-medium text-neutral transition-colors duration-200 hover:bg-sand/50 hover:text-contrast;
+    @apply inline-flex items-center justify-center gap-2 rounded-none px-4 py-2.5
+           font-mono text-[0.68rem] uppercase tracking-[0.2em] text-neutral transition-colors
+           duration-200 hover:text-brand;
   }
 
   /* WhatsApp ordering action. */
   .btn-whatsapp {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5
-           text-sm font-semibold text-white transition-all duration-200
+    @apply inline-flex items-center justify-center gap-2 rounded-none bg-[#25D366] px-7 py-3.5
+           font-serif text-lg uppercase tracking-[0.14em] text-black transition-all duration-200
            hover:bg-[#1ebe5a] active:scale-[0.98];
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-sand bg-white px-4 py-3 text-contrast
-           placeholder:text-neutral/60 transition-shadow duration-200
-           focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25;
+    @apply w-full rounded-none border border-sand bg-surface px-4 py-3 text-foreground
+           placeholder:text-neutral/60 transition-colors duration-200
+           focus:border-brand focus:outline-none;
   }
 
   .card {
-    @apply rounded-2xl border border-sand bg-white shadow-card transition-all duration-200;
+    @apply rounded-none border border-sand bg-surface transition-colors duration-200;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-sand bg-white px-3 py-1.5
-           text-xs font-medium text-neutral;
+    @apply inline-flex items-center gap-1.5 rounded-none border border-sand bg-transparent px-3 py-1.5
+           font-mono text-[0.7rem] uppercase tracking-[0.14em] text-neutral;
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold;
+    @apply inline-flex items-center gap-1 rounded-none px-2.5 py-1 font-mono text-[0.6rem]
+           uppercase tracking-[0.1em] font-medium;
   }
 
   .section-padding {
@@ -172,6 +176,58 @@
     to { width: 0%; }
   }
 
+  /* Cinematic slow zoom for the active hero slide */
+  .animate-hero-zoom {
+    animation: heroZoom 7000ms ease-out forwards;
+  }
+
+  @keyframes heroZoom {
+    from { transform: scale(1.09); }
+    to { transform: scale(1); }
+  }
+
+  /* Scrolling ticker strip (content is rendered twice for a seamless loop) */
+  .animate-marquee {
+    animation: marquee 26s linear infinite;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Outlined display word in the brand accent (falls back to solid accent) */
+  .text-outline-accent {
+    color: rgb(var(--accent));
+  }
+
+  @supports (-webkit-text-stroke: 2px black) {
+    .text-outline-accent {
+      color: transparent;
+      -webkit-text-stroke: 2.5px rgb(var(--accent));
+    }
+  }
+
+  /* Reveal-on-load for stacked homepage blocks */
+  .animate-rise {
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Ported from the template — hero reveal on load */
+  .animate-reveal {
+    animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes reveal-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* Sticky mobile buy bar */
   .animate-bar-up {
     animation: barUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -223,19 +279,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F8FA;
+  background: #0D0D0D;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 4px;
+  background: #2A2A2A;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #3A3A3A;
 }
 
 ::selection {
-  background: #E7F3EC;
-  color: #0F172A;
+  background: rgb(var(--accent));
+  color: #0D0D0D;
 }

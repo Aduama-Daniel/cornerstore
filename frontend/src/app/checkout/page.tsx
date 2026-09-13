@@ -137,70 +137,61 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
-      <section className="border-b border-sand bg-white">
-        <div className="container-custom py-8 sm:py-10">
-          <p className="text-xs font-bold uppercase tracking-wider text-brand">Checkout</p>
-          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Complete your order</h1>
-          <p className="mt-2 max-w-2xl text-sm text-neutral">
-            Delivery details first, then secure payment. Your order summary stays visible while you move through the flow.
-          </p>
-        </div>
-      </section>
+    <div className="mx-auto max-w-7xl px-6 py-16">
+      <h1 className="font-serif text-6xl uppercase tracking-tight md:text-7xl">CHECKOUT</h1>
 
-      <div className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 flex flex-wrap gap-3 text-sm">
-            <span className={`rounded-full px-4 py-2 ${!orderId ? 'bg-contrast text-cream' : 'bg-black/5 text-neutral'}`}>
-              1. Delivery
-            </span>
-            <span className={`rounded-full px-4 py-2 ${orderId ? 'bg-contrast text-cream' : 'bg-black/5 text-neutral'}`}>
-              2. Payment
-            </span>
-          </div>
+      <div className="mt-8 flex flex-wrap gap-px bg-sand">
+        <span className={`bg-background px-5 py-3 font-mono text-[10px] uppercase tracking-widest ${!orderId ? 'text-brand' : 'text-foreground/40'}`}>
+          01 — Delivery
+        </span>
+        <span className={`bg-background px-5 py-3 font-mono text-[10px] uppercase tracking-widest ${orderId ? 'text-brand' : 'text-foreground/40'}`}>
+          02 — Payment
+        </span>
+      </div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.55fr)_22rem] xl:grid-cols-[minmax(0,1.7fr)_24rem]">
-          <div>
-            {!orderId ? (
-              <CheckoutForm onSubmit={handleShippingSubmit} loading={loading} />
-            ) : (
-              <div className="rounded-[2rem] border border-black/10 bg-white/80 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
-                <h2 className="mb-6 text-2xl font-serif">Complete Payment</h2>
+      <div className="mt-10 grid grid-cols-1 gap-16 lg:grid-cols-[3fr_2fr]">
+        <div>
+          {!orderId ? (
+            <CheckoutForm onSubmit={handleShippingSubmit} loading={loading} />
+          ) : (
+            <div className="border border-sand p-6 sm:p-8">
+              <h2 className="font-serif text-3xl uppercase tracking-widest">COMPLETE PAYMENT</h2>
 
-                <div className="mb-8 rounded-[1.5rem] bg-warm-beige p-4 sm:p-5">
-                  <h3 className="font-medium mb-2">Delivering To:</h3>
-                  <p className="text-sm text-neutral">
-                    {shippingInfo?.fullName}<br />
-                    {shippingInfo?.address}<br />
-                    {shippingInfo?.town ? `${shippingInfo.town}, ` : ''}{shippingInfo?.city}<br />
-                    {shippingInfo?.region}<br />
-                    {shippingInfo?.phone}
-                  </p>
-                  <button
-                    onClick={() => {
-                      setOrderId(null);
-                      setOrderTotal(null);
-                      setShippingInfo(null);
-                    }}
-                    className="text-sm text-contrast hover:underline mt-2"
-                  >
-                    Change Address
-                  </button>
-                </div>
+              <div className="mt-6 border border-sand bg-surface p-5">
+                <h3 className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Delivering to</h3>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/70">
+                  {shippingInfo?.fullName}<br />
+                  {shippingInfo?.address}<br />
+                  {shippingInfo?.town ? `${shippingInfo.town}, ` : ''}{shippingInfo?.city}<br />
+                  {shippingInfo?.region}<br />
+                  {shippingInfo?.phone}
+                </p>
+                <button
+                  onClick={() => {
+                    setOrderId(null);
+                    setOrderTotal(null);
+                    setShippingInfo(null);
+                  }}
+                  className="mt-3 font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline hover:text-brand"
+                >
+                  Change address
+                </button>
+              </div>
 
-                <div className="mb-6">
-                  <h3 className="font-medium mb-4">Payment Method</h3>
-                  <div className="flex items-center gap-3 rounded-[1.25rem] border-2 border-gray-900 p-4">
-                    <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
-                      <span className="text-xs font-bold">Card</span>
-                    </div>
-                    <div>
-                      <p className="font-medium">Paystack</p>
-                      <p className="text-xs text-neutral">Card, Mobile Money, Bank Transfer</p>
-                    </div>
+              <div className="mt-6">
+                <h3 className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Payment method</h3>
+                <div className="mt-3 flex items-center gap-4 border border-brand p-4">
+                  <div className="flex h-8 w-12 items-center justify-center border border-sand">
+                    <span className="font-mono text-[9px] uppercase tracking-widest">Card</span>
+                  </div>
+                  <div>
+                    <p className="font-serif text-lg uppercase tracking-wide">Paystack</p>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Card, Mobile Money, Bank Transfer</p>
                   </div>
                 </div>
+              </div>
 
+              <div className="mt-6">
                 <PaystackPayment
                   email={user?.email || shippingInfo?.email || ''}
                   amount={orderTotal || finalTotal}
@@ -212,59 +203,50 @@ export default function CheckoutPage() {
                     customerName: shippingInfo?.fullName
                   }}
                 />
-
-                <p className="mt-4 text-center text-xs text-neutral">
-                  Secure payment powered by Paystack
-                </p>
-              </div>
-            )}
-          </div>
-
-          <div>
-            <div className="sticky top-24 rounded-[2rem] border border-black/10 bg-[#fbf8f4] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
-              <div className="mb-6 border-b border-neutral/20 pb-6">
-                <p className="text-[0.72rem] uppercase tracking-[0.28em] text-neutral">Order Summary</p>
-                <h2 className="mt-3 text-2xl font-serif">Review totals</h2>
               </div>
 
-              <div className="space-y-4 mb-6 pb-6 border-b border-neutral/20">
-                {items.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <div className="flex-1">
-                      <p className="font-medium">{item.product?.name}</p>
-                      <p className="text-neutral text-xs">Size: {item.size || 'Standard'} • Qty: {item.quantity}</p>
-                      {item.product && (
-                        <div className="mt-2 space-y-1 text-xs text-neutral">
-                          <p>{getProductFulfillment(item.product).originType === 'international' ? 'International item' : 'Local item'}</p>
-                          <p>{getProductFulfillment(item.product).paymentLabel}</p>
-                          <p>{getProductFulfillment(item.product).deliveryLabel}</p>
-                        </div>
-                      )}
-                    </div>
-                    <p>{formatPrice(item.price * item.quantity)}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="space-y-3 mb-6 pb-6 border-b border-neutral/20">
-                <div className="flex justify-between text-sm">
-                  <span>Subtotal</span>
-                  <span>{formatPrice(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Delivery</span>
-                  <span className="text-green-600 font-medium">Free</span>
-                </div>
-              </div>
-
-              <div className="flex justify-between font-semibold text-lg">
-                <span>Total</span>
-                <span>{formatPrice(finalTotal)}</span>
-              </div>
+              <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-widest text-foreground/30">
+                Secure payment powered by Paystack
+              </p>
             </div>
-          </div>
+          )}
         </div>
-        </div>
+
+        <aside className="h-fit border border-sand p-8">
+          <h2 className="font-serif text-3xl uppercase tracking-widest">ORDER</h2>
+          <ul className="mt-8 space-y-5">
+            {items.map((item) => (
+              <li key={item.id} className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="font-serif text-lg uppercase tracking-wide">{item.product?.name}</p>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                    {[item.size, `x${item.quantity}`].filter(Boolean).join(' · ')}
+                  </p>
+                  {item.product && (
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/30">
+                      {getProductFulfillment(item.product).deliveryLabel}
+                    </p>
+                  )}
+                </div>
+                <span className="whitespace-nowrap font-mono text-xs text-brand">{formatPrice(item.price * item.quantity)}</span>
+              </li>
+            ))}
+          </ul>
+          <dl className="mt-8 space-y-4 border-t border-sand pt-6 font-mono text-xs uppercase tracking-widest">
+            <div className="flex justify-between">
+              <dt className="text-foreground/40">Subtotal</dt>
+              <dd>{formatPrice(subtotal)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-foreground/40">Delivery</dt>
+              <dd>Free</dd>
+            </div>
+            <div className="flex justify-between border-t border-sand pt-4 text-brand">
+              <dt>Total</dt>
+              <dd>{formatPrice(finalTotal)}</dd>
+            </div>
+          </dl>
+        </aside>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, Manrope } from 'next/font/google';
+import { Bebas_Neue, Barlow, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
@@ -13,16 +13,25 @@ import AppChrome from '@/components/AppChrome';
 import AnalyticsScripts from '@/components/AnalyticsScripts';
 import { defaultDescription, organizationJsonLd, pageMetadata, siteUrl, websiteJsonLd } from '@/lib/seo';
 
-const jakarta = Plus_Jakarta_Sans({
+// Display face — condensed all-caps for the editorial "Noir & Gold" headings.
+const bebas = Bebas_Neue({
   subsets: ['latin'],
   variable: '--font-serif',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400'],
 });
 
-const manrope = Manrope({
+// Body face — clean, slightly technical grotesque.
+const barlow = Barlow({
   subsets: ['latin'],
   variable: '--font-sans',
   weight: ['300', '400', '500', '600', '700'],
+});
+
+// Mono — used for prices, badges and small metadata labels.
+const jetbrains = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500'],
 });
 
 const defaultSeo = pageMetadata({ description: defaultDescription });
@@ -81,7 +90,7 @@ export default function RootLayout({
     '--accent-soft': cfg.accentSoft,
   } as React.CSSProperties;
   return (
-    <html lang="en" className={`${jakarta.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${bebas.variable} ${barlow.variable} ${jetbrains.variable}`}>
       <body style={accentVars}>
         <script
           type="application/ld+json"

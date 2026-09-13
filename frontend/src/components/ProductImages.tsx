@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
@@ -19,6 +19,11 @@ interface ProductImagesProps {
 export default function ProductImages({ images, productName }: ProductImagesProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
+  const [mainLoaded, setMainLoaded] = useState(false);
+
+  useEffect(() => {
+    setMainLoaded(false);
+  }, [selectedImage]);
 
   const mediaItems: MediaItem[] = images.map((item) => {
     if (typeof item === 'string') {
@@ -30,7 +35,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
 
   if (!mediaItems || mediaItems.length === 0) {
     return (
-      <div className="flex aspect-[4/5] items-center justify-center rounded-[1.5rem] border border-black/10 bg-sand/20">
+      <div className="flex aspect-square items-center justify-center rounded-none border border-sand bg-surface">
         <svg className="h-24 w-24 text-neutral/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
@@ -51,7 +56,12 @@ export default function ProductImages({ images, productName }: ProductImagesProp
   return (
     <>
       <div className="space-y-3 lg:sticky lg:top-24">
-        <div className="group relative mx-auto aspect-[4/5] w-full max-w-[30rem] overflow-hidden rounded-xl bg-sand/20 lg:max-w-[28rem] lg:aspect-[3/4]">
+        <div className="group relative aspect-square w-full overflow-hidden rounded-none border border-sand bg-surface">
+          {!mainLoaded && currentMedia.type !== 'video' && (
+            <span className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-2 border-sand border-t-brand" />
+            </span>
+          )}
           {currentMedia.type === 'video' ? (
             <video
               src={currentMedia.url}
@@ -70,7 +80,8 @@ export default function ProductImages({ images, productName }: ProductImagesProp
                 src={optimizedImageUrl(currentMedia.url, 1200)}
                 alt={`${productName} - Image ${selectedImage + 1}`}
                 fill
-                className="cursor-zoom-in object-cover"
+                onLoad={() => setMainLoaded(true)}
+                className={`cursor-zoom-in object-contain transition-opacity duration-500 ${mainLoaded ? 'opacity-100' : 'opacity-0'}`}
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
@@ -81,7 +92,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
             <>
               <button
                 onClick={handlePrevious}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-none border border-sand bg-background/80 p-2.5 text-foreground opacity-0 backdrop-blur-sm transition-opacity hover:text-brand group-hover:opacity-100"
                 aria-label="Previous image"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +101,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
               </button>
               <button
                 onClick={handleNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-none border border-sand bg-background/80 p-2.5 text-foreground opacity-0 backdrop-blur-sm transition-opacity hover:text-brand group-hover:opacity-100"
                 aria-label="Next image"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +114,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
           {currentMedia.type === 'image' && (
             <button
               onClick={() => setShowLightbox(true)}
-              className="absolute bottom-3 right-3 rounded-full bg-white/85 p-2.5 text-contrast opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100"
+              className="absolute bottom-3 right-3 rounded-none border border-sand bg-background/80 p-2.5 text-foreground opacity-0 backdrop-blur-sm transition-opacity hover:text-brand group-hover:opacity-100"
               aria-label="View fullscreen"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +130,7 @@ export default function ProductImages({ images, productName }: ProductImagesProp
               <button
                 key={index}
                 onClick={() => setSelectedImage(index)}
-                className={`relative aspect-square overflow-hidden rounded-lg border transition-opacity ${selectedImage === index ? 'border-contrast' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                className={`relative aspect-square overflow-hidden rounded-none border transition-opacity ${selectedImage === index ? 'border-brand' : 'border-sand opacity-60 hover:opacity-100'}`}
               >
                 {media.type === 'video' ? (
                   <div className="relative h-full w-full bg-black">

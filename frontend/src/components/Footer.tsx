@@ -1,80 +1,69 @@
-'use client';
-
-import Image from 'next/image';
 import Link from 'next/link';
-import { MODE_CONFIG } from '@/lib/modes';
-import { useMode } from '@/contexts/ModeContext';
-
-const supportCompanyLinks = {
-  Support: [
-    { href: '/contact', label: 'Contact Us' },
-    { href: '/faq', label: 'FAQ' },
-    { href: '/support', label: 'Help Center' },
-    { href: '/shipping', label: 'Delivery Policy' },
-    { href: '/returns', label: 'Returns & Refunds' },
-    { href: '/payment-policy', label: 'Payment Policy' },
-    { href: '/size-guide', label: 'Size Guide' },
-    { href: '/account/orders', label: 'Track Order' },
-  ],
-  Company: [
-    { href: '/about', label: 'About Cornerstore' },
-    { href: '/terms', label: 'Terms & Conditions' },
-    { href: '/privacy', label: 'Privacy Policy' },
-    { href: '/cookies', label: 'Cookie Policy' },
-    { href: '/cancellations', label: 'Cancellations' },
-    { href: '/accessibility', label: 'Accessibility' },
-  ],
-};
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  const { mode } = useMode();
-  const cfg = MODE_CONFIG[mode];
-  const footerLinks = {
-    Shop: [
-      { href: '/shop', label: 'All Products' },
-      ...cfg.categories.slice(0, 4).map((c) => ({ href: `/shop?category=${c.slug}`, label: c.label })),
-    ],
-    ...supportCompanyLinks,
-  };
-
   return (
-    <footer className="bg-contrast text-white">
-      <div className="container-custom py-12 sm:py-16">
-        <div className="grid gap-10 pb-12 lg:grid-cols-[1.3fr_2fr]">
-          <div className="max-w-sm">
-            <Link href="/" className="flex items-center" aria-label="Cornerstore home">
-              <Image src="/logo.png" alt="Cornerstore" width={667} height={106} className="h-7 w-auto brightness-0 invert" />
-            </Link>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/shop" className="btn-primary">Start shopping</Link>
-              <Link href="/contact" className="btn-secondary border-white/20 bg-white/10 text-white hover:bg-white/20">Get help</Link>
-            </div>
-            <p className="mt-5 text-sm leading-relaxed text-white/60">
-              Curated local and selected international products with clear payment and delivery details before you order.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {Object.entries(footerLinks).map(([section, links]) => (
-              <div key={section}>
-                <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-white/50">{section}</h4>
-                <ul className="space-y-3 text-sm text-white/75">
-                  {links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className="transition-colors hover:text-white">{link.label}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+    <footer className="border-t border-sand bg-surface py-24">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 md:grid-cols-4">
+        <div className="col-span-1 md:col-span-2">
+          <span className="font-serif text-4xl uppercase tracking-widest text-brand">CORNERSTORE</span>
+          <p className="mt-6 max-w-sm text-sm text-foreground/40">
+            Connecting the streets of Accra to the runways of the world. All items are authenticated
+            for quality and provenance.
+          </p>
         </div>
-
-        <div className="flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-white/50">© {currentYear} Cornerstore. All rights reserved.</p>
-          <p className="text-sm text-white/50">Prices shown in Ghana Cedis (GH₵).</p>
+        <div>
+          <h2 className="mb-6 font-serif text-xl uppercase tracking-widest">SERVICE</h2>
+          <ul className="space-y-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
+            <li>
+              <Link href="/shipping" className="transition-colors hover:text-brand">
+                Shipping &amp; Imports
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className="transition-colors hover:text-brand">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="transition-colors hover:text-brand">
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link href="/account/orders" className="transition-colors hover:text-brand">
+                Order tracking
+              </Link>
+            </li>
+          </ul>
         </div>
+        <div>
+          <h2 className="mb-6 font-serif text-xl uppercase tracking-widest">EXPLORE</h2>
+          <ul className="space-y-4 font-mono text-[10px] uppercase tracking-widest text-foreground/60">
+            <li>
+              <Link href="/shop" className="transition-colors hover:text-brand">
+                All products
+              </Link>
+            </li>
+            <li>
+              <Link href="/wishlist" className="transition-colors hover:text-brand">
+                Wishlist
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="transition-colors hover:text-brand">
+                About us
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="mx-auto mt-24 flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-sand px-6 pt-8 md:flex-row">
+        <span className="font-mono text-[9px] tracking-widest text-foreground/20">
+          © 2026 CORNERSTORE GHANA LTD.
+        </span>
+        <span className="font-mono text-[9px] uppercase tracking-widest text-foreground/20">
+          Global Logistics Partner: FedEx Priority
+        </span>
       </div>
     </footer>
   );

@@ -73,6 +73,9 @@ export const api = {
   },
 
   user: {
+    getProfile: (token: string | null): Promise<ApiResponse> =>
+      fetchWithAuth('/api/user/profile', token),
+
     updateProfile: (token: string | null, data: any): Promise<ApiResponse> =>
       fetchWithAuth('/api/user/profile', token, {
         method: 'PUT',

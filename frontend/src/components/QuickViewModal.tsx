@@ -72,6 +72,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [mediaLoaded, setMediaLoaded] = useState(false);
   const [adding, setAdding] = useState(false);
   const [loadingOptions, setLoadingOptions] = useState(false);
   const [colors, setColors] = useState<Color[]>([]);
@@ -198,6 +199,10 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
     if (selectedSize && !availableSizes.includes(selectedSize)) setSelectedSize('');
   }, [availableSizes, selectedSize]);
 
+  useEffect(() => {
+    setMediaLoaded(false);
+  }, [currentMediaIndex, currentMedia?.url]);
+
   const handleAddToCart = async () => {
     if (!details._id || !canAdd) return;
 
@@ -235,7 +240,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-end justify-center bg-contrast/65 p-0 backdrop-blur-sm sm:items-center sm:p-5"
+      className="fixed inset-0 z-[120] flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-5"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -245,12 +250,12 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
         role="dialog"
         aria-modal="true"
         aria-labelledby={`quick-view-${details.slug}`}
-        className="relative grid max-h-[94dvh] w-full overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:max-w-5xl sm:rounded-3xl lg:grid-cols-[1.05fr_0.95fr] lg:overflow-hidden"
+        className="relative grid max-h-[94dvh] w-full overflow-y-auto rounded-none border border-sand bg-surface shadow-2xl sm:max-w-5xl lg:grid-cols-[1.05fr_0.95fr] lg:overflow-hidden"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/95 text-contrast shadow-sm backdrop-blur transition-colors hover:bg-sand sm:right-5 sm:top-5"
+          className="absolute right-3 top-3 z-30 flex h-10 w-10 items-center justify-center rounded-none border border-sand bg-background/80 text-foreground backdrop-blur transition-colors hover:border-brand hover:text-brand sm:right-5 sm:top-5"
           aria-label="Close quick view"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,14 +263,19 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
           </svg>
         </button>
 
-        <div className="min-h-0 bg-cream lg:overflow-hidden">
-          <div className="relative aspect-square min-h-[18rem] w-full lg:h-full lg:min-h-[38rem] lg:aspect-auto">
+        <div className="min-h-0 border-b border-sand bg-background lg:border-b-0 lg:border-r lg:overflow-hidden">
+          <div className="relative aspect-square min-h-[18rem] w-full lg:h-full lg:min-h-[38rem]">
+            {currentMedia && currentMedia.type !== 'video' && !mediaLoaded && (
+              <span className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                <span className="h-8 w-8 animate-spin rounded-full border-2 border-sand border-t-brand" />
+              </span>
+            )}
             {currentMedia ? (
               currentMedia.type === 'video' ? (
                 <video
                   key={currentMedia.url}
                   src={currentMedia.url}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                   controls
                   muted
                   playsInline
@@ -275,12 +285,13 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                   src={optimizedImageUrl(currentMedia.url, 1000)}
                   alt={details.name}
                   fill
-                  className="object-cover"
+                  onLoad={() => setMediaLoaded(true)}
+                  className={`object-contain transition-opacity duration-500 ${mediaLoaded ? 'opacity-100' : 'opacity-0'}`}
                   sizes="(max-width: 1024px) 100vw, 52vw"
                 />
               )
             ) : (
-              <div className="flex h-full items-center justify-center text-neutral/35">
+              <div className="flex h-full items-center justify-center text-neutral/30">
                 <svg className="h-20 w-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.5-4.5a2 2 0 012.8 0L16 16m-2-2 1.6-1.6a2 2 0 012.8 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2Z" />
                 </svg>
@@ -288,21 +299,21 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
             )}
 
             {mediaItems.length > 1 && (
-              <div className="absolute inset-x-0 bottom-0 flex gap-2 overflow-x-auto bg-gradient-to-t from-black/55 to-transparent p-4 pt-12 no-scrollbar">
+              <div className="absolute inset-x-0 bottom-0 flex gap-2 overflow-x-auto bg-gradient-to-t from-background/80 to-transparent p-4 pt-12 no-scrollbar">
                 {mediaItems.map((media, index) => (
                   <button
                     type="button"
                     key={`${media.url}-${index}`}
                     onClick={() => setCurrentMediaIndex(index)}
-                    className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-white shadow-sm transition ${
-                      currentMediaIndex === index ? 'border-white ring-2 ring-brand' : 'border-white/55 opacity-80 hover:opacity-100'
+                    className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-none border bg-surface transition ${
+                      currentMediaIndex === index ? 'border-brand' : 'border-sand opacity-70 hover:opacity-100'
                     }`}
                     aria-label={`View media ${index + 1}`}
                   >
                     {media.type === 'video' ? (
                       <>
                         <video src={media.url} className="h-full w-full object-cover" muted playsInline />
-                        <span className="absolute inset-0 flex items-center justify-center bg-black/25 text-white">
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-foreground">
                           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M6.3 2.84A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.27l9.34-5.89a1.5 1.5 0 000-2.54L6.3 2.84Z" />
                           </svg>
@@ -321,45 +332,45 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
         <div className="min-h-0 p-6 sm:p-8 lg:overflow-y-auto lg:p-10">
           <div className="flex h-full flex-col">
             <div className="flex-1">
-              <p className="pr-12 text-xs font-semibold uppercase tracking-[0.18em] text-brand">
+              <p className="pr-12 font-mono text-[10px] uppercase tracking-[0.2em] text-brand">
                 {details.brand?.name || formatCategory(details.category)}
               </p>
-              <h2 id={`quick-view-${details.slug}`} className="mt-3 pr-10 text-2xl font-bold leading-tight sm:text-3xl">
+              <h2 id={`quick-view-${details.slug}`} className="mt-3 pr-10 font-serif text-3xl uppercase leading-none tracking-tight sm:text-4xl">
                 {details.name}
               </h2>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="mt-4 flex flex-wrap items-baseline gap-3">
                 {isOnSale ? (
                   <>
-                    <p className="text-2xl font-bold">{formatPrice(details.discountPrice as number)}</p>
-                    <p className="text-sm text-neutral line-through">{formatPrice(details.price)}</p>
-                    <span className="badge bg-red-50 text-red-600">Sale</span>
+                    <p className="font-mono text-2xl text-brand">{formatPrice(details.discountPrice as number)}</p>
+                    <p className="font-mono text-sm text-foreground/30 line-through">{formatPrice(details.price)}</p>
+                    <span className="badge bg-brand text-black">Sale</span>
                   </>
                 ) : (
-                  <p className="text-2xl font-bold">{formatPrice(details.price)}</p>
+                  <p className="font-mono text-2xl text-brand">{formatPrice(details.price)}</p>
                 )}
               </div>
 
-              <p className={`mt-3 flex items-center gap-2 text-xs font-semibold ${isOutOfStock ? 'text-red-600' : 'text-brand'}`}>
-                <span className={`h-2 w-2 rounded-full ${isOutOfStock ? 'bg-red-600' : 'bg-brand'}`} />
-                {isOutOfStock ? 'Currently unavailable' : fulfillment.originType === 'international' ? 'International item · upfront payment required' : 'Local item · Pay on Delivery may be available'}
+              <p className={`mt-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest ${isOutOfStock ? 'text-red-400' : 'text-foreground/50'}`}>
+                <span className={`h-1.5 w-1.5 ${isOutOfStock ? 'bg-red-400' : 'bg-brand'}`} />
+                {isOutOfStock ? 'Currently unavailable' : fulfillment.originType === 'international' ? 'International item · upfront payment' : 'In stock in Ghana · Pay on Delivery available'}
               </p>
 
               {!isOutOfStock && (
-                <div className="mt-4 grid gap-2 rounded-2xl border border-sand bg-cream p-4 text-xs text-neutral sm:grid-cols-2">
-                  <p><span className="font-semibold text-contrast">Delivery:</span> {fulfillment.deliveryLabel}</p>
-                  <p><span className="font-semibold text-contrast">Payment:</span> {fulfillment.paymentLabel}</p>
+                <div className="mt-5 grid gap-2 border border-sand bg-background p-4 font-mono text-[10px] uppercase tracking-widest text-foreground/50 sm:grid-cols-2">
+                  <p><span className="text-foreground/80">Delivery:</span> {fulfillment.deliveryLabel}</p>
+                  <p><span className="text-foreground/80">Payment:</span> {fulfillment.paymentLabel}</p>
                 </div>
               )}
 
               {details.description && (
-                <p className="mt-6 text-sm leading-7 text-neutral sm:text-[0.95rem]">
+                <p className="mt-6 text-sm leading-relaxed text-foreground/60">
                   {details.description}
                 </p>
               )}
 
               {loadingOptions && (
-                <div className="mt-7 flex items-center gap-2 text-sm text-neutral">
+                <div className="mt-7 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-sand border-t-brand" />
                   Loading available options
                 </div>
@@ -367,21 +378,19 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
               {!loadingOptions && colors.length > 0 && (
                 <fieldset className="mt-7">
-                  <legend className="text-sm font-bold">Choose color</legend>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <legend className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Colour</legend>
+                  <div className="mt-3 flex w-fit flex-wrap gap-px bg-sand">
                     {colors.map((color) => (
                       <button
                         type="button"
                         key={color.slug}
                         onClick={() => setSelectedColor(color.slug)}
-                        className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition ${
-                          selectedColor === color.slug
-                            ? 'border-contrast bg-contrast text-white'
-                            : 'border-sand bg-white hover:border-contrast/35'
+                        className={`flex items-center gap-2 bg-background px-4 py-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+                          selectedColor === color.slug ? 'bg-brand text-black' : 'hover:text-brand'
                         }`}
                       >
                         {color.hexCode && (
-                          <span className="h-4 w-4 rounded-full border border-black/10" style={{ backgroundColor: color.hexCode }} />
+                          <span className={`h-3.5 w-3.5 border ${selectedColor === color.slug ? 'border-black/40' : 'border-sand'}`} style={{ backgroundColor: color.hexCode }} />
                         )}
                         {color.name}
                       </button>
@@ -392,17 +401,15 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
               {!loadingOptions && availableSizes.length > 0 && (
                 <fieldset className="mt-7">
-                  <legend className="text-sm font-bold">Choose size</legend>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <legend className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Size</legend>
+                  <div className="mt-3 flex w-fit flex-wrap gap-px bg-sand">
                     {availableSizes.map((size) => (
                       <button
                         type="button"
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-12 rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-                          selectedSize === size
-                            ? 'border-contrast bg-contrast text-white'
-                            : 'border-sand bg-white hover:border-contrast/35'
+                        className={`bg-background px-5 py-3 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+                          selectedSize === size ? 'bg-brand text-black' : 'hover:text-brand'
                         }`}
                       >
                         {size}
@@ -419,9 +426,9 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!canAdd}
-                  className="btn-primary flex-1"
+                  className="btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {isOutOfStock ? 'Unavailable' : adding ? 'Adding...' : requiresColor && !selectedColor ? 'Choose a color' : requiresSize && !selectedSize ? 'Choose a size' : 'Add to cart'}
+                  {isOutOfStock ? 'Unavailable' : adding ? 'Adding…' : requiresColor && !selectedColor ? 'Choose a colour' : requiresSize && !selectedSize ? 'Choose a size' : 'Add to cart'}
                 </button>
                 {details._id && (
                   <WishlistButton productId={details._id} productName={details.name} size="lg" />
@@ -430,7 +437,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
               <button
                 type="button"
                 onClick={handleViewDetails}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-contrast transition-colors hover:bg-sand/50"
+                className="mt-4 flex w-full items-center justify-center gap-2 py-2 font-mono text-[10px] uppercase tracking-widest text-foreground/60 transition-colors hover:text-brand"
               >
                 View full product details
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

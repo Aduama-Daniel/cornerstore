@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://cornerstore.com.gh').replace(/\/$/, '');
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.mycornerstoreonline.com').replace(/\/$/, '');
 
 export const defaultDescription =
   'Shop curated fashion, lifestyle, beauty, accessories, home, and everyday products online in Ghana. Order local items with pay-on-delivery options or shop selected international items with secure upfront payment.';
@@ -85,4 +85,3 @@ export function websiteJsonLd() {
     },
   };
 }
-

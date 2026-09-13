@@ -44,9 +44,9 @@ const MAX_VISIBLE = 3;
 const EXIT_MS = 220;
 
 const TYPE_STYLES = {
-  success: { ring: 'bg-emerald-100 text-emerald-600', bar: 'bg-emerald-500' },
-  error: { ring: 'bg-red-100 text-red-600', bar: 'bg-red-500' },
-  info: { ring: 'bg-brand-light text-brand-dark', bar: 'bg-brand' },
+  success: { ring: 'border border-brand text-brand', bar: 'bg-brand' },
+  error: { ring: 'border border-red-400/60 text-red-400', bar: 'bg-red-400' },
+  info: { ring: 'border border-sand text-foreground/70', bar: 'bg-foreground/40' },
 } as const;
 
 function ToastIcon({ type }: { type: Toast['type'] }) {
@@ -128,38 +128,44 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               role="status"
-              className={`pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-2xl border border-black/5 bg-white/95 shadow-[0_12px_40px_rgba(15,23,42,0.18)] backdrop-blur-md transition-all duration-200 ${
+              className={`pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-none border border-sand bg-surface shadow-[0_12px_40px_rgba(0,0,0,0.55)] backdrop-blur-md transition-all duration-200 ${
                 toast.leaving ? 'translate-y-2 opacity-0' : 'animate-toast-in'
               }`}
             >
               <div className="flex items-center gap-3 p-3.5 pr-2.5">
                 {toast.image ? (
-                  <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-sand/40">
+                  <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-none border border-sand bg-background">
                     <img src={toast.image} alt="" className="h-full w-full object-cover" />
-                    <span className={`absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white ${styles.ring}`}>
+                    <span className={`absolute -bottom-px -right-px flex h-5 w-5 items-center justify-center bg-surface ${styles.ring}`}>
                       <ToastIcon type={toast.type} />
                     </span>
                   </span>
                 ) : (
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${styles.ring}`}>
+                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-none bg-background ${styles.ring}`}>
                     <ToastIcon type={toast.type} />
                   </span>
                 )}
 
                 <div className="min-w-0 flex-1">
-                  {toast.title && (
-                    <p className="truncate text-sm font-bold text-contrast">{toast.title}</p>
+                  {toast.title ? (
+                    <>
+                      <p className="truncate font-serif text-lg uppercase leading-none tracking-wide text-foreground">{toast.title}</p>
+                      <p className="mt-1 truncate font-mono text-[10px] uppercase tracking-widest text-foreground/50">
+                        {toast.message}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-foreground">
+                      {toast.message}
+                    </p>
                   )}
-                  <p className={`text-sm leading-snug text-contrast ${toast.title ? 'text-neutral' : 'font-medium'}`}>
-                    {toast.message}
-                  </p>
                 </div>
 
                 {toast.action && (
                   <Link
                     href={toast.action.href}
                     onClick={() => removeToast(toast.id)}
-                    className="shrink-0 rounded-full bg-contrast px-3.5 py-2 text-xs font-bold text-white transition-colors hover:bg-contrast/85"
+                    className="shrink-0 rounded-none bg-brand px-3.5 py-2 font-mono text-[10px] uppercase tracking-widest text-black transition-colors hover:bg-brand-dark"
                   >
                     {toast.action.label}
                   </Link>
@@ -168,7 +174,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 <button
                   onClick={() => removeToast(toast.id)}
                   aria-label="Dismiss notification"
-                  className="shrink-0 rounded-full p-1.5 text-neutral/60 transition-colors hover:bg-sand/60 hover:text-contrast"
+                  className="shrink-0 rounded-none p-1.5 text-foreground/40 transition-colors hover:text-brand"
                 >
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

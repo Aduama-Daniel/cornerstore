@@ -17,24 +17,30 @@ module.exports = {
           light: 'var(--accent-light)',
           soft: 'var(--accent-soft)',
         },
-        // Legacy token names kept (used widely across components) but repointed to a
-        // clean, modern convenience-store palette so the whole app shifts at once.
-        primary: '#E7F3EC',
-        neutral: '#64748B',
-        contrast: '#0F172A',
-        cream: '#F7F8FA',
-        sand: '#E2E8F0',
-        charcoal: '#0F172A',
-        'warm-gray': '#64748B',
-        'warm-beige': '#E7F3EC',
+        // "Noir & Gold" palette. The legacy token names are kept (used widely across
+        // components) but repointed to the dark editorial scheme so the whole app flips
+        // at once. `contrast` = primary (light) text/foreground; `cream` = page bg.
+        background: '#0D0D0D',
+        surface: '#171717',
+        'surface-2': '#212121',
+        foreground: '#F5F4F0',
+        primary: '#171717',
+        neutral: '#9B9689',
+        contrast: '#F5F4F0',
+        cream: '#0D0D0D',
+        sand: '#2A2A2A',
+        charcoal: '#0D0D0D',
+        'warm-gray': '#9B9689',
+        'warm-beige': '#171717',
       },
       fontFamily: {
         // Loaded once via next/font (see layout.tsx) and referenced through CSS variables.
-        // `serif` token maps to the clean display sans (Plus Jakarta Sans) so every existing
-        // `font-serif` heading becomes modern without per-file edits.
-        serif: ['var(--font-serif)', 'system-ui', 'sans-serif'],
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-serif)', 'system-ui', 'sans-serif'],
+        // `serif`/`display` -> Bebas Neue (condensed all-caps display), `sans` -> Barlow
+        // (body), `mono` -> JetBrains Mono (prices, badges, metadata labels).
+        serif: ['var(--font-serif)', 'ui-sans-serif', 'sans-serif'],
+        sans: ['var(--font-sans)', 'ui-sans-serif', 'sans-serif'],
+        display: ['var(--font-serif)', 'ui-sans-serif', 'sans-serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       fontSize: {
         'display-xl': ['4.25rem', { lineHeight: '1.05', letterSpacing: '-0.03em' }],
@@ -51,15 +57,24 @@ module.exports = {
         '8xl': '88rem',
         '9xl': '96rem',
       },
+      // The editorial system is intentionally sharp: everything but true circles
+      // (rounded-full, kept for dots/avatars/spinners) collapses to square corners.
       borderRadius: {
-        xl: '0.875rem',
-        '2xl': '1.125rem',
-        '3xl': '1.5rem',
+        none: '0',
+        sm: '0',
+        DEFAULT: '0',
+        md: '0',
+        lg: '0',
+        xl: '0',
+        '2xl': '0',
+        '3xl': '0',
+        full: '9999px',
       },
       boxShadow: {
-        card: '0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06)',
-        'card-hover': '0 2px 6px rgba(15, 23, 42, 0.06), 0 18px 40px rgba(15, 23, 42, 0.12)',
-        soft: '0 10px 30px rgba(15, 23, 42, 0.08)',
+        // Noir relies on borders, not drop shadows; shadows become subtle depth only.
+        card: '0 1px 2px rgba(0, 0, 0, 0.4)',
+        'card-hover': '0 8px 40px rgba(0, 0, 0, 0.55)',
+        soft: '0 10px 30px rgba(0, 0, 0, 0.45)',
       },
     },
   },

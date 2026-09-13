@@ -9,39 +9,34 @@ function SuccessContent() {
   const reference = searchParams.get('ref');
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center bg-cream px-4 py-16">
-      <div className="mx-auto w-full max-w-lg text-center">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </span>
-        <h1 className="mt-6 text-3xl font-bold leading-tight sm:text-4xl">Order confirmed</h1>
-        <p className="mt-4 text-sm leading-relaxed text-neutral sm:text-base">
-          Thank you for shopping with Cornerstore. We&apos;ve received your payment and your order
-          is being prepared. You&apos;ll be contacted on the phone number you provided to arrange
-          delivery.
+    <div className="mx-auto max-w-3xl px-6 py-32 text-center">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-brand">Order placed</p>
+      <h1 className="mt-4 font-serif text-6xl uppercase leading-none tracking-tight md:text-7xl">
+        THANK YOU
+      </h1>
+      <p className="mx-auto mt-6 max-w-[46ch] text-sm leading-relaxed text-foreground/50">
+        We have your order and a confirmation is on its way. You&apos;ll be contacted on the phone
+        number you provided to arrange delivery. Import pieces arrive in 3-5 weeks; in-stock Accra
+        items dispatch within 48 hours.
+      </p>
+      {reference && (
+        <p className="mx-auto mt-8 inline-block break-all border border-sand px-6 py-4 font-mono text-sm tracking-widest text-brand">
+          REFERENCE: {reference}
         </p>
-        {reference && (
-          <div className="mt-6 rounded-2xl border border-sand bg-white p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral">Payment reference</p>
-            <p className="mt-1 break-all font-mono text-sm font-semibold text-contrast">{reference}</p>
-            <p className="mt-2 text-xs text-neutral">
-              Keep this reference — you&apos;ll need it for any questions about this order.
-            </p>
-          </div>
-        )}
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/shop" className="btn-primary w-full sm:w-auto">
-            Continue shopping
-          </Link>
-          <Link href="/support" className="btn-secondary w-full sm:w-auto">
-            Get help
-          </Link>
-        </div>
-        <p className="mt-8 text-xs text-neutral">
-          Tip: create an account next time to track your orders in one place.
-        </p>
+      )}
+      <div className="mt-10 flex flex-wrap justify-center gap-4">
+        <Link
+          href="/account/orders"
+          className="bg-brand px-10 py-4 font-serif text-xl uppercase tracking-widest text-black"
+        >
+          TRACK ORDER
+        </Link>
+        <Link
+          href="/shop"
+          className="border border-sand px-10 py-4 font-serif text-xl uppercase tracking-widest transition-colors hover:border-brand hover:text-brand"
+        >
+          KEEP SHOPPING
+        </Link>
       </div>
     </div>
   );
@@ -49,7 +44,7 @@ function SuccessContent() {
 
 export default function CheckoutSuccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-[70vh] bg-cream" />}>
+    <Suspense fallback={<div className="min-h-[70vh] bg-background" />}>
       <SuccessContent />
     </Suspense>
   );

@@ -1,0 +1,1547 @@
+{
+  "generatedAt": "2026-09-13T00:53:06.070Z",
+  "sourceFolder": "temu stuff/generated-dark-product-images",
+  "count": 35,
+  "products": [
+    {
+      "importIndex": 1,
+      "sourceImage": "product-01-dark.png",
+      "name": "Gothic Thorn Heart Chain Necklace",
+      "slug": "china-01-gothic-thorn-heart-chain-necklace",
+      "price": 130,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Silver-tone gothic chain necklace with a thorned heart pendant, made for bold streetwear, party looks, and alternative styling.",
+      "shortDescription": "Silver-tone gothic chain necklace with a thorned heart pendant, made for bold streetwear, party looks, and alternative styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-01-gothic-thorn-heart-chain-necklace.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-01-gothic-thorn-heart-chain-necklace.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 2,
+      "sourceImage": "product-02-dark.png",
+      "name": "Long Geometric Star Pendant Necklace",
+      "slug": "china-02-long-geometric-star-pendant-necklace",
+      "price": 120,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Long silver-tone chain necklace with a sharp geometric star pendant for clean gothic and streetwear layering.",
+      "shortDescription": "Long silver-tone chain necklace with a sharp geometric star pendant for clean gothic and streetwear layering.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-02-long-geometric-star-pendant-necklace.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-02-long-geometric-star-pendant-necklace.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 3,
+      "sourceImage": "product-03-dark.png",
+      "name": "Minimal Star Pendant Chain",
+      "slug": "china-03-minimal-star-pendant-chain",
+      "price": 110,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Sleek silver-tone pendant chain with a long pointed star silhouette, designed as a subtle statement piece.",
+      "shortDescription": "Sleek silver-tone pendant chain with a long pointed star silhouette, designed as a subtle statement piece.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-03-minimal-star-pendant-chain.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-03-minimal-star-pendant-chain.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 4,
+      "sourceImage": "product-04-dark.png",
+      "name": "Gothic Flame Heart Necklace",
+      "slug": "china-04-gothic-flame-heart-necklace",
+      "price": 135,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Polished silver-tone necklace with a flame-shaped heart pendant for edgy fashion and night-out outfits.",
+      "shortDescription": "Polished silver-tone necklace with a flame-shaped heart pendant for edgy fashion and night-out outfits.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-04-gothic-flame-heart-necklace.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-04-gothic-flame-heart-necklace.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 5,
+      "sourceImage": "product-05-dark.png",
+      "name": "Yin-Yang Bead Pendant Necklace",
+      "slug": "china-05-yin-yang-bead-pendant-necklace",
+      "price": 115,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Black-and-white beaded necklace with a yin-yang pendant, easy to pair with casual streetwear and layered looks.",
+      "shortDescription": "Black-and-white beaded necklace with a yin-yang pendant, easy to pair with casual streetwear and layered looks.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-05-yin-yang-bead-pendant-necklace.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-05-yin-yang-bead-pendant-necklace.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 6,
+      "sourceImage": "product-06-dark.png",
+      "name": "RGB Standing Light Stick",
+      "slug": "china-06-rgb-standing-light-stick",
+      "price": 850,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Colorful RGB standing light for room styling, photo setups, content creation, and fashion display corners.",
+      "shortDescription": "Colorful RGB standing light for room styling, photo setups, content creation, and fashion display corners.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-06-rgb-standing-light-stick.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-06-rgb-standing-light-stick.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 7,
+      "sourceImage": "product-07-dark.png",
+      "name": "Satin Bonnet Color Set",
+      "slug": "china-07-satin-bonnet-color-set",
+      "price": 180,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Multi-color satin bonnet set for hair protection, sleep routines, and everyday styling.",
+      "shortDescription": "Multi-color satin bonnet set for hair protection, sleep routines, and everyday styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-07-satin-bonnet-color-set.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-07-satin-bonnet-color-set.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 8,
+      "sourceImage": "product-08-dark.png",
+      "name": "Satin Durag Color Set",
+      "slug": "china-08-satin-durag-color-set",
+      "price": 260,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Assorted satin durag set for waves, hair protection, and coordinated streetwear looks.",
+      "shortDescription": "Assorted satin durag set for waves, hair protection, and coordinated streetwear looks.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-08-satin-durag-color-set.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-08-satin-durag-color-set.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 9,
+      "sourceImage": "product-09-dark.png",
+      "name": "Navy Paisley Bandana",
+      "slug": "china-09-navy-paisley-bandana",
+      "price": 75,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Classic navy paisley bandana for headwear, neck styling, bag styling, and casual outfit accents.",
+      "shortDescription": "Classic navy paisley bandana for headwear, neck styling, bag styling, and casual outfit accents.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-09-navy-paisley-bandana.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-09-navy-paisley-bandana.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 10,
+      "sourceImage": "product-10-dark.png",
+      "name": "Floral Satin Square Scarf",
+      "slug": "china-10-floral-satin-square-scarf",
+      "price": 120,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Beige satin square scarf with floral and paisley-inspired detailing for elegant hair, neck, or bag styling.",
+      "shortDescription": "Beige satin square scarf with floral and paisley-inspired detailing for elegant hair, neck, or bag styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-10-floral-satin-square-scarf.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-10-floral-satin-square-scarf.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 11,
+      "sourceImage": "product-11-dark.png",
+      "name": "RGB Desk Light Bar Pair",
+      "slug": "china-11-rgb-desk-light-bar-pair",
+      "price": 420,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Pair of RGB light bars for room styling, gaming setups, content creation, and product photo backgrounds.",
+      "shortDescription": "Pair of RGB light bars for room styling, gaming setups, content creation, and product photo backgrounds.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-11-rgb-desk-light-bar-pair.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-11-rgb-desk-light-bar-pair.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 12,
+      "sourceImage": "product-12-dark.png",
+      "name": "Gothic Mixed Ring Set",
+      "slug": "china-12-gothic-mixed-ring-set",
+      "price": 160,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Mixed silver-tone gothic ring set with skull, cross, wing, flame, and statement motifs.",
+      "shortDescription": "Mixed silver-tone gothic ring set with skull, cross, wing, flame, and statement motifs.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-12-gothic-mixed-ring-set.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-12-gothic-mixed-ring-set.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 13,
+      "sourceImage": "product-13-dark.png",
+      "name": "Twisted RGB Table Lamp",
+      "slug": "china-13-twisted-rgb-table-lamp",
+      "price": 470,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Sculptural RGB table lamp for room styling, bedside setups, photoshoots, and modern fashion spaces.",
+      "shortDescription": "Sculptural RGB table lamp for room styling, bedside setups, photoshoots, and modern fashion spaces.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-13-twisted-rgb-table-lamp.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-13-twisted-rgb-table-lamp.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 14,
+      "sourceImage": "product-14-dark.png",
+      "name": "Grey Hooded Face Cover",
+      "slug": "china-14-grey-hooded-face-cover",
+      "price": 150,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Full-coverage grey hood and face cover for outdoor styling, cycling, cold weather, and layered streetwear.",
+      "shortDescription": "Full-coverage grey hood and face cover for outdoor styling, cycling, cold weather, and layered streetwear.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-14-grey-hooded-face-cover.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-14-grey-hooded-face-cover.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 15,
+      "sourceImage": "product-15-dark.png",
+      "name": "Black Balaclava and Arm Sleeve Set",
+      "slug": "china-15-black-balaclava-arm-sleeve-set",
+      "price": 170,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Black face-cover and arm sleeve set for outdoor rides, activewear looks, and sun/wind protection.",
+      "shortDescription": "Black face-cover and arm sleeve set for outdoor rides, activewear looks, and sun/wind protection.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-15-black-balaclava-arm-sleeve-set.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-15-black-balaclava-arm-sleeve-set.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 16,
+      "sourceImage": "product-16-dark.png",
+      "name": "Brown Corduroy Brimless Cap",
+      "slug": "china-16-brown-corduroy-brimless-cap",
+      "price": 135,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Brown corduroy brimless cap with a soft vintage texture and adjustable back strap.",
+      "shortDescription": "Brown corduroy brimless cap with a soft vintage texture and adjustable back strap.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-16-brown-corduroy-brimless-cap.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-16-brown-corduroy-brimless-cap.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 17,
+      "sourceImage": "product-17-dark.png",
+      "name": "Distressed Denim Brimless Cap",
+      "slug": "china-17-distressed-denim-brimless-cap",
+      "price": 145,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Light-wash distressed denim brimless cap with frayed patch details for casual streetwear styling.",
+      "shortDescription": "Light-wash distressed denim brimless cap with frayed patch details for casual streetwear styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-17-distressed-denim-brimless-cap.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-17-distressed-denim-brimless-cap.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 18,
+      "sourceImage": "product-18-dark.png",
+      "name": "White Mesh Brimless Cap",
+      "slug": "china-18-white-mesh-brimless-cap",
+      "price": 140,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Breathable white mesh brimless cap with black adjustable strap, ideal for warm-weather streetwear.",
+      "shortDescription": "Breathable white mesh brimless cap with black adjustable strap, ideal for warm-weather streetwear.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-18-white-mesh-brimless-cap.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-18-white-mesh-brimless-cap.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 19,
+      "sourceImage": "product-19-dark.png",
+      "name": "Black Cat-Eye Ear Beanie",
+      "slug": "china-19-black-cat-eye-ear-beanie",
+      "price": 120,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Black knit beanie with raised ear-like shape and yellow eye embroidery for playful cold-weather styling.",
+      "shortDescription": "Black knit beanie with raised ear-like shape and yellow eye embroidery for playful cold-weather styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-19-black-cat-eye-ear-beanie.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-19-black-cat-eye-ear-beanie.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 20,
+      "sourceImage": "product-20-dark.png",
+      "name": "White Embroidered Eye Beanie",
+      "slug": "china-20-white-embroidered-eye-beanie",
+      "price": 125,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "White knit beanie with dramatic embroidered eye artwork for bold winter and streetwear outfits.",
+      "shortDescription": "White knit beanie with dramatic embroidered eye artwork for bold winter and streetwear outfits.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-20-white-embroidered-eye-beanie.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-20-white-embroidered-eye-beanie.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 21,
+      "sourceImage": "product-21-dark.png",
+      "name": "Black and White Full Face Balaclava",
+      "slug": "china-21-black-white-full-face-balaclava",
+      "price": 130,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Split black-and-white full face balaclava with clean eye opening and soft stretch fabric.",
+      "shortDescription": "Split black-and-white full face balaclava with clean eye opening and soft stretch fabric.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-21-black-white-full-face-balaclava.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-21-black-white-full-face-balaclava.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 22,
+      "sourceImage": "product-22-dark.png",
+      "name": "Distressed Knit Skull Cap",
+      "slug": "china-22-distressed-knit-skull-cap",
+      "price": 150,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Distressed grey-and-black knit skull cap with open-weave texture for alternative streetwear styling.",
+      "shortDescription": "Distressed grey-and-black knit skull cap with open-weave texture for alternative streetwear styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-22-distressed-knit-skull-cap.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-22-distressed-knit-skull-cap.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 23,
+      "sourceImage": "product-23-dark.png",
+      "name": "Gold Heart Crystal Grillz Set",
+      "slug": "china-23-gold-heart-crystal-grillz-set",
+      "price": 190,
+      "category": "jewelry",
+      "department": "fashion",
+      "description": "Gold-tone heart crystal grillz accessory set for parties, photoshoots, costumes, and statement styling.",
+      "shortDescription": "Gold-tone heart crystal grillz accessory set for parties, photoshoots, costumes, and statement styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "jewelry"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-23-gold-heart-crystal-grillz-set.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-23-gold-heart-crystal-grillz-set.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 24,
+      "sourceImage": "product-24-dark.png",
+      "name": "Black Distressed Baseball Cap",
+      "slug": "china-24-black-distressed-baseball-cap",
+      "price": 145,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Black distressed baseball cap with textured frayed detailing for rugged everyday outfits.",
+      "shortDescription": "Black distressed baseball cap with textured frayed detailing for rugged everyday outfits.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-24-black-distressed-baseball-cap.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-24-black-distressed-baseball-cap.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 25,
+      "sourceImage": "product-25-dark.png",
+      "name": "Red Cyberpunk Half Face Mask",
+      "slug": "china-25-red-cyberpunk-half-face-mask",
+      "price": 520,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Glossy red and black cyberpunk half-face mask with mechanical styling for cosplay, shoots, and statement looks.",
+      "shortDescription": "Glossy red and black cyberpunk half-face mask with mechanical styling for cosplay, shoots, and statement looks.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-25-red-cyberpunk-half-face-mask.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-25-red-cyberpunk-half-face-mask.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 26,
+      "sourceImage": "product-26-dark.png",
+      "name": "Red Horned Knit Mask Beanie",
+      "slug": "china-26-red-horned-knit-mask-beanie",
+      "price": 220,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Red horned knit face-cover beanie with black detailing for costume styling and standout winter looks.",
+      "shortDescription": "Red horned knit face-cover beanie with black detailing for costume styling and standout winter looks.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-26-red-horned-knit-mask-beanie.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-26-red-horned-knit-mask-beanie.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 27,
+      "sourceImage": "product-27-dark.png",
+      "name": "Chrome Flame Phone Case",
+      "slug": "china-27-chrome-flame-phone-case",
+      "price": 110,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Metallic chrome phone case with flame cutout styling, made to add a bold fashion detail to everyday carry.",
+      "shortDescription": "Metallic chrome phone case with flame cutout styling, made to add a bold fashion detail to everyday carry.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-27-chrome-flame-phone-case.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-27-chrome-flame-phone-case.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 28,
+      "sourceImage": "product-28-dark.png",
+      "name": "RGB Light Bar Set with Remote",
+      "slug": "china-28-rgb-light-bar-set-with-remote",
+      "price": 430,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Two-piece RGB light bar set with remote and USB cable for styling rooms, shoots, and display spaces.",
+      "shortDescription": "Two-piece RGB light bar set with remote and USB cable for styling rooms, shoots, and display spaces.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-28-rgb-light-bar-set-with-remote.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-28-rgb-light-bar-set-with-remote.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 29,
+      "sourceImage": "product-29-dark.png",
+      "name": "Black Dragon Relief Phone Case",
+      "slug": "china-29-black-dragon-relief-phone-case",
+      "price": 120,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Black phone case with raised dragon relief artwork for a premium dark fashion accessory look.",
+      "shortDescription": "Black phone case with raised dragon relief artwork for a premium dark fashion accessory look.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-29-black-dragon-relief-phone-case.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-29-black-dragon-relief-phone-case.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 30,
+      "sourceImage": "product-30-dark.png",
+      "name": "Red Eye Graffiti Phone Case",
+      "slug": "china-30-red-eye-graffiti-phone-case",
+      "price": 115,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Glossy black and red phone case with bold eye-inspired artwork for expressive everyday styling.",
+      "shortDescription": "Glossy black and red phone case with bold eye-inspired artwork for expressive everyday styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-30-red-eye-graffiti-phone-case.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-30-red-eye-graffiti-phone-case.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 31,
+      "sourceImage": "product-31-dark.png",
+      "name": "Cream Plush Character Phone Case",
+      "slug": "china-31-cream-plush-character-phone-case",
+      "price": 135,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Cream plush phone case with embroidered character face, soft texture, and playful fashion appeal.",
+      "shortDescription": "Cream plush phone case with embroidered character face, soft texture, and playful fashion appeal.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-31-cream-plush-character-phone-case.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-31-cream-plush-character-phone-case.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 32,
+      "sourceImage": "product-32-dark.png",
+      "name": "Beige Inflatable Lounge Chair",
+      "slug": "china-32-beige-inflatable-lounge-chair",
+      "price": 650,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Beige inflatable lounge chair for bedroom styling, studio corners, dorm rooms, and relaxed lifestyle spaces.",
+      "shortDescription": "Beige inflatable lounge chair for bedroom styling, studio corners, dorm rooms, and relaxed lifestyle spaces.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-32-beige-inflatable-lounge-chair.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-32-beige-inflatable-lounge-chair.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 33,
+      "sourceImage": "product-33-dark.png",
+      "name": "Color Print Riding Goggles Mask",
+      "slug": "china-33-color-print-riding-goggles-mask",
+      "price": 420,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Colorful riding goggles and mask set with mirrored lenses for biking, cosplay, and bold outdoor styling.",
+      "shortDescription": "Colorful riding goggles and mask set with mirrored lenses for biking, cosplay, and bold outdoor styling.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-33-color-print-riding-goggles-mask.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-33-color-print-riding-goggles-mask.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 34,
+      "sourceImage": "product-34-dark.png",
+      "name": "Braided Rope Fashion Belt",
+      "slug": "china-34-braided-rope-fashion-belt",
+      "price": 95,
+      "category": "accessories",
+      "department": "fashion",
+      "description": "Braided cream-and-black rope belt with tassel ends for casual styling, oversized shirts, and relaxed fits.",
+      "shortDescription": "Braided cream-and-black rope belt with tassel ends for casual styling, oversized shirts, and relaxed fits.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "accessories"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-34-braided-rope-fashion-belt.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-34-braided-rope-fashion-belt.png",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "importIndex": 35,
+      "sourceImage": "product-35-dark.png",
+      "name": "Black Utility Chest Bag",
+      "slug": "china-35-black-utility-chest-bag",
+      "price": 320,
+      "category": "bags",
+      "department": "fashion",
+      "description": "Black utility chest bag with adjustable straps, front storage pocket, and orange zipper accents for travel and streetwear.",
+      "shortDescription": "Black utility chest bag with adjustable straps, front storage pocket, and orange zipper accents for travel and streetwear.",
+      "brand": {
+        "name": "Cornerstore Select",
+        "slug": "cornerstore-select"
+      },
+      "origin": "China",
+      "originType": "international",
+      "paymentMode": "upfront",
+      "status": "active",
+      "estimatedDeliveryLabel": "3-5 weeks delivery",
+      "estimatedDeliveryMinDays": 21,
+      "estimatedDeliveryMaxDays": 35,
+      "productNotes": "Sourced from China and imported on order. Not currently stocked in Ghana; please allow 3-5 weeks for delivery.",
+      "returnEligible": true,
+      "tags": [
+        "china-sourced",
+        "international-import",
+        "bags"
+      ],
+      "productHighlights": [
+        "Sourced from China",
+        "Imported on order · 3-5 weeks delivery",
+        "Not currently stocked in Ghana"
+      ],
+      "stockQuantity": 100,
+      "images": [
+        "/images/temu/china-35-black-utility-chest-bag.png"
+      ],
+      "mainMedia": [
+        {
+          "url": "/images/temu/china-35-black-utility-chest-bag.png",
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}

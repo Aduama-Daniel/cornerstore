@@ -53,9 +53,9 @@ export default function WishlistButton({
             className={`
         ${sizeClasses[size]}
         flex items-center justify-center
-        rounded-full
-        bg-white hover:bg-gray-50
-        border border-gray-200
+        rounded-none
+        bg-background/70 hover:border-brand
+        border border-sand backdrop-blur-sm
         transition-all duration-200
         group
         ${isAnimating ? 'scale-125' : 'scale-100'}
@@ -67,8 +67,8 @@ export default function WishlistButton({
                 <div className="flex items-center gap-2 px-4">
                     <svg
                         className={`${iconSizes[size]} transition-all duration-200 ${inWishlist
-                                ? 'fill-red-500 stroke-red-500'
-                                : 'fill-none stroke-gray-600 group-hover:stroke-red-500'
+                                ? 'fill-brand stroke-brand'
+                                : 'fill-none stroke-foreground/70 group-hover:stroke-brand'
                             }`}
                         viewBox="0 0 24 24"
                         strokeWidth={2}
@@ -86,8 +86,8 @@ export default function WishlistButton({
             ) : (
                 <svg
                     className={`${iconSizes[size]} transition-all duration-200 ${inWishlist
-                            ? 'fill-red-500 stroke-red-500 animate-heart-beat'
-                            : 'fill-none stroke-gray-600 group-hover:stroke-red-500 group-hover:scale-110'
+                            ? 'fill-brand stroke-brand animate-heart-beat'
+                            : 'fill-none stroke-foreground/70 group-hover:stroke-brand group-hover:scale-110'
                         }`}
                     viewBox="0 0 24 24"
                     strokeWidth={2}

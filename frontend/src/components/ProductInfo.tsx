@@ -261,22 +261,22 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
   return (
     <div className="space-y-6 py-1">
-      <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral">
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brand">
         {[product.brand?.name, product.category.replace('-', ' '), product.origin].filter(Boolean).join(' · ')}
       </p>
 
       <div>
-        <div className="flex flex-wrap items-center gap-2">
-          {product.tags?.includes('sale') ? <span className="rounded-full bg-red-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-red-700">Sale</span> : null}
-          {product.tags?.includes('new') ? <span className="rounded-full bg-green-50 px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-green-700">New</span> : null}
-          <span className="rounded-full bg-brand-light px-3 py-1 text-[0.64rem] uppercase tracking-[0.18em] text-brand-dark">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {product.tags?.includes('sale') ? <span className="badge bg-brand text-black">Sale</span> : null}
+          {product.tags?.includes('new') ? <span className="badge border border-sand text-foreground/70">New</span> : null}
+          <span className="badge border border-sand text-foreground/70">
             {fulfillment.originType === 'international' ? 'International order' : 'Local delivery'}
           </span>
         </div>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-serif sm:text-3xl">{product.name}</h1>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral">
+            <h1 className="font-serif text-5xl uppercase leading-none tracking-tight md:text-6xl">{product.name}</h1>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-foreground/60">
               {product.shortDescription || product.description}
             </p>
           </div>
@@ -285,14 +285,14 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       <div className="border-y border-sand py-5">
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-baseline gap-4">
           {isOnSale ? (
             <>
-              <p className="text-2xl font-medium text-red-600 sm:text-3xl">{formatPrice(discountedPrice)}</p>
-              <p className="text-base text-gray-400 line-through sm:text-lg">{formatPrice(price)}</p>
+              <p className="font-mono text-2xl text-brand">{formatPrice(discountedPrice)}</p>
+              <p className="font-mono text-sm text-foreground/30 line-through">{formatPrice(price)}</p>
             </>
           ) : (
-            <p className="text-2xl font-medium text-contrast sm:text-3xl">{formatPrice(price)}</p>
+            <p className="font-mono text-2xl text-brand">{formatPrice(price)}</p>
           )}
         </div>
       </div>
@@ -320,8 +320,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )}
 
       <div className="border-b border-sand pb-6">
-        <label className="mb-3 block text-sm font-medium uppercase tracking-wide">Quantity</label>
-        <div className="flex w-fit items-center overflow-hidden rounded-full border border-neutral/20 bg-white">
+        <label className="mb-3 block font-mono text-[10px] uppercase tracking-widest text-foreground/40">Quantity</label>
+        <div className="flex w-fit items-center overflow-hidden rounded-none border border-sand bg-transparent">
           <button
             onClick={() => setQuantity(Math.max(1, quantity - 1))}
             aria-label="Decrease quantity"
@@ -332,7 +332,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
             </svg>
           </button>
-          <span className="min-w-[4rem] border-x border-neutral/20 px-5 py-3 text-center">{quantity}</span>
+          <span className="min-w-[4rem] border-x border-sand px-5 py-3 text-center font-mono">{quantity}</span>
           <button
             onClick={() => setQuantity(Math.min(effectiveVariant?.stockQuantity || 1, quantity + 1))}
             aria-label="Increase quantity"
@@ -443,11 +443,11 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Sticky mobile buy bar */}
       {showStickyBar && !isOutOfStock && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-sand bg-white/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-8px_30px_rgba(15,23,42,0.10)] backdrop-blur-md lg:hidden animate-bar-up">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-sand bg-background/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur-md lg:hidden animate-bar-up">
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-contrast">{product.name}</p>
-              <p className="text-base font-bold text-contrast">
+              <p className="truncate font-serif text-lg uppercase tracking-wide text-foreground">{product.name}</p>
+              <p className="font-mono text-sm text-brand">
                 {formatPrice(isOnSale ? (discountedPrice as number) : price)}
                 {isOnSale && <span className="ml-2 text-xs font-normal text-neutral line-through">{formatPrice(price)}</span>}
               </p>

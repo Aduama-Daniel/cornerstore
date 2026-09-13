@@ -48,6 +48,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const router = useRouter();
 
@@ -89,10 +90,15 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   return (
     <div className="group relative flex cursor-pointer flex-col overflow-hidden bg-transparent" onClick={handleCardClick}>
       <div
-        className="relative aspect-[4/5] overflow-hidden rounded-xl bg-sand/25 ring-1 ring-transparent transition-shadow duration-300 group-hover:shadow-card-hover group-hover:ring-black/5"
+        className="relative aspect-[3/4] overflow-hidden border border-sand bg-surface transition-colors duration-300 group-hover:border-brand/40"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
+        {!imgLoaded && currentMedia && (
+          <span className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
+            <span className="h-6 w-6 animate-spin rounded-full border-2 border-sand border-t-brand" />
+          </span>
+        )}
         <Link
           href={`/product/${product.slug}`}
           className="absolute inset-0 z-0 block h-full w-full"
@@ -114,7 +120,8 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
                 src={optimizedImageUrl(currentMedia.url, 640)}
                 alt={product.name}
                 fill
-                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                onLoad={() => setImgLoaded(true)}
+                className={`object-cover transition-all duration-500 ease-out group-hover:scale-[1.04] ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 priority={priority}
               />
@@ -129,14 +136,14 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         </Link>
 
         {/* Badges */}
-        <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1.5">
-          {isOnSale && <span className="badge bg-white/90 text-red-600">Sale</span>}
-          {isOutOfStock && <span className="badge bg-white/90 text-contrast">Sold out</span>}
+        <div className="absolute left-3 top-3 z-10 flex flex-col gap-1.5">
+          {isOnSale && <span className="badge bg-brand text-black">Sale</span>}
+          {isOutOfStock && <span className="badge bg-background/80 text-foreground/70">Sold out</span>}
           {!isOutOfStock && fulfillment.originType === 'international' && (
-            <span className="badge bg-white/90 text-contrast">Imported item</span>
+            <span className="badge bg-background/80 text-foreground/70">Imported</span>
           )}
           {!isOutOfStock && fulfillment.originType === 'local' && fulfillment.paymentMode !== 'upfront' && (
-            <span className="badge bg-white/90 text-contrast">Pay on Delivery</span>
+            <span className="badge bg-background/80 text-foreground/70">Pay on Delivery</span>
           )}
         </div>
 
@@ -146,49 +153,41 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         </div>
 
         {/* Quick view (desktop hover) */}
-        <div className="absolute inset-x-2.5 bottom-2.5 z-10 hidden sm:block">
+        <div className="absolute inset-x-3 bottom-3 z-10 hidden translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:block">
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setShowQuickView(true);
             }}
-            className="w-full rounded-full border border-white/50 bg-white/90 py-2.5 text-xs font-semibold text-contrast backdrop-blur-sm transition-colors hover:bg-white"
+            className="w-full rounded-none border border-sand bg-background/80 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-foreground backdrop-blur-sm transition-colors hover:border-brand hover:text-brand"
           >
             Quick view
           </button>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col px-0.5 pb-2 pt-3">
-        <p className="text-[0.68rem] font-medium uppercase tracking-wide text-neutral">
-          {product.brand?.name || formatCategory(product.category)}
-        </p>
-        <Link href={`/product/${product.slug}`} onClick={(e) => e.stopPropagation()} className="mt-1">
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-contrast transition-colors group-hover:text-brand sm:text-[0.95rem]">
-            {product.name}
-          </h3>
-        </Link>
-
-        <div className="mt-auto pt-3">
-          <div className="flex items-center gap-2">
-            {isOnSale ? (
-              <>
-                <p className="text-base font-bold text-contrast">{formatPrice(product.discountPrice as number)}</p>
-                <p className="text-xs text-neutral line-through">{formatPrice(product.price)}</p>
-              </>
-            ) : (
-              <p className="text-base font-bold text-contrast">{formatPrice(product.price)}</p>
-            )}
-          </div>
-          {isOutOfStock && (
-            <p className="mt-1.5 flex items-center gap-1.5 text-[0.7rem] font-medium text-neutral">
-              <span className="h-1.5 w-1.5 rounded-full bg-neutral/50" />
-              Currently unavailable
-            </p>
-          )}
-          {!isOutOfStock && (
-            <p className="mt-1.5 text-[0.7rem] font-medium text-neutral">{fulfillment.deliveryLabel}</p>
+      <div className="flex flex-1 items-start justify-between gap-4 pb-2 pt-5">
+        <div className="min-w-0">
+          <Link href={`/product/${product.slug}`} onClick={(e) => e.stopPropagation()}>
+            <h3 className="line-clamp-2 font-serif text-xl uppercase leading-tight tracking-wide text-foreground transition-colors group-hover:text-brand">
+              {product.name}
+            </h3>
+          </Link>
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-neutral">
+            {product.brand?.name || formatCategory(product.category)}
+            {!isOutOfStock && <> · {fulfillment.deliveryLabel}</>}
+            {isOutOfStock && <> · Currently unavailable</>}
+          </p>
+        </div>
+        <div className="shrink-0 whitespace-nowrap text-right">
+          {isOnSale ? (
+            <>
+              <p className="font-mono text-sm text-brand">{formatPrice(product.discountPrice as number)}</p>
+              <p className="font-mono text-[10px] text-neutral line-through">{formatPrice(product.price)}</p>
+            </>
+          ) : (
+            <p className="font-mono text-sm text-brand">{formatPrice(product.price)}</p>
           )}
         </div>
       </div>

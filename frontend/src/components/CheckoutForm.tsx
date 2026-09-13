@@ -70,7 +70,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Contact Information */}
       <div>
-        <h3 className="text-lg font-medium mb-4">Contact Information</h3>
+        <h3 className="mb-6 font-serif text-3xl uppercase tracking-widest">01 — Contact</h3>
         <div className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm mb-2">
@@ -124,7 +124,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
 
       {/* Delivery Address */}
       <div>
-        <h3 className="text-lg font-medium mb-4">Delivery Address</h3>
+        <h3 className="mb-6 font-serif text-3xl uppercase tracking-widest">02 — Delivery</h3>
         <div className="space-y-4">
           <div>
             <label htmlFor="fullName" className="block text-sm mb-2">
@@ -234,7 +234,7 @@ export default function CheckoutForm({ onSubmit, loading, initialValues }: Check
         </p>
       </div>
 
-      <div className="rounded-2xl border border-sand bg-white p-4">
+      <div className="border border-sand bg-surface p-4">
         <label className="flex items-start gap-3 text-sm leading-relaxed text-neutral">
           <input
             type="checkbox"

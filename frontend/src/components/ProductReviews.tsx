@@ -65,7 +65,7 @@ export default function ProductReviews({
                 {[1, 2, 3, 4, 5].map((star) => (
                     <svg
                         key={star}
-                        className={`${sizeClasses[size]} ${star <= rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                        className={`${sizeClasses[size]} ${star <= rating ? 'text-brand fill-current' : 'text-foreground/20 fill-current'
                             }`}
                         viewBox="0 0 20 20"
                     >
@@ -93,177 +93,118 @@ export default function ProductReviews({
     const regularReviews = reviews.filter(r => !r.pinned);
 
     return (
-        <div className="py-16 bg-cream">
-            <div className="container-custom">
-                <h2 className="text-3xl font-serif mb-8">Customer Reviews</h2>
+        <section className="mt-24 border-t border-sand pt-16">
+            <h2 className="mb-10 font-serif text-5xl uppercase tracking-tight">CUSTOMER REVIEWS</h2>
 
-                {/* Rating Summary */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-                    <div className="lg:col-span-1 bg-white p-6 rounded-lg border border-gray-200">
-                        <div className="text-center">
-                            <div className="text-5xl font-bold mb-2">
-                                {ratingSummary.averageRating.toFixed(1)}
-                            </div>
-                            <div className="flex justify-center mb-2">
-                                {renderStars(Math.round(ratingSummary.averageRating), 'lg')}
-                            </div>
-                            <p className="text-sm text-gray-600">
-                                Based on {ratingSummary.totalReviews} reviews
-                            </p>
-                        </div>
+            {/* Rating Summary */}
+            <div className="mb-12 grid grid-cols-1 gap-px bg-sand lg:grid-cols-3">
+                <div className="bg-surface p-8 text-center lg:col-span-1">
+                    <div className="font-serif text-7xl leading-none text-brand">
+                        {ratingSummary.averageRating.toFixed(1)}
                     </div>
-
-                    <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-200">
-                        <div className="space-y-2">
-                            {[5, 4, 3, 2, 1].map((stars) => {
-                                let count = 0;
-                                if (stars === 5) count = ratingSummary.fiveStars;
-                                else if (stars === 4) count = ratingSummary.fourStars;
-                                else if (stars === 3) count = ratingSummary.threeStars;
-                                else if (stars === 2) count = ratingSummary.twoStars;
-                                else if (stars === 1) count = ratingSummary.oneStar;
-
-                                const percentage = getRatingPercentage(count);
-
-                                return (
-                                    <div key={stars} className="flex items-center gap-3">
-                                        <span className="text-sm font-medium w-12">{stars} star</span>
-                                        <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-yellow-400"
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
-                                        <span className="text-sm text-gray-600 w-12 text-right">
-                                            {percentage}%
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                    <div className="mt-3 flex justify-center">
+                        {renderStars(Math.round(ratingSummary.averageRating), 'lg')}
                     </div>
+                    <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                        Based on {ratingSummary.totalReviews} review{ratingSummary.totalReviews === 1 ? '' : 's'}
+                    </p>
                 </div>
 
-                {/* Write Review Button */}
-                <div className="mb-8">
-                    {!showReviewForm ? (
-                        <button
-                            onClick={() => setShowReviewForm(true)}
-                            className="btn-primary"
-                        >
-                            Write a Review
-                        </button>
-                    ) : (
-                        <ReviewForm
-                            productId={productId}
-                            onSuccess={handleReviewSuccess}
-                            onCancel={() => setShowReviewForm(false)}
-                        />
-                    )}
-                </div>
+                <div className="bg-surface p-8 lg:col-span-2">
+                    <div className="space-y-3">
+                        {[5, 4, 3, 2, 1].map((stars) => {
+                            let count = 0;
+                            if (stars === 5) count = ratingSummary.fiveStars;
+                            else if (stars === 4) count = ratingSummary.fourStars;
+                            else if (stars === 3) count = ratingSummary.threeStars;
+                            else if (stars === 2) count = ratingSummary.twoStars;
+                            else if (stars === 1) count = ratingSummary.oneStar;
 
-                {/* Reviews List */}
-                <div className="space-y-6">
-                    {/* Pinned Reviews */}
-                    {pinnedReviews.map((review) => (
-                        <div
-                            key={review._id}
-                            className="bg-yellow-50 border-2 border-yellow-200 p-6 rounded-lg"
-                        >
-                            <div className="flex items-start justify-between mb-3">
-                                <div>
-                                    <div className="flex items-center gap-3 mb-2">
-                                        {renderStars(review.rating)}
-                                        <span className="px-2 py-1 bg-yellow-200 text-yellow-900 text-xs font-medium rounded">
-                                            Featured Review
-                                        </span>
+                            const percentage = getRatingPercentage(count);
+
+                            return (
+                                <div key={stars} className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-foreground/50">
+                                    <span className="w-14">{stars} star</span>
+                                    <div className="h-1.5 flex-1 overflow-hidden bg-background">
+                                        <div className="h-full bg-brand" style={{ width: `${percentage}%` }} />
                                     </div>
-                                    {review.title && (
-                                        <h4 className="font-medium text-lg mb-1">{review.title}</h4>
-                                    )}
+                                    <span className="w-10 text-right">{percentage}%</span>
                                 </div>
-                            </div>
-
-                            <p className="text-gray-700 mb-3">{review.comment}</p>
-
-                            {review.images && review.images.length > 0 && (
-                                <div className="flex gap-2 mb-3">
-                                    {review.images.map((img, idx) => (
-                                        <img
-                                            key={idx}
-                                            src={img}
-                                            alt="Customer photo"
-                                            className="w-20 h-20 object-cover rounded"
-                                        />
-                                    ))}
-                                </div>
-                            )}
-
-                            <div className="text-sm text-gray-600">
-                                {review.user?.displayName || 'Verified Buyer'} • {formatDate(review.createdAt)}
-                            </div>
-
-                            {review.adminResponse && (
-                                <div className="mt-4 pl-4 border-l-2 border-gray-300">
-                                    <p className="text-sm font-medium text-gray-900 mb-1">Response from Cornerstore:</p>
-                                    <p className="text-sm text-gray-700">{review.adminResponse.text}</p>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-
-                    {/* Regular Reviews */}
-                    {regularReviews.map((review) => (
-                        <div
-                            key={review._id}
-                            className="bg-white border border-gray-200 p-6 rounded-lg"
-                        >
-                            <div className="flex items-start justify-between mb-3">
-                                <div>
-                                    <div className="flex items-center gap-3 mb-2">
-                                        {renderStars(review.rating)}
-                                    </div>
-                                    {review.title && (
-                                        <h4 className="font-medium text-lg mb-1">{review.title}</h4>
-                                    )}
-                                </div>
-                            </div>
-
-                            <p className="text-gray-700 mb-3">{review.comment}</p>
-
-                            {review.images && review.images.length > 0 && (
-                                <div className="flex gap-2 mb-3">
-                                    {review.images.map((img, idx) => (
-                                        <img
-                                            key={idx}
-                                            src={img}
-                                            alt="Customer photo"
-                                            className="w-20 h-20 object-cover rounded"
-                                        />
-                                    ))}
-                                </div>
-                            )}
-
-                            <div className="text-sm text-gray-600">
-                                {review.user?.displayName || 'Verified Buyer'} • {formatDate(review.createdAt)}
-                            </div>
-
-                            {review.adminResponse && (
-                                <div className="mt-4 pl-4 border-l-2 border-gray-300">
-                                    <p className="text-sm font-medium text-gray-900 mb-1">Response from Cornerstore:</p>
-                                    <p className="text-sm text-gray-700">{review.adminResponse.text}</p>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-
-                {reviews.length === 0 && (
-                    <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                        <p className="text-gray-600">No reviews yet. Be the first to review this product!</p>
+                            );
+                        })}
                     </div>
+                </div>
+            </div>
+
+            {/* Write Review */}
+            <div className="mb-10">
+                {!showReviewForm ? (
+                    <button onClick={() => setShowReviewForm(true)} className="btn-secondary text-base">
+                        Write a review
+                    </button>
+                ) : (
+                    <ReviewForm
+                        productId={productId}
+                        onSuccess={handleReviewSuccess}
+                        onCancel={() => setShowReviewForm(false)}
+                    />
                 )}
             </div>
-        </div>
+
+            {/* Reviews List */}
+            {reviews.length > 0 && (
+            <div className="divide-y divide-sand border-y border-sand">
+                {[...pinnedReviews, ...regularReviews].map((review) => (
+                    <div key={review._id} className="py-8">
+                        <div className="flex items-center gap-4">
+                            {renderStars(review.rating)}
+                            {review.pinned && (
+                                <span className="bg-brand px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-black">
+                                    Featured
+                                </span>
+                            )}
+                        </div>
+                        {review.title && (
+                            <h4 className="mt-3 font-serif text-2xl uppercase tracking-wide">{review.title}</h4>
+                        )}
+                        <p className="mt-3 max-w-[70ch] text-sm leading-relaxed text-foreground/60">{review.comment}</p>
+
+                        {review.images && review.images.length > 0 && (
+                            <div className="mt-4 flex gap-2">
+                                {review.images.map((img, idx) => (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                        key={idx}
+                                        src={img}
+                                        alt="Customer photo"
+                                        className="h-20 w-20 border border-sand object-cover"
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="mt-4 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                            {review.user?.displayName || 'Verified Buyer'} · {formatDate(review.createdAt)}
+                        </div>
+
+                        {review.adminResponse && (
+                            <div className="mt-4 border-l border-brand pl-4">
+                                <p className="font-mono text-[10px] uppercase tracking-widest text-brand">Response from Cornerstore</p>
+                                <p className="mt-2 text-sm text-foreground/60">{review.adminResponse.text}</p>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+            )}
+
+            {reviews.length === 0 && (
+                <div className="border border-sand py-16 text-center">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                        No reviews yet. Be the first to review this product.
+                    </p>
+                </div>
+            )}
+        </section>
     );
 }

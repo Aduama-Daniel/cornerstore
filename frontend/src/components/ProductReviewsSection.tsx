@@ -78,11 +78,10 @@ export default function ProductReviewsSection({ productId }: ProductReviewsSecti
 
     if (loading) {
         return (
-            <div className="py-16 bg-cream">
-                <div className="container-custom">
-                    <div className="text-center text-gray-600">Loading reviews...</div>
-                </div>
-            </div>
+            <section className="mt-24 border-t border-sand pt-16">
+                <h2 className="mb-10 font-serif text-5xl uppercase tracking-tight">CUSTOMER REVIEWS</h2>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/40">Loading reviews…</p>
+            </section>
         );
     }
 

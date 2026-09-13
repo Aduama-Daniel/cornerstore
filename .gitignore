@@ -49,7 +49,16 @@ next-env.d.ts
 .vercel
 
 # Local tooling & stray artifacts (not for production)
+# Anchored to repo root so public/images (hero assets) is never matched.
 .claude/
-images/
-ChatGPT Image*.png
-test_chat.js
+/images/
+/ChatGPT Image*.png
+/test_chat.js
+
+# Heavy source assets & local working material (not needed for deploy)
+/temu stuff/
+/images/
+/cornerstore-os/
+.playwright-cli/
+frontend/*.log
+frontend/build-log.txt

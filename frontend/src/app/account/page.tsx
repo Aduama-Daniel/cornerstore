@@ -1,141 +1,185 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
+import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/currency';
 
+type ProfileForm = {
+  displayName: string;
+  phone: string;
+  address: string;
+  city: string;
+  region: string;
+  country: string;
+};
+
+const emptyProfile: ProfileForm = {
+  displayName: '',
+  phone: '',
+  address: '',
+  city: '',
+  region: '',
+  country: 'Ghana',
+};
+
+const FIELD =
+  'w-full border border-sand bg-background px-4 py-3 font-sans text-sm text-foreground outline-none transition-colors focus:border-brand placeholder:text-foreground/25';
+
 export default function AccountPage() {
-  const { user, logout, getIdToken, loading } = useAuth();
+  const { user, logout, getIdToken, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
+  const [saving, setSaving] = useState(false);
+  const [notice, setNotice] = useState('');
+  const [tab, setTab] = useState<'orders' | 'details'>('orders');
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
-    }
-  }, [loading, user, router]);
+    if (!authLoading && !user) router.replace('/login?redirect=/account');
+  }, [authLoading, user, router]);
 
-  const { data: ordersData } = useSWR(
-    user ? ['/api/orders', user.uid] : null,
-    async () => {
-      const token = await getIdToken();
-      return api.orders.getUserOrders(token, { limit: 5 });
-    }
+  const { data: profileData } = useSWR(
+    user ? ['/api/user/profile', user.uid] : null,
+    async () => api.user.getProfile(await getIdToken()),
   );
 
-  if (loading || !user) {
-    return null;
-  }
+  const { data: ordersData, isLoading: ordersLoading } = useSWR(
+    user ? ['/api/orders', user.uid] : null,
+    async () => api.orders.getUserOrders(await getIdToken(), { limit: 10 }),
+  );
+
+  useEffect(() => {
+    const saved = profileData?.data || {};
+    setProfile({
+      ...emptyProfile,
+      ...saved,
+      displayName: saved.displayName || user?.displayName || '',
+    });
+  }, [profileData, user?.displayName]);
+
+  if (authLoading || !user) return null;
+
+  const orders = ordersData?.data || [];
+
+  const updateField = (field: keyof ProfileForm, value: string) => {
+    setProfile((current) => ({ ...current, [field]: value }));
+    setNotice('');
+  };
+
+  const saveProfile = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSaving(true);
+    setNotice('');
+    try {
+      await api.user.updateProfile(await getIdToken(), profile);
+      setNotice('Your details have been saved.');
+    } catch {
+      setNotice('We could not save your details. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
     router.push('/');
   };
 
-  const recentOrders = ordersData?.data || [];
-
   return (
-    <div className="min-h-screen">
-      <div className="bg-warm-beige py-12">
-        <div className="container-custom">
-          <h1 className="text-4xl font-serif mb-2">My Account</h1>
-          <p className="text-neutral">{user.email}</p>
-        </div>
+    <div className="mx-auto max-w-5xl px-6 py-16">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="font-serif text-6xl uppercase tracking-tight">MY ACCOUNT</h1>
+        <button
+          onClick={handleLogout}
+          className="font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline hover:text-brand"
+        >
+          Sign out
+        </button>
+      </div>
+      <p className="mt-3 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+        Signed in as {user.email}
+      </p>
+
+      <div className="mt-10 flex gap-px bg-sand">
+        {(['orders', 'details'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`bg-background px-6 py-3 font-serif text-lg uppercase tracking-widest transition-colors ${
+              tab === t ? 'text-brand' : 'hover:text-brand'
+            }`}
+          >
+            {t === 'orders' ? 'Orders' : 'Details'}
+          </button>
+        ))}
       </div>
 
-      <div className="container-custom py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-1">
-            <div className="bg-warm-beige p-6 space-y-4">
-              <h2 className="text-lg font-medium mb-4">Account Menu</h2>
-              <Link href="/account/orders" className="block py-2 hover:text-neutral transition-colors">
-                Order History
-              </Link>
-              <Link href="/account/addresses" className="block py-2 hover:text-neutral transition-colors">
-                Saved Addresses
-              </Link>
-              <Link href="/account/settings" className="block py-2 hover:text-neutral transition-colors">
-                Account Settings
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="block w-full text-left py-2 text-red-600 hover:text-red-700 transition-colors"
+      {tab === 'orders' ? (
+        <div className="mt-10">
+          {ordersLoading ? (
+            <p className="py-10 font-mono text-[10px] uppercase tracking-widest text-foreground/40">Loading…</p>
+          ) : orders.length === 0 ? (
+            <div className="border border-sand py-20 text-center">
+              <p className="text-sm text-foreground/50">No orders yet.</p>
+              <Link
+                href="/shop"
+                className="mt-8 inline-block bg-brand px-10 py-4 font-serif text-xl uppercase tracking-widest text-black"
               >
-                Sign Out
-              </button>
+                SHOP THE ARCHIVE
+              </Link>
             </div>
-          </div>
-
-          <div className="md:col-span-2 space-y-8">
-            <div>
-              <h2 className="text-2xl font-serif mb-4">Welcome back!</h2>
-              <p className="text-neutral">
-                Manage your orders, addresses, and account settings from here.
-              </p>
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-serif">Recent Orders</h3>
-                <Link href="/account/orders" className="text-sm uppercase tracking-wide link-underline">
-                  View All
+          ) : (
+            <div className="divide-y divide-sand border-y border-sand">
+              {orders.map((o: any) => (
+                <Link
+                  key={o._id}
+                  href={`/account/orders/${o._id}`}
+                  className="flex flex-wrap items-center justify-between gap-4 py-6 transition-colors hover:text-brand"
+                >
+                  <div>
+                    <p className="font-serif text-2xl uppercase tracking-wide">Order {o.orderNumber}</p>
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                      {new Date(o.createdAt).toLocaleDateString('en-GH', { year: 'numeric', month: 'short', day: 'numeric' })} · {o.items?.length || 0} item{o.items?.length === 1 ? '' : 's'}
+                    </p>
+                  </div>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-brand">
+                    {String(o.status).replaceAll('_', ' ')}
+                  </span>
+                  <span className="font-mono text-sm">{formatPrice(o.total)}</span>
                 </Link>
-              </div>
-
-              {recentOrders.length === 0 ? (
-                <div className="bg-warm-beige p-8 text-center">
-                  <p className="text-neutral mb-4">You haven&apos;t placed any orders yet.</p>
-                  <Link href="/shop" className="btn-primary inline-block">
-                    Start Shopping
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {recentOrders.map((order: any) => (
-                    <Link
-                      key={order._id}
-                      href={`/account/orders/${order._id}`}
-                      className="block bg-warm-beige p-6 hover:bg-sand/30 transition-colors"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium">Order {order.orderNumber}</p>
-                          <p className="text-sm text-neutral">
-                            {new Date(order.createdAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">{formatPrice(order.total)}</p>
-                          <p className="text-sm text-neutral capitalize">{order.status}</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-neutral">
-                        {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Link href="/shop" className="btn-secondary text-center py-6">
-                Continue Shopping
-              </Link>
-              <Link href="/account/orders" className="btn-ghost text-center py-6 border border-neutral/30">
-                Track Orders
-              </Link>
-            </div>
-          </div>
+          )}
         </div>
-      </div>
+      ) : (
+        <form onSubmit={saveProfile} className="mt-10 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+          <input value={profile.displayName} onChange={(e) => updateField('displayName', e.target.value)} placeholder="Full name" className={FIELD} />
+          <input value={profile.phone} onChange={(e) => updateField('phone', e.target.value)} placeholder="Phone" className={FIELD} />
+          <input value={profile.city} onChange={(e) => updateField('city', e.target.value)} placeholder="City" className={FIELD} />
+          <input value={profile.region} onChange={(e) => updateField('region', e.target.value)} placeholder="Region" className={FIELD} />
+          <textarea value={profile.address} onChange={(e) => updateField('address', e.target.value)} placeholder="Default delivery address" rows={3} className={`${FIELD} sm:col-span-2`} />
+          <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-brand px-10 py-4 font-serif text-xl uppercase tracking-widest text-black disabled:opacity-40"
+            >
+              {saving ? 'SAVING…' : 'SAVE DETAILS'}
+            </button>
+            {notice && <p className="font-mono text-[10px] uppercase tracking-widest text-brand" role="status">{notice}</p>}
+          </div>
+        </form>
+      )}
+
+      <Link
+        href="/wishlist"
+        className="mt-12 inline-block font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline hover:text-brand"
+      >
+        View saved pieces →
+      </Link>
     </div>
   );
 }

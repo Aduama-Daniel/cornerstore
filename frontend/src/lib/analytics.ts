@@ -74,7 +74,10 @@ export function trackEvent(event: AnalyticsEvent, params: Record<string, unknown
 
   window.gtag?.('event', event, params);
 
-  if (event === 'purchase' || event === 'order_submitted') {
+  if (event === 'order_submitted') {
+    // An accepted order (including pay on delivery) is not verified revenue.
+    window.fbq?.('trackCustom', 'OrderSubmitted', params);
+  } else if (event === 'purchase') {
     window.fbq?.('track', 'Purchase', params);
   } else if (event === 'add_to_cart') {
     window.fbq?.('track', 'AddToCart', params);

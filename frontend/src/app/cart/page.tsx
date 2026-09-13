@@ -1,138 +1,142 @@
-﻿'use client';
+'use client';
 
-import { useCart } from '@/contexts/CartContext';
-import CartItem from '@/components/CartItem';
 import Link from 'next/link';
+import { useCart } from '@/contexts/CartContext';
 import { formatPrice } from '@/lib/currency';
-import CartItemSkeleton from '@/components/skeletons/CartItemSkeleton';
+
+const formatColor = (slug?: string) =>
+  slug ? slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
 
 export default function CartPage() {
-  const { items, total, itemCount, loading } = useCart();
-
-  const subtotal = total;
-  const finalTotal = subtotal;
-
-  if (loading) {
-    return (
-      <div className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8 space-y-3">
-            <p className="text-[0.72rem] uppercase tracking-[0.35em] text-neutral">Shopping Bag</p>
-            <div className="h-8 w-56 animate-pulse rounded bg-black/10 sm:h-10 sm:w-72" />
-            <div className="h-4 w-64 animate-pulse rounded bg-black/10" />
-          </div>
-          <div className="space-y-0 overflow-hidden rounded-[2rem] border border-black/10 bg-white/75 backdrop-blur-sm">
-            {[...Array(3)].map((_, i) => (
-              <CartItemSkeleton key={i} />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (itemCount === 0) {
-    return (
-      <div className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="mx-auto flex max-w-2xl flex-col items-center rounded-2xl border border-sand bg-white px-6 py-16 text-center shadow-card sm:px-10">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-light text-brand">
-            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </span>
-          <h1 className="mb-2 mt-6 text-xl font-bold sm:text-2xl">Your cart is empty</h1>
-          <p className="mb-8 max-w-sm text-neutral">Browse the store and add items to start your order.</p>
-          <Link href="/shop" className="btn-primary inline-flex">Continue shopping</Link>
-        </div>
-      </div>
-    );
-  }
+  const { items, total, updateQuantity, removeItem, clearCart, loading } = useCart();
 
   return (
-    <div className="min-h-screen">
-      <section className="border-b border-sand bg-white">
-        <div className="container-custom py-8 sm:py-10">
-          <p className="text-xs font-bold uppercase tracking-wider text-brand">Your cart</p>
-          <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Review your cart</h1>
-          <p className="mt-2 max-w-2xl text-sm text-neutral">
-            Check your items, update quantities, then move straight into secure checkout.
-          </p>
-        </div>
-      </section>
+    <div className="mx-auto max-w-7xl px-6 py-16">
+      <h1 className="font-serif text-6xl uppercase tracking-tight md:text-7xl">YOUR BAG</h1>
 
-      <div className="container-custom py-10 sm:py-12 lg:py-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 flex flex-wrap gap-3 text-sm">
-            <span className="rounded-full bg-contrast px-4 py-2 text-cream">
-              1. Cart
-            </span>
-            <span className="rounded-full bg-black/5 px-4 py-2 text-neutral">
-              2. Checkout
-            </span>
+      {loading ? (
+        <p className="mt-12 font-mono text-[10px] uppercase tracking-widest text-foreground/40">Loading…</p>
+      ) : items.length === 0 ? (
+        <div className="mt-12 border border-sand py-24 text-center">
+          <p className="text-sm text-foreground/50">Your bag is empty.</p>
+          <Link
+            href="/shop"
+            className="mt-8 inline-block bg-brand px-10 py-4 font-serif text-xl uppercase tracking-widest text-black"
+          >
+            SHOP THE ARCHIVE
+          </Link>
+        </div>
+      ) : (
+        <div className="mt-12 grid grid-cols-1 gap-16 lg:grid-cols-[2fr_1fr]">
+          <div className="divide-y divide-sand border-y border-sand">
+            {items.map((item) => {
+              const img = item.product?.images?.[0];
+              const meta = [formatColor(item.colorSlug), item.size].filter(Boolean).join(' · ');
+              return (
+                <div key={item.id} className="flex gap-6 py-8">
+                  <Link href={`/product/${item.product?.slug}`} className="shrink-0">
+                    {img ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={img}
+                        alt={item.product?.name || ''}
+                        className="h-40 w-32 border border-sand object-cover"
+                      />
+                    ) : (
+                      <div className="h-40 w-32 border border-sand bg-surface" />
+                    )}
+                  </Link>
+                  <div className="flex grow flex-col justify-between">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <Link href={`/product/${item.product?.slug}`}>
+                          <h2 className="font-serif text-2xl uppercase tracking-wide hover:text-brand">
+                            {item.product?.name}
+                          </h2>
+                        </Link>
+                        {meta && (
+                          <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-foreground/40">
+                            {meta}
+                          </p>
+                        )}
+                      </div>
+                      <span className="font-mono text-sm text-brand">
+                        {formatPrice(item.price * item.quantity)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center border border-sand">
+                        <button
+                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                          aria-label="Decrease quantity"
+                          className="px-3 py-2 transition-colors hover:text-brand"
+                        >
+                          −
+                        </button>
+                        <span className="w-8 text-center font-mono text-xs">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          aria-label="Increase quantity"
+                          className="px-3 py-2 transition-colors hover:text-brand"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline transition-colors hover:text-brand"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <div className="py-6">
+              <button
+                onClick={clearCart}
+                className="font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline hover:text-brand"
+              >
+                Clear bag
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.55fr)_22rem] xl:grid-cols-[minmax(0,1.7fr)_24rem]">
-            <div>
-              <div className="overflow-hidden rounded-[2rem] border border-black/10 bg-white/75 backdrop-blur-sm">
-                {items.map((item) => (
-                  <CartItem key={item.id} item={item} />
-                ))}
+          <aside className="h-fit border border-sand p-8">
+            <h2 className="font-serif text-3xl uppercase tracking-widest">SUMMARY</h2>
+            <dl className="mt-8 space-y-4 font-mono text-xs uppercase tracking-widest">
+              <div className="flex justify-between">
+                <dt className="text-foreground/40">Subtotal</dt>
+                <dd>{formatPrice(total)}</dd>
               </div>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <Link href="/shop" className="btn-ghost inline-flex items-center">
-                  <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  Continue Shopping
-                </Link>
-                <p className="text-sm text-neutral">Free shipping is already applied at checkout.</p>
+              <div className="flex justify-between">
+                <dt className="text-foreground/40">Shipping</dt>
+                <dd>Free</dd>
               </div>
-            </div>
-
-            <div>
-              <div className="sticky top-24 rounded-[2rem] border border-black/10 bg-[#fbf8f4] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-8">
-                <div className="mb-6 border-b border-neutral/20 pb-6">
-                  <p className="text-[0.72rem] uppercase tracking-[0.28em] text-neutral">Order Summary</p>
-                  <h2 className="mt-3 text-2xl font-serif">Ready for checkout</h2>
-                </div>
-
-                <div className="mb-6 space-y-3 border-b border-neutral/20 pb-6">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>{formatPrice(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Shipping</span>
-                    <span className="font-medium text-green-600">Free</span>
-                  </div>
-                  <p className="text-xs text-neutral">Free shipping on all orders within Ghana</p>
-                </div>
-
-                <div className="mb-6 flex justify-between text-lg font-semibold">
-                  <span>Total</span>
-                  <span>{formatPrice(finalTotal)}</span>
-                </div>
-
-                <Link href="/checkout" className="btn-primary mb-3 block w-full text-center">
-                  Proceed to Checkout
-                </Link>
-                <p className="text-center text-xs text-neutral">Secure checkout with card and mobile money support.</p>
-
-                <div className="mt-6 border-t border-neutral/20 pt-6">
-                  <p className="mb-3 text-center text-xs text-neutral">We accept</p>
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="flex h-6 w-10 items-center justify-center rounded bg-contrast/10 text-xs">VISA</div>
-                    <div className="flex h-6 w-10 items-center justify-center rounded bg-contrast/10 text-xs">MC</div>
-                    <div className="flex h-6 w-10 items-center justify-center rounded bg-contrast/10 text-xs">AMEX</div>
-                  </div>
-                </div>
+              <div className="flex justify-between border-t border-sand pt-4 text-brand">
+                <dt>Total</dt>
+                <dd>{formatPrice(total)}</dd>
               </div>
-            </div>
-          </div>
+            </dl>
+            <p className="mt-6 font-mono text-[10px] uppercase tracking-widest text-foreground/30">
+              Free nationwide delivery across Ghana
+            </p>
+            <Link
+              href="/checkout"
+              className="mt-8 block bg-brand px-10 py-4 text-center font-serif text-xl uppercase tracking-widest text-black"
+            >
+              CHECKOUT
+            </Link>
+            <Link
+              href="/shop"
+              className="mt-4 block text-center font-mono text-[10px] uppercase tracking-widest text-foreground/40 underline hover:text-brand"
+            >
+              Continue shopping
+            </Link>
+          </aside>
         </div>
-      </div>
+      )}
     </div>
   );
 }
-
