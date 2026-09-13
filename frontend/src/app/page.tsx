@@ -4,6 +4,7 @@ import { api } from '@/lib/api';
 import { getServerMode } from '@/lib/serverMode';
 import { filterByMode } from '@/lib/modes';
 import { getPreferredMedia, optimizedImageUrl } from '@/lib/media';
+import { getProductFulfillment } from '@/lib/productFulfillment';
 import { formatPrice } from '@/lib/currency';
 
 export const dynamic = 'force-dynamic';
@@ -26,6 +27,11 @@ type Product = {
   trending?: boolean;
   images?: string[];
   mainMedia?: Array<{ url: string; type?: 'image' | 'video' }>;
+  origin?: string;
+  originType?: 'local' | 'international';
+  paymentMode?: 'pay_on_delivery' | 'upfront' | 'both';
+  estimatedDeliveryLabel?: string;
+  returnEligible?: boolean;
 };
 
 const formatCategory = (value: string) =>
@@ -136,6 +142,11 @@ export default async function HomePage() {
             {trending.map((product) => {
               const image = productImage(product);
               const onSale = product.discountPrice != null && product.discountPrice < product.price;
+              const fulfillment = getProductFulfillment(product);
+              const note =
+                fulfillment.originType === 'international'
+                  ? `${fulfillment.deliveryLabel} (import)`
+                  : fulfillment.deliveryLabel;
               return (
                 <Link href={`/product/${product.slug}`} key={product._id || product.slug} className="group cursor-pointer">
                   <div className="relative aspect-[3/4] overflow-hidden border border-sand bg-surface transition-colors group-hover:border-brand/40">
@@ -165,7 +176,7 @@ export default async function HomePage() {
                         {product.name}
                       </h3>
                       <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-foreground/40">
-                        3-5 weeks delivery (import)
+                        {note}
                       </p>
                     </div>
                     <div className="whitespace-nowrap text-right">
